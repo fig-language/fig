@@ -93,11 +93,11 @@ pub enum BinaryOperator {
     LogicalOr,  // ||
 
     // Bitwise operators
-    BitwiseAnd,   // &
-    BitwiseOr,    // |
-    BitwiseXor,   // ^
-    ShiftLeft,    // <<
-    ShiftRight,   // >>
+    BitwiseAnd, // &
+    BitwiseOr,  // |
+    BitwiseXor, // ^
+    ShiftLeft,  // <<
+    ShiftRight, // >>
 }
 
 // ============================================================================
@@ -123,6 +123,10 @@ pub enum UnaryOperator {
     Negate,
     /// Unary plus (+)
     Plus,
+    /// Address-of operator (&)
+    AddressOf,
+    /// Dereference operator (*)
+    Dereference,
 }
 
 // ============================================================================

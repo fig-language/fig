@@ -14,7 +14,7 @@ grammar;
 pub Expression: Expression = {
     // Level 0: Primary expressions (highest precedence)
     #[precedence(level="0")]
-    Primary,
+    Unary,
     
     // Level 1: Multiplication, Division, Modulo
     #[precedence(level="1")] #[assoc(side="left")]
@@ -120,13 +120,13 @@ Unary: Expression = {
     "+" <operand:Unary> => Expression::UnaryOp(UnaryOpExpr::new(
         UnaryOperator::Plus, Box::new(operand)
     )),
+    "&" <operand:Unary> => Expression::UnaryOp(UnaryOpExpr::new(
+        UnaryOperator::AddressOf, Box::new(operand)
+    )),
+    "*" <operand:Unary> => Expression::UnaryOp(UnaryOpExpr::new(
+        UnaryOperator::Dereference, Box::new(operand)
+    )),
     Atom,
-};
-
-// Primary expressions - these are the building blocks
-Primary: Expression = {
-    Unary,
-    "(" <Expression> ")" => Expression::Parenthesized(Box::new(<>)),
 };
 
 // Atomic expressions - literals and identifiers
@@ -139,7 +139,12 @@ Atom: Expression = {
     OkLiteral,
     Identifier,
     ArrayLiteral,
+    Parenthesized,
 };
+
+Parenthesized: Expression = {
+    "(" <expr:Expression> ")" => Expression::Parenthesized(Box::new(expr)),
+}
 
 // ============================================================================
 // Literal Expressions

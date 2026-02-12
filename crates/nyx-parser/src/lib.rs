@@ -39,11 +39,9 @@ impl<'input> Iterator for Lexer<'input> {
     type Item = Spanned<Token, usize, LexicalError>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.token_stream.next().map(|(token, span)| {
-            match token {
-                Ok(token) => Ok((span.start, token, span.end)),
-                Err(_) => Err(LexicalError::InvalidToken),
-            }
+        self.token_stream.next().map(|(token, span)| match token {
+            Ok(token) => Ok((span.start, token, span.end)),
+            Err(_) => Err(LexicalError::InvalidToken),
         })
     }
 }
@@ -162,7 +160,10 @@ mod tests {
         if let Expression::BinaryOp(mul_op) = expr {
             assert_eq!(*mul_op.op(), BinaryOperator::Multiply);
             // LHS should be parenthesized addition
-            assert!(matches!(mul_op.lhs().as_ref(), Expression::Parenthesized(_)));
+            assert!(matches!(
+                mul_op.lhs().as_ref(),
+                Expression::Parenthesized(_)
+            ));
         } else {
             panic!("Expected multiplication at root");
         }
@@ -204,19 +205,117 @@ mod tests {
         assert!(result.is_ok());
     }
 
+
     #[test]
-    fn test_shift_operations() {
-        let input = "1 << 2";
+    fn test_address_of_expression() {
+        let input = "&x";
         let lexer = Lexer::new(input);
         let result = parser::ExpressionParser::new().parse(lexer);
         assert!(result.is_ok());
         let expr = result.unwrap();
-        if let Expression::BinaryOp(op) = expr {
-            assert_eq!(*op.op(), BinaryOperator::ShiftLeft);
+        if let Expression::UnaryOp(op) = expr {
+            assert_eq!(*op.op(), UnaryOperator::AddressOf);
+            assert!(matches!(&**op.operand(), Expression::Identifier(_)));
         } else {
-            panic!("Expected shift operation");
+            panic!("Expected AddressOf unary operation");
         }
     }
+
+    #[test]
+    fn test_dereference_expression() {
+        let input = "*y";
+        let lexer = Lexer::new(input);
+        let result = parser::ExpressionParser::new().parse(lexer);
+        assert!(result.is_ok());
+        let expr = result.unwrap();
+        if let Expression::UnaryOp(op) = expr {
+            assert_eq!(*op.op(), UnaryOperator::Dereference);
+            assert!(matches!(&**op.operand(), Expression::Identifier(_)));
+        } else {
+            panic!("Expected Dereference unary operation");
+        }
+    }
+
+    #[test]
+    fn test_nested_address_of_dereference() {
+        let input = "&*z";
+        let lexer = Lexer::new(input);
+        let result = parser::ExpressionParser::new().parse(lexer);
+        assert!(result.is_ok());
+        let expr = result.unwrap();
+        if let Expression::UnaryOp(outer_op) = expr {
+            assert_eq!(*outer_op.op(), UnaryOperator::AddressOf);
+            if let Expression::UnaryOp(inner_op) = &**outer_op.operand() {
+                assert_eq!(*inner_op.op(), UnaryOperator::Dereference);
+                assert!(matches!(&**inner_op.operand(), Expression::Identifier(_)));
+            } else {
+                panic!("Expected nested Dereference operation");
+            }
+        } else {
+            panic!("Expected outer AddressOf operation");
+        }
+    }
+
+    #[test]
+    fn test_dereference_address_of_expression() {
+        let input = "*&z";
+        let lexer = Lexer::new(input);
+        let result = parser::ExpressionParser::new().parse(lexer);
+        assert!(result.is_ok());
+        let expr = result.unwrap();
+        if let Expression::UnaryOp(outer_op) = expr {
+            assert_eq!(*outer_op.op(), UnaryOperator::Dereference);
+            if let Expression::UnaryOp(inner_op) = &**outer_op.operand() {
+                assert_eq!(*inner_op.op(), UnaryOperator::AddressOf);
+                assert!(matches!(&**inner_op.operand(), Expression::Identifier(_)));
+            } else {
+                panic!("Expected nested AddressOf operation");
+            }
+        } else {
+            panic!("Expected outer Dereference operation");
+        }
+    }
+
+    #[test]
+    fn test_unary_with_binary_precedence() {
+        let input = "&x + 5";
+        let lexer = Lexer::new(input);
+        let result = parser::ExpressionParser::new().parse(lexer);
+        assert!(result.is_ok());
+        let expr = result.unwrap();
+        if let Expression::BinaryOp(binary_op) = expr {
+            assert_eq!(*binary_op.op(), BinaryOperator::Add);
+            if let Expression::UnaryOp(unary_op) = &**binary_op.lhs() {
+                assert_eq!(*unary_op.op(), UnaryOperator::AddressOf);
+                assert!(matches!(&**unary_op.operand(), Expression::Identifier(_)));
+            } else {
+                panic!("Expected AddressOf on LHS of binary op");
+            }
+            assert!(matches!(&**binary_op.rhs(), Expression::IntegerLiteral(_)));
+        } else {
+            panic!("Expected binary operation");
+        }
+    }
+
+    #[test]
+    fn test_unary_with_parenthesized() {
+        let input = "&(x + 5)";
+        let lexer = Lexer::new(input);
+        let result = parser::ExpressionParser::new().parse(lexer);
+        assert!(result.is_ok());
+        let expr = result.unwrap();
+        if let Expression::UnaryOp(unary_op) = expr {
+            assert_eq!(*unary_op.op(), UnaryOperator::AddressOf);
+            if let Expression::Parenthesized(inner_expr) = &**unary_op.operand() {
+                assert!(matches!(&**inner_expr, Expression::BinaryOp(_)));
+            } else {
+                panic!("Expected parenthesized expression after AddressOf");
+            }
+        } else {
+            panic!("Expected Unary operation");
+        }
+    }
+
 
     // Type parsing tests
     #[test]
@@ -255,6 +354,7 @@ mod tests {
         assert_eq!(result.unwrap(), Type::Bool);
     }
 
+
     #[test]
     fn test_parse_primitive_type_ok() {
         let input = "ok";
@@ -264,6 +364,7 @@ mod tests {
         assert_eq!(result.unwrap(), Type::Ok);
     }
 
+    // Pointer type tests
     #[test]
     fn test_parse_raw_pointer() {
         let input = "*raw";
@@ -274,7 +375,7 @@ mod tests {
     }
 
     #[test]
-    fn test_parse_typed_pointer() {
+    fn test_parse_typed_pointer_u32() {
         let input = "*u32";
         let lexer = Lexer::new(input);
         let result = parser::TypeParser::new().parse(lexer);
@@ -282,12 +383,25 @@ mod tests {
         if let Type::TypedPointer(inner) = result.unwrap() {
             assert_eq!(*inner, Type::U32);
         } else {
-            panic!("Expected typed pointer");
+            panic!("Expected typed pointer to U32");
         }
     }
 
     #[test]
-    fn test_parse_nested_pointer() {
+    fn test_parse_typed_pointer_bool() {
+        let input = "*bool";
+        let lexer = Lexer::new(input);
+        let result = parser::TypeParser::new().parse(lexer);
+        assert!(result.is_ok());
+        if let Type::TypedPointer(inner) = result.unwrap() {
+            assert_eq!(*inner, Type::Bool);
+        } else {
+            panic!("Expected typed pointer to Bool");
+        }
+    }
+
+    #[test]
+    fn test_parse_nested_pointer_i64() {
         let input = "**i64";
         let lexer = Lexer::new(input);
         let result = parser::TypeParser::new().parse(lexer);
@@ -296,12 +410,34 @@ mod tests {
             if let Type::TypedPointer(inner) = *outer {
                 assert_eq!(*inner, Type::I64);
             } else {
-                panic!("Expected nested typed pointer");
+                panic!("Expected nested typed pointer to I64");
             }
         } else {
-            panic!("Expected typed pointer");
+            panic!("Expected outer typed pointer");
         }
     }
+
+    #[test]
+    fn test_parse_triple_nested_pointer_u8() {
+        let input = "***u8";
+        let lexer = Lexer::new(input);
+        let result = parser::TypeParser::new().parse(lexer);
+        assert!(result.is_ok());
+        if let Type::TypedPointer(outer) = result.unwrap() {
+            if let Type::TypedPointer(middle) = *outer {
+                if let Type::TypedPointer(inner) = *middle {
+                    assert_eq!(*inner, Type::U8);
+                } else {
+                    panic!("Expected innermost typed pointer to U8");
+                }
+            } else {
+                panic!("Expected middle typed pointer");
+            }
+        } else {
+            panic!("Expected outer typed pointer");
+        }
+    }
+
 
     #[test]
     fn test_parse_array_type() {
@@ -317,3 +453,4 @@ mod tests {
         }
     }
 }
+

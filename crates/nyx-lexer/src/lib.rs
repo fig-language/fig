@@ -1,8 +1,8 @@
 mod float;
 mod integer;
 
-pub use float::{FloatExponent, FloatLiteral, FloatSuffix, parse_float};
-pub use integer::{Base, IntegerLiteral, IntegerSuffix, parse_integer};
+pub use float::{parse_float, FloatExponent, FloatLiteral, FloatSuffix};
+pub use integer::{parse_integer, Base, IntegerLiteral, IntegerSuffix};
 
 use logos::Logos;
 

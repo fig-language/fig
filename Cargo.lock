@@ -355,7 +355,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "650eef8c711430f1a879fdd01d4745a7deea475becfb90269c06775983bbf086"
 
 [[package]]
-name = "nyx"
+name = "nyx-lexer"
 version = "0.1.0"
 dependencies = [
  "derive-new",
@@ -364,6 +364,10 @@ dependencies = [
  "lalrpop",
  "logos",
 ]
+
+[[package]]
+name = "nyx-parser"
+version = "0.1.0"
 
 [[package]]
 name = "parking_lot"

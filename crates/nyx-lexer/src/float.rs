@@ -1,6 +1,6 @@
 use derive_builder::Builder;
 
-use crate::lexer::Token;
+use crate::Token;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum FloatSuffix {

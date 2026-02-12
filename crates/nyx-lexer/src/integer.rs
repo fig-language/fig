@@ -1,8 +1,7 @@
+use derive_builder::Builder;
 use std::fmt::Display;
 
-use derive_builder::Builder;
-
-use crate::lexer::Token;
+use crate::Token;
 
 #[derive(Default, Debug, Clone, PartialEq)]
 pub enum Base {

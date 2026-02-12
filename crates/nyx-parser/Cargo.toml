@@ -5,9 +5,11 @@ edition = "2024"
 
 [dependencies]
 lalrpop-util = "0.20.0"
-derive-new = "0.5.9"
-derive_builder = "0.12.0"
-getset = "0.1.0"
+derive-new = "0.7.0"
+derive_builder = "0.20.2"
+getset = "0.1.6"
+logos = "0.16.1"
+nyx-lexer = { path = "../nyx-lexer" }
 
 [build-dependencies]
 lalrpop = "0.20.0"

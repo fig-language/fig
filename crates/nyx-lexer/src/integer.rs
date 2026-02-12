@@ -78,6 +78,37 @@ impl IntegerLiteral {
     pub fn builder() -> IntegerLiteralBuilder {
         IntegerLiteralBuilder::default()
     }
+
+    /// Get the base of the integer literal
+    pub fn base(&self) -> &Base {
+        &self.base
+    }
+
+    /// Get the digits as a string
+    pub fn digits(&self) -> &str {
+        &self.digits
+    }
+
+    /// Get the suffix if present
+    pub fn suffix(&self) -> Option<&IntegerSuffix> {
+        self.suffix.as_ref()
+    }
+
+    /// Parse the integer literal as a u64
+    pub fn as_u64(&self) -> Result<u64, std::num::ParseIntError> {
+        let radix = match self.base {
+            Base::Binary => 2,
+            Base::Octal => 8,
+            Base::Decimal => 10,
+            Base::Hex => 16,
+        };
+        u64::from_str_radix(&self.digits, radix)
+    }
+
+    /// Parse the integer literal as a usize
+    pub fn as_usize(&self) -> Result<usize, std::num::ParseIntError> {
+        self.as_u64().map(|v| v as usize)
+    }
 }
 
 impl Display for IntegerLiteral {

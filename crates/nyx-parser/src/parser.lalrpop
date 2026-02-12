@@ -1,1 +1,368 @@
+use crate::LexicalError;
+use crate::ast::*;
+use nyx_lexer::{Token, FloatLiteral, IntegerLiteral};
 
+grammar;
+
+// ============================================================================
+// Main Entry Point
+// ============================================================================
+
+/// Main entry point for expression parsing with precedence levels
+/// Level 0 = highest precedence (primary expressions)
+/// Level 8 = lowest precedence (logical OR)
+pub Expression: Expression = {
+    // Level 0: Primary expressions (highest precedence)
+    #[precedence(level="0")]
+    Primary,
+    
+    // Level 1: Multiplication, Division, Modulo
+    #[precedence(level="1")] #[assoc(side="left")]
+    <lhs:Expression> "*" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::Multiply, Box::new(rhs)
+    )),
+    <lhs:Expression> "/" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::Divide, Box::new(rhs)
+    )),
+    <lhs:Expression> "%" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::Modulo, Box::new(rhs)
+    )),
+    
+    // Level 2: Addition and Subtraction
+    #[precedence(level="2")] #[assoc(side="left")]
+    <lhs:Expression> "+" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::Add, Box::new(rhs)
+    )),
+    <lhs:Expression> "-" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::Subtract, Box::new(rhs)
+    )),
+    
+    // Level 3: Bit shifts
+    #[precedence(level="3")] #[assoc(side="left")]
+    <lhs:Expression> "<<" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::ShiftLeft, Box::new(rhs)
+    )),
+    <lhs:Expression> ">>" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::ShiftRight, Box::new(rhs)
+    )),
+    
+    // Level 4: Comparison operators
+    #[precedence(level="4")] #[assoc(side="left")]
+    <lhs:Expression> "<" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::LessThan, Box::new(rhs)
+    )),
+    <lhs:Expression> ">" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::GreaterThan, Box::new(rhs)
+    )),
+    <lhs:Expression> "<=" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::LessThanOrEqual, Box::new(rhs)
+    )),
+    <lhs:Expression> ">=" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::GreaterThanOrEqual, Box::new(rhs)
+    )),
+    
+    // Level 5: Equality operators
+    #[precedence(level="5")] #[assoc(side="left")]
+    <lhs:Expression> "==" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::Equal, Box::new(rhs)
+    )),
+    <lhs:Expression> "!=" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::NotEqual, Box::new(rhs)
+    )),
+    
+    // Level 6: Bitwise AND
+    #[precedence(level="6")] #[assoc(side="left")]
+    <lhs:Expression> "&" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::BitwiseAnd, Box::new(rhs)
+    )),
+    
+    // Level 7: Bitwise XOR
+    #[precedence(level="7")] #[assoc(side="left")]
+    <lhs:Expression> "^" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::BitwiseXor, Box::new(rhs)
+    )),
+    
+    // Level 8: Bitwise OR
+    #[precedence(level="8")] #[assoc(side="left")]
+    <lhs:Expression> "|" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::BitwiseOr, Box::new(rhs)
+    )),
+    
+    // Level 9: Logical AND
+    #[precedence(level="9")] #[assoc(side="left")]
+    <lhs:Expression> "&&" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::LogicalAnd, Box::new(rhs)
+    )),
+    
+    // Level 10: Logical OR (lowest precedence)
+    #[precedence(level="10")] #[assoc(side="left")]
+    <lhs:Expression> "||" <rhs:Expression> => Expression::BinaryOp(BinaryOpExpr::new(
+        Box::new(lhs), BinaryOperator::LogicalOr, Box::new(rhs)
+    )),
+};
+
+// ============================================================================
+// Unary Expressions and Primary Expressions
+// ============================================================================
+
+/// Unary operators have higher precedence than any binary operator
+/// They are applied before the expression enters the precedence hierarchy
+Unary: Expression = {
+    "!" <operand:Unary> => Expression::UnaryOp(UnaryOpExpr::new(
+        UnaryOperator::LogicalNot, Box::new(operand)
+    )),
+    "~" <operand:Unary> => Expression::UnaryOp(UnaryOpExpr::new(
+        UnaryOperator::BitwiseNot, Box::new(operand)
+    )),
+    "-" <operand:Unary> => Expression::UnaryOp(UnaryOpExpr::new(
+        UnaryOperator::Negate, Box::new(operand)
+    )),
+    "+" <operand:Unary> => Expression::UnaryOp(UnaryOpExpr::new(
+        UnaryOperator::Plus, Box::new(operand)
+    )),
+    Atom,
+};
+
+// Primary expressions - these are the building blocks
+Primary: Expression = {
+    Unary,
+    "(" <Expression> ")" => Expression::Parenthesized(Box::new(<>)),
+};
+
+// Atomic expressions - literals and identifiers
+Atom: Expression = {
+    IntegerLiteral,
+    FloatLiteral,
+    BooleanLiteral,
+    CharLiteral,
+    StringLiteral,
+    OkLiteral,
+    Identifier,
+    ArrayLiteral,
+};
+
+// ============================================================================
+// Literal Expressions
+// ============================================================================
+
+IntegerLiteral: Expression = {
+    <lit:"int"> => Expression::IntegerLiteral(lit),
+};
+
+FloatLiteral: Expression = {
+    <lit:"float"> => Expression::FloatLiteral(lit),
+};
+
+BooleanLiteral: Expression = {
+    "true" => Expression::BooleanLiteral(true),
+    "false" => Expression::BooleanLiteral(false),
+};
+
+CharLiteral: Expression = {
+    "char" => {
+        // Note: The lexer returns the full character literal with quotes
+        // We'll store it as-is for now
+        Expression::CharLiteral(String::new())
+    },
+};
+
+StringLiteral: Expression = {
+    "string" => {
+        // Note: The lexer returns the full string literal with quotes
+        // We'll store it as-is for now
+        Expression::StringLiteral(String::new())
+    },
+};
+
+OkLiteral: Expression = {
+    "ok" => Expression::OkLiteral,
+};
+
+Identifier: Expression = {
+    "ident" => Expression::Identifier(String::new()),
+};
+
+ArrayLiteral: Expression = {
+    "[" <elements:Comma<Expression>> "]" => {
+        Expression::ArrayLiteral(ArrayLiteralExpr::new(elements))
+    },
+};
+
+// ============================================================================
+// Type Parsing
+// ============================================================================
+
+/// Main type parser - parses any type
+pub Type: Type = {
+    PointerType,
+};
+
+/// Pointer types: *raw or *T (recursively handles nested pointers like **T)
+PointerType: Type = {
+    "*" "raw" => Type::RawPointer,
+    "*" <element_type:PointerType> => Type::TypedPointer(Box::new(element_type)),
+    ArrayType,
+};
+
+ArrayType: Type = {
+    "[" <size:ArraySize> "]" <element_type:ArrayType> => Type::Array{ 
+        element_type: Box::new(element_type), 
+        size: Some(size) 
+    },
+    "[" "]" <element_type:ArrayType> => Type::Array{ 
+        element_type: Box::new(element_type), 
+        size: None 
+    },
+    PrimitiveType,
+}
+
+/// Helper rule to parse array size as usize
+ArraySize: usize = {
+    <lit:"int"> => {
+        // Extract the integer value and convert to usize
+        lit.as_usize().unwrap_or(0)
+    },
+};
+
+/// Primitive types
+PrimitiveType: Type = {
+    "u8" => Type::U8,
+    "u16" => Type::U16,
+    "u32" => Type::U32,
+    "u64" => Type::U64,
+    "usize" => Type::USize,
+    "i8" => Type::I8,
+    "i16" => Type::I16,
+    "i32" => Type::I32,
+    "i64" => Type::I64,
+    "isize" => Type::ISize,
+    "f32" => Type::F32,
+    "f64" => Type::F64,
+    "bool" => Type::Bool,
+    "ok" => Type::Ok,
+};
+
+// ============================================================================
+// Helper Rules
+// ============================================================================
+
+/// Parse a comma-separated list of items (with optional trailing comma)
+Comma<T>: Vec<T> = {
+    <mut v:(<T> ",")*> <e:T?> => match e {
+        None => v,
+        Some(e) => {
+            v.push(e);
+            v
+        }
+    }
+};
+
+extern {
+    type Location = usize;
+    type Error = LexicalError;
+
+    enum Token {
+        // Keywords
+        "fn" => Token::Fn,
+        "let" => Token::Let,
+        "mut" => Token::Mut,
+        "const" => Token::Const,
+        "type" => Token::Type,
+        "struct" => Token::Struct,
+        "union" => Token::Union,
+        "interface" => Token::Interface,
+        "ext" => Token::Ext,
+        "impl" => Token::Impl,
+        "true" => Token::True,
+        "false" => Token::False,
+        "ok" => Token::OkLiteral,
+        "raw" => Token::Raw,
+        "super" => Token::Super,
+        "if" => Token::If,
+        "else" => Token::Else,
+        "for" => Token::For,
+        "while" => Token::While,
+        "break" => Token::Break,
+        "continue" => Token::Continue,
+        "match" => Token::Match,
+        "return" => Token::Return,
+        "mutable" => Token::Mutable,
+        "Self" => Token::SelfKeyword,
+        "in" => Token::In,
+
+        // Primitive Types
+        "u8" => Token::U8,
+        "u16" => Token::U16,
+        "u32" => Token::U32,
+        "u64" => Token::U64,
+        "usize" => Token::USize,
+        "isize" => Token::ISize,
+        "i8" => Token::I8,
+        "i16" => Token::I16,
+        "i32" => Token::I32,
+        "i64" => Token::I64,
+        "f32" => Token::F32,
+        "f64" => Token::F64,
+        "bool" => Token::Bool,
+
+        // Operators
+        "+" => Token::Plus,
+        "-" => Token::Minus,
+        "*" => Token::Star,
+        "/" => Token::Slash,
+        "%" => Token::Percent,
+        "==" => Token::EqEq,
+        "!=" => Token::Ne,
+        "<" => Token::Lt,
+        ">" => Token::Gt,
+        "<=" => Token::Le,
+        ">=" => Token::Ge,
+        "&&" => Token::AndAnd,
+        "||" => Token::OrOr,
+        "!" => Token::Bang,
+        "&" => Token::And,
+        "|" => Token::Or,
+        "^" => Token::Caret,
+        "~" => Token::Tilde,
+        "<<" => Token::Shl,
+        ">>" => Token::Shr,
+        "=" => Token::Eq,
+        "+=" => Token::PlusEq,
+        "-=" => Token::MinusEq,
+        "*=" => Token::StarEq,
+        "/=" => Token::SlashEq,
+        "%=" => Token::PercentEq,
+        "&=" => Token::AndEq,
+        "|=" => Token::OrEq,
+        "^=" => Token::CaretEq,
+        "<<=" => Token::ShlEq,
+        ">>=" => Token::ShrEq,
+        "->" => Token::Arrow,
+        "=>" => Token::FatArrow,
+
+        // Delimiters and Punctuation
+        "(" => Token::LParen,
+        ")" => Token::RParen,
+        "{" => Token::LBrace,
+        "}" => Token::RBrace,
+        "[" => Token::LBracket,
+        "]" => Token::RBracket,
+        ":" => Token::Colon,
+        ";" => Token::Semicolon,
+        "," => Token::Comma,
+        "." => Token::Dot,
+
+        // Special
+        "_" => Token::Underscore,
+
+        // Identifiers and Literals
+        "ident" => Token::Ident,
+        "float" => Token::FloatLiteral(<FloatLiteral>),
+        "int" => Token::IntegerLiteral(<IntegerLiteral>),
+        "string" => Token::StringLiteral,
+        "char" => Token::CharLiteral,
+
+        // Metadata
+        "@" => Token::At,
+    }
+}

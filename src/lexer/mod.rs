@@ -1,0 +1,830 @@
+mod float;
+mod integer;
+
+pub use float::{FloatExponent, FloatLiteral, FloatSuffix, parse_float};
+pub use integer::{Base, IntegerLiteral, IntegerSuffix, parse_integer};
+
+use logos::Logos;
+
+#[derive(Logos, Debug, PartialEq, Clone)]
+#[logos(skip r"[ \t\n\f]+")] // Skip whitespace
+pub enum Token {
+    // Keywords
+    #[token("fn")]
+    Fn,
+    #[token("let")]
+    Let,
+    #[token("mut")]
+    Mut,
+    #[token("const")]
+    Const,
+    #[token("type")]
+    Type,
+    #[token("struct")]
+    Struct,
+    #[token("union")]
+    Union,
+    #[token("interface")]
+    Interface,
+    #[token("ext")]
+    Ext,
+    #[token("impl")]
+    Impl,
+    #[token("true")]
+    True,
+    #[token("false")]
+    False,
+    #[token("ok")]
+    OkLiteral,
+    #[token("raw")]
+    Raw,
+    #[token("super")]
+    Super,
+    #[token("if")]
+    If,
+    #[token("else")]
+    Else,
+    #[token("for")]
+    For,
+    #[token("while")]
+    While,
+    #[token("break")]
+    Break,
+    #[token("continue")]
+    Continue,
+    #[token("match")]
+    Match,
+    #[token("return")]
+    Return,
+    #[token("mutable")]
+    Mutable,
+    #[token("Self")]
+    SelfKeyword,
+    #[token("in")]
+    In,
+
+    // Primitive Types
+    #[token("u8")]
+    U8,
+    #[token("u16")]
+    U16,
+    #[token("u32")]
+    U32,
+    #[token("u64")]
+    U64,
+    #[token("usize")]
+    USize,
+    #[token("isize")]
+    ISize,
+    #[token("i8")]
+    I8,
+    #[token("i16")]
+    I16,
+    #[token("i32")]
+    I32,
+    #[token("i64")]
+    I64,
+    #[token("f32")]
+    F32,
+    #[token("f64")]
+    F64,
+    #[token("bool")]
+    Bool,
+
+    // Operators
+    #[token("+")]
+    Plus,
+    #[token("-")]
+    Minus,
+    #[token("*")]
+    Star,
+    #[token("/")]
+    Slash,
+    #[token("%")]
+    Percent,
+    #[token("==")]
+    EqEq,
+    #[token("!=")]
+    Ne,
+    #[token("<")]
+    Lt,
+    #[token(">")]
+    Gt,
+    #[token("<=")]
+    Le,
+    #[token(">=")]
+    Ge,
+    #[token("&&")]
+    AndAnd,
+    #[token("||")]
+    OrOr,
+    #[token("!")]
+    Bang,
+    #[token("&")]
+    And,
+    #[token("|")]
+    Or,
+    #[token("^")]
+    Caret,
+    #[token("~")]
+    Tilde,
+    #[token("<<")]
+    Shl,
+    #[token(">>")]
+    Shr,
+    #[token("=")]
+    Eq,
+    #[token("+=")]
+    PlusEq,
+    #[token("-=")]
+    MinusEq,
+    #[token("*=")]
+    StarEq,
+    #[token("/=")]
+    SlashEq,
+    #[token("%=")]
+    PercentEq,
+    #[token("&=")]
+    AndEq,
+    #[token("|=")]
+    OrEq,
+    #[token("^=")]
+    CaretEq,
+    #[token("<<=")]
+    ShlEq,
+    #[token(">>=")]
+    ShrEq,
+    #[token("->")]
+    Arrow, // Function return type
+    #[token("=>")]
+    FatArrow,
+
+    // Delimiters and Punctuation
+    #[token("(")]
+    LParen,
+    #[token(")")]
+    RParen,
+    #[token("{")]
+    LBrace,
+    #[token("}")]
+    RBrace,
+    #[token("[")]
+    LBracket,
+    #[token("]")]
+    RBracket,
+    #[token(":")]
+    Colon,
+    #[token(";")]
+    Semicolon,
+    #[token(",")]
+    Comma,
+    #[token(".")]
+    Dot,
+
+    // Special wildcard identifier
+    #[token("_")]
+    Underscore,
+
+    // Identifiers - Must come after keywords and special identifiers to avoid false positives
+    // Modified to not match a single underscore
+    #[regex("[a-zA-Z][a-zA-Z0-9_]*|_[a-zA-Z0-9_]+")]
+    Ident,
+
+    // ------------------------
+    // Unsuffixed Literals
+    // ------------------------
+    #[regex(
+        r"[0-9][_0-9]*\.[0-9][_0-9]*(?:e[+-]?[0-9][_0-9]*)?(f32|f64)?",
+        parse_float
+    )]
+    #[regex(r"[0-9][_0-9]*e[+-]?[0-9][_0-9]*(f32|f64)?", parse_float)]
+    FloatLiteral(FloatLiteral),
+
+    #[regex(
+        r"[0-9][_0-9]*(i8|i16|i32|i64|isize|u8|u16|u32|u64|usize)?",
+        parse_integer
+    )]
+    #[regex(
+        r"0b[01][_01]*(i8|i16|i32|i64|isize|u8|u16|u32|u64|usize)?",
+        parse_integer
+    )]
+    #[regex(
+        r"0o_?[0-7][_0-7]*(i8|i16|i32|i64|isize|u8|u16|u32|u64|usize)?",
+        parse_integer
+    )]
+    #[regex(
+        r"0x_?[0-9a-fA-F][_0-9a-fA-F]*(i8|i16|i32|i64|isize|u8|u16|u32|u64|usize)?",
+        parse_integer
+    )]
+    IntegerLiteral(IntegerLiteral), // unsuffixed integers
+
+    // String literal with basic escape sequences
+    #[regex(r#""(?:[^"\\]|\\.)*""#)]
+    // This regex will NOT match unclosed strings, so Logos will emit an error for them
+    StringLiteral,
+
+    // Character literal with basic escape sequences
+    #[regex(r#"'(?:[^'\\]|\\.)'"#)]
+    CharLiteral,
+
+    // Metadata prefix - '@' symbol. The identifier following it will be `Ident`.
+    #[token("@")]
+    At,
+
+    // Whitespace and Comments - Skipped by Logos
+    #[regex(r"//[^\n]*", logos::skip, allow_greedy = true)] // Single-line comments
+    #[regex(r"/\*[^*]*\*+(?:[^/*][^*]*\*+)*/", logos::skip, allow_greedy = true)]
+    // Multi-line comments
+    Comment,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use logos::Logos;
+
+    fn lexer_test_helper(input: &str, expected_tokens: Vec<Token>) {
+        let mut lex = Token::lexer(input);
+        for expected_token in expected_tokens {
+            assert_eq!(lex.next().unwrap().unwrap(), expected_token);
+        }
+        assert_eq!(lex.next(), None); // Ensure no more tokens
+    }
+
+    // --- Simple Tests ---
+
+    #[test]
+    fn test_keywords() {
+        lexer_test_helper(
+            "fn let mut const type struct union interface ext impl true false ok raw super if else for while break continue match return mutable usize Self in",
+            vec![
+                Token::Fn,
+                Token::Let,
+                Token::Mut,
+                Token::Const,
+                Token::Type,
+                Token::Struct,
+                Token::Union,
+                Token::Interface,
+                Token::Ext,
+                Token::Impl,
+                Token::True,
+                Token::False,
+                Token::OkLiteral,
+                Token::Raw,
+                Token::Super,
+                Token::If,
+                Token::Else,
+                Token::For,
+                Token::While,
+                Token::Break,
+                Token::Continue,
+                Token::Match,
+                Token::Return,
+                Token::Mutable,
+                Token::USize,
+                Token::SelfKeyword,
+                Token::In,
+            ],
+        );
+    }
+
+    #[test]
+    fn test_primitive_types() {
+        lexer_test_helper(
+            "u8 u16 u32 u64 i8 i16 i32 i64 f32 f64 bool",
+            vec![
+                Token::U8,
+                Token::U16,
+                Token::U32,
+                Token::U64,
+                Token::I8,
+                Token::I16,
+                Token::I32,
+                Token::I64,
+                Token::F32,
+                Token::F64,
+                Token::Bool,
+            ],
+        );
+    }
+
+    #[test]
+    fn test_operators() {
+        lexer_test_helper(
+            "+ - * / % == != < > <= >= && || ! & | ^ ~ << >> = += -= *= /= %= &= |= ^= <<= >>=",
+            vec![
+                Token::Plus,
+                Token::Minus,
+                Token::Star,
+                Token::Slash,
+                Token::Percent,
+                Token::EqEq,
+                Token::Ne,
+                Token::Lt,
+                Token::Gt,
+                Token::Le,
+                Token::Ge,
+                Token::AndAnd,
+                Token::OrOr,
+                Token::Bang,
+                Token::And,
+                Token::Or,
+                Token::Caret,
+                Token::Tilde,
+                Token::Shl,
+                Token::Shr,
+                Token::Eq,
+                Token::PlusEq,
+                Token::MinusEq,
+                Token::StarEq,
+                Token::SlashEq,
+                Token::PercentEq,
+                Token::AndEq,
+                Token::OrEq,
+                Token::CaretEq,
+                Token::ShlEq,
+                Token::ShrEq,
+            ],
+        );
+    }
+
+    #[test]
+    fn test_delimiters_and_punctuation() {
+        lexer_test_helper(
+            "() {} [] : ; , . ->",
+            vec![
+                Token::LParen,
+                Token::RParen,
+                Token::LBrace,
+                Token::RBrace,
+                Token::LBracket,
+                Token::RBracket,
+                Token::Colon,
+                Token::Semicolon,
+                Token::Comma,
+                Token::Dot,
+                Token::Arrow,
+            ],
+        );
+    }
+
+    #[test]
+    fn test_identifiers_and_underscore() {
+        lexer_test_helper(
+            "myVar _ another_var _123 var_name_long _leading_underscore",
+            vec![
+                Token::Ident,
+                Token::Underscore,
+                Token::Ident,
+                Token::Ident,
+                Token::Ident,
+                Token::Ident,
+            ],
+        );
+    }
+
+    // --- Complex Tests (Numeric Literals with Suffixes) ---
+
+    #[test]
+    fn test_integer_literals_with_suffixes() {
+        lexer_test_helper(
+            "123u8 0b101u16 0o77u32 0xAFu64 10i8 0b11i16 0o12i32 0xFFi64 5usize",
+            vec![
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Decimal)
+                        .digits("123".to_string())
+                        .suffix(Some(IntegerSuffix::U8))
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Binary)
+                        .digits("101".to_string())
+                        .suffix(Some(IntegerSuffix::U16))
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Octal)
+                        .digits("77".to_string())
+                        .suffix(Some(IntegerSuffix::U32))
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Hex)
+                        .digits("AF".to_string())
+                        .suffix(Some(IntegerSuffix::U64))
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Decimal)
+                        .digits("10".to_string())
+                        .suffix(Some(IntegerSuffix::I8))
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Binary)
+                        .digits("11".to_string())
+                        .suffix(Some(IntegerSuffix::I16))
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Octal)
+                        .digits("12".to_string())
+                        .suffix(Some(IntegerSuffix::I32))
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Hex)
+                        .digits("FF".to_string())
+                        .suffix(Some(IntegerSuffix::I64))
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Decimal)
+                        .digits("5".to_string())
+                        .suffix(Some(IntegerSuffix::USize))
+                        .build()
+                        .unwrap(),
+                ),
+            ],
+        );
+        lexer_test_helper(
+            "1_000u32 0b1_0u8 0o_7_7u16 0x_AF_u64", // Underscores in numbers
+            vec![
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Decimal)
+                        .digits("1000".to_string())
+                        .suffix(Some(IntegerSuffix::U32))
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Binary)
+                        .digits("10".to_string())
+                        .suffix(Some(IntegerSuffix::U8))
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Octal)
+                        .digits("77".to_string())
+                        .suffix(Some(IntegerSuffix::U16))
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Hex)
+                        .digits("AF".to_string())
+                        .suffix(Some(IntegerSuffix::U64))
+                        .build()
+                        .unwrap(),
+                ),
+            ],
+        );
+    }
+
+    #[test]
+    fn test_float_literals_with_suffixes() {
+        lexer_test_helper(
+            "3.14f32 1.0e-5f64 2f32 2.f32", // Note: 2f32 might be `2` (Integer) followed by `f32` (Ident)
+            vec![
+                Token::FloatLiteral(
+                    FloatLiteral::builder()
+                        .digits("3.14".to_string())
+                        .exponent(None)
+                        .suffix(Some(FloatSuffix::F32))
+                        .build()
+                        .unwrap(),
+                ),
+                Token::FloatLiteral(
+                    FloatLiteral::builder()
+                        .digits("1.0".to_string())
+                        .exponent(Some(FloatExponent::Negative(5)))
+                        .suffix(Some(FloatSuffix::F64))
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Decimal)
+                        .digits("2".to_string())
+                        .suffix(None)
+                        .build()
+                        .unwrap(),
+                ),
+                Token::F32,
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Decimal)
+                        .digits("2".to_string())
+                        .suffix(None)
+                        .build()
+                        .unwrap(),
+                ),
+                Token::Dot,
+                Token::F32,
+            ],
+        );
+        // Correct float with exponent only
+        lexer_test_helper(
+            "1e5f32 1.23e+10f64",
+            vec![
+                Token::FloatLiteral(
+                    FloatLiteral::builder()
+                        .digits("1".to_string())
+                        .exponent(Some(FloatExponent::Unsigned(5)))
+                        .suffix(Some(FloatSuffix::F32))
+                        .build()
+                        .unwrap(),
+                ),
+                Token::FloatLiteral(
+                    FloatLiteral::builder()
+                        .digits("1.23".to_string())
+                        .exponent(Some(FloatExponent::Positive(10)))
+                        .suffix(Some(FloatSuffix::F64))
+                        .build()
+                        .unwrap(),
+                ),
+            ],
+        );
+        // Test cases that might be problematic: 2.f32 - current regex doesn't handle trailing dot without digits.
+        // It's `[0-9][_0-9]*\.[0-9][_0-9]*` so `2.` won't match as Float. It'll be `IntegerLiteral` + `Dot`.
+        // This is a language design choice.
+    }
+
+    #[test]
+    fn test_mixed_simple_literals() {
+        lexer_test_helper(
+            "42 3.14 0b10 0o7 0xFa 'c' \"hello\"",
+            vec![
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Decimal)
+                        .digits("42".to_string())
+                        .suffix(None)
+                        .build()
+                        .unwrap(),
+                ),
+                Token::FloatLiteral(
+                    FloatLiteral::builder()
+                        .digits("3.14".to_string())
+                        .exponent(None)
+                        .suffix(None)
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Binary)
+                        .digits("10".to_string())
+                        .suffix(None)
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Octal)
+                        .digits("7".to_string())
+                        .suffix(None)
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Hex)
+                        .digits("Fa".to_string())
+                        .suffix(None)
+                        .build()
+                        .unwrap(),
+                ),
+                Token::CharLiteral,
+                Token::StringLiteral,
+            ],
+        );
+    }
+
+    #[test]
+    fn test_string_and_char_literals() {
+        lexer_test_helper(
+            r#"'a' '\n' '\'' '\\' "hello world" "tab\tnew\nline""#,
+            vec![
+                Token::CharLiteral,
+                Token::CharLiteral,
+                Token::CharLiteral,
+                Token::CharLiteral,
+                Token::StringLiteral,
+                Token::StringLiteral,
+            ],
+        );
+    }
+
+    #[test]
+    fn test_metadata() {
+        lexer_test_helper(
+            "@inline @deprecated(msg) @test_attr",
+            vec![
+                Token::At,
+                Token::Ident,
+                Token::At,
+                Token::Ident,
+                Token::LParen,
+                Token::Ident,
+                Token::RParen,
+                Token::At,
+                Token::Ident,
+            ],
+        );
+    }
+
+    #[test]
+    fn test_comments_and_whitespace() {
+        lexer_test_helper(
+            "  // single line comment\n let /*multi\nline\ncomment*/ x = 10",
+            vec![
+                Token::Let,
+                Token::Ident,
+                Token::Eq,
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Decimal)
+                        .digits("10".to_string())
+                        .suffix(None)
+                        .build()
+                        .unwrap(),
+                ),
+            ],
+        );
+    }
+
+    #[test]
+    fn test_complex_expression() {
+        let input = "fn add(a: i32, b: i32) -> i32 { return a + b; }";
+        let expected = vec![
+            Token::Fn,
+            Token::Ident,
+            Token::LParen,
+            Token::Ident,
+            Token::Colon,
+            Token::I32,
+            Token::Comma,
+            Token::Ident,
+            Token::Colon,
+            Token::I32,
+            Token::RParen,
+            Token::Arrow,
+            Token::I32,
+            Token::LBrace,
+            Token::Return,
+            Token::Ident,
+            Token::Plus,
+            Token::Ident,
+            Token::Semicolon,
+            Token::RBrace,
+        ];
+        lexer_test_helper(input, expected);
+    }
+
+    #[test]
+    fn test_match_statement() {
+        let input = "match value { 0 => handle_zero(), _ => handle_other() }";
+        let expected = vec![
+            Token::Match,
+            Token::Ident,
+            Token::LBrace,
+            Token::IntegerLiteral(
+                IntegerLiteral::builder()
+                    .base(Base::Decimal)
+                    .digits("0".to_string())
+                    .suffix(None)
+                    .build()
+                    .unwrap(),
+            ),
+            Token::FatArrow,
+            Token::Ident,
+            Token::LParen,
+            Token::RParen,
+            Token::Comma,
+            Token::Underscore,
+            Token::FatArrow,
+            Token::Ident,
+            Token::LParen,
+            Token::RParen,
+            Token::RBrace,
+        ];
+        lexer_test_helper(input, expected);
+    }
+
+    // --- Edge Case Tests ---
+
+    #[test]
+    fn test_empty_input() {
+        let mut lex = Token::lexer("");
+        assert_eq!(lex.next(), None);
+    }
+
+    #[test]
+    fn test_unrecognized_character() {
+        let mut lex = Token::lexer("let $invalid;"); // $ is not tokenized
+        assert_eq!(lex.next().unwrap().unwrap(), Token::Let);
+        assert_eq!(lex.next().unwrap().unwrap_err(), ()); // Should be an error for $
+        assert_eq!(lex.next().unwrap().unwrap(), Token::Ident); // invalid
+        assert_eq!(lex.next().unwrap().unwrap(), Token::Semicolon);
+        assert_eq!(lex.next(), None);
+    }
+
+    #[test]
+    fn test_string_literal_with_unclosed_quote() {
+        let mut lex = Token::lexer("\"unclosed string");
+        assert!(lex.next().unwrap().is_err()); // Should produce an error
+        assert_eq!(lex.next(), None);
+    }
+
+    #[test]
+    fn test_char_literal_with_unclosed_quote() {
+        let mut lex = Token::lexer(r#"'u"#);
+        assert!(lex.next().unwrap().is_err()); // Should produce an error
+        assert_eq!(lex.next(), None);
+    }
+
+    #[test]
+    fn test_incomplete_float_literal() {
+        // "1." is an IntegerLiteral then Dot, as per regex
+        lexer_test_helper(
+            "1. f32",
+            vec![
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Decimal)
+                        .digits("1".to_string())
+                        .suffix(None)
+                        .build()
+                        .unwrap(),
+                ),
+                Token::Dot,
+                Token::F32,
+            ],
+        );
+    }
+
+    #[test]
+    fn test_float_vs_integer_no_suffix() {
+        lexer_test_helper(
+            "100 100.0 1e5 0xAf",
+            vec![
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Decimal)
+                        .digits("100".to_string())
+                        .suffix(None)
+                        .build()
+                        .unwrap(),
+                ),
+                Token::FloatLiteral(
+                    FloatLiteral::builder()
+                        .digits("100.0".to_string())
+                        .exponent(None)
+                        .suffix(None)
+                        .build()
+                        .unwrap(),
+                ),
+                Token::FloatLiteral(
+                    FloatLiteral::builder()
+                        .digits("1".to_string())
+                        .exponent(Some(FloatExponent::Unsigned(5)))
+                        .suffix(None)
+                        .build()
+                        .unwrap(),
+                ),
+                Token::IntegerLiteral(
+                    IntegerLiteral::builder()
+                        .base(Base::Hex)
+                        .digits("Af".to_string())
+                        .suffix(None)
+                        .build()
+                        .unwrap(),
+                ),
+            ],
+        );
+    }
+}

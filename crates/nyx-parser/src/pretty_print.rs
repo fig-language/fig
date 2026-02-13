@@ -53,6 +53,13 @@ impl PrettyPrinter {
         output
     }
 
+    /// Pretty print a type to a string
+    pub fn print_type(&mut self, ast_type: &Type) -> String {
+        let mut output = String::new();
+        self.format_type(ast_type, &mut output, true);
+        output
+    }
+
     /// Get the current indentation string
     fn indent(&self) -> String {
         " ".repeat(self.indent_level * self.indent_size)
@@ -158,6 +165,102 @@ impl PrettyPrinter {
             }
         }
     }
+
+    /// Format a type into the output buffer
+    fn format_type(&mut self, ast_type: &Type, output: &mut String, is_last: bool) {
+        let prefix = if self.indent_level == 0 {
+            String::new()
+        } else {
+            format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() })
+        };
+
+        match ast_type {
+            Type::U8 => {
+                writeln!(output, "{}Type: U8", prefix).unwrap();
+            }
+            Type::U16 => {
+                writeln!(output, "{}Type: U16", prefix).unwrap();
+            }
+            Type::U32 => {
+                writeln!(output, "{}Type: U32", prefix).unwrap();
+            }
+            Type::U64 => {
+                writeln!(output, "{}Type: U64", prefix).unwrap();
+            }
+            Type::USize => {
+                writeln!(output, "{}Type: USize", prefix).unwrap();
+            }
+            Type::I8 => {
+                writeln!(output, "{}Type: I8", prefix).unwrap();
+            }
+            Type::I16 => {
+                writeln!(output, "{}Type: I16", prefix).unwrap();
+            }
+            Type::I32 => {
+                writeln!(output, "{}Type: I32", prefix).unwrap();
+            }
+            Type::I64 => {
+                writeln!(output, "{}Type: I64", prefix).unwrap();
+            }
+            Type::ISize => {
+                writeln!(output, "{}Type: ISize", prefix).unwrap();
+            }
+            Type::F32 => {
+                writeln!(output, "{}Type: F32", prefix).unwrap();
+            }
+            Type::F64 => {
+                writeln!(output, "{}Type: F64", prefix).unwrap();
+            }
+            Type::Bool => {
+                writeln!(output, "{}Type: Bool", prefix).unwrap();
+            }
+            Type::Ok => {
+                writeln!(output, "{}Type: Ok", prefix).unwrap();
+            }
+            Type::RawPointer => {
+                writeln!(output, "{}Type: RawPointer", prefix).unwrap();
+            }
+            Type::TypedPointer(inner_type) => {
+                writeln!(output, "{}Type: TypedPointer", prefix).unwrap();
+                self.indent_level += 1;
+                writeln!(output, "{}element_type:", self.indent()).unwrap();
+                self.indent_level += 1;
+                self.format_type(inner_type, output, true);
+                self.indent_level -= 1;
+                self.indent_level -= 1;
+            }
+            Type::Named(name) => {
+                writeln!(output, "{}Type: Named(\"{}\")", prefix, name).unwrap();
+            }
+            Type::Array { element_type, size } => {
+                writeln!(output, "{}Type: Array", prefix).unwrap();
+                self.indent_level += 1;
+                if let Some(s) = size {
+                    writeln!(output, "{}size: {}", self.indent(), s).unwrap();
+                } else {
+                    writeln!(output, "{}size: dynamic", self.indent()).unwrap();
+                }
+                writeln!(output, "{}element_type:", self.indent()).unwrap();
+                self.indent_level += 1;
+                self.format_type(element_type, output, true);
+                self.indent_level -= 1;
+                self.indent_level -= 1;
+            }
+            Type::Result { ok_type, err_type } => {
+                writeln!(output, "{}Type: Result", prefix).unwrap();
+                self.indent_level += 1;
+                writeln!(output, "{}ok_type:", self.indent()).unwrap();
+                self.indent_level += 1;
+                self.format_type(ok_type, output, true);
+                self.indent_level -= 1;
+                writeln!(output, "{}err_type:", self.indent()).unwrap();
+                self.indent_level += 1;
+                self.format_type(err_type, output, true);
+                self.indent_level -= 1;
+                self.indent_level -= 1;
+            }
+        }
+    }
 }
 
 /// Convenience function to pretty print an expression with default settings
@@ -173,6 +276,12 @@ pub fn print_expression_ascii(expr: &Expression) -> String {
 impl std::fmt::Display for Expression {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", print_expression(self))
+    }
+}
+
+impl std::fmt::Display for Type {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", PrettyPrinter::new().print_type(self))
     }
 }
 
@@ -308,5 +417,84 @@ mod tests {
         let expr = Expression::Identifier("my_var".to_string());
         let output = format!("{}", expr);
         assert!(output.contains("Identifier: my_var"));
+    }
+
+    #[test]
+    fn test_print_primitive_type() {
+        let ast_type = Type::I32;
+        let output = PrettyPrinter::new().print_type(&ast_type);
+        assert!(output.contains("Type: I32"));
+    }
+
+    #[test]
+    fn test_print_raw_pointer_type() {
+        let ast_type = Type::RawPointer;
+        let output = PrettyPrinter::new().print_type(&ast_type);
+        assert!(output.contains("Type: RawPointer"));
+    }
+
+    #[test]
+    fn test_print_typed_pointer_type() {
+        let ast_type = Type::TypedPointer(Box::new(Type::Bool));
+        let output = PrettyPrinter::new().print_type(&ast_type);
+        assert!(output.contains("Type: TypedPointer"));
+        assert!(output.contains("element_type:"));
+        assert!(output.contains("Type: Bool"));
+    }
+
+    #[test]
+    fn test_print_named_type() {
+        let ast_type = Type::Named("MyStruct".to_string());
+        let output = PrettyPrinter::new().print_type(&ast_type);
+        assert!(output.contains("Type: Named(\"MyStruct\")"));
+    }
+
+    #[test]
+    fn test_print_array_type_fixed_size() {
+        let ast_type = Type::Array {
+            element_type: Box::new(Type::U8),
+            size: Some(10),
+        };
+        let output = PrettyPrinter::new().print_type(&ast_type);
+        assert!(output.contains("Type: Array"));
+        assert!(output.contains("size: 10"));
+        assert!(output.contains("element_type:"));
+        assert!(output.contains("Type: U8"));
+    }
+
+    #[test]
+    fn test_print_array_type_dynamic_size() {
+        let ast_type = Type::Array {
+            element_type: Box::new(Type::Named("Foo".to_string())),
+            size: None,
+        };
+        let output = PrettyPrinter::new().print_type(&ast_type);
+        assert!(output.contains("Type: Array"));
+        assert!(output.contains("size: dynamic"));
+        assert!(output.contains("element_type:"));
+        assert!(output.contains("Type: Named(\"Foo\")"));
+    }
+
+    #[test]
+    fn test_print_result_type() {
+        let ast_type = Type::Result {
+            ok_type: Box::new(Type::I32),
+            err_type: Box::new(Type::Named("MyError".to_string())),
+        };
+        let output = PrettyPrinter::new().print_type(&ast_type);
+        assert!(output.contains("Type: Result"));
+        assert!(output.contains("ok_type:"));
+        assert!(output.contains("Type: I32"));
+        assert!(output.contains("err_type:"));
+        assert!(output.contains("Type: Named(\"MyError\")"));
+    }
+
+    #[test]
+    fn test_display_trait_for_type() {
+        let ast_type = Type::TypedPointer(Box::new(Type::RawPointer));
+        let output = format!("{}", ast_type);
+        assert!(output.contains("Type: TypedPointer"));
+        assert!(output.contains("element_type:"));
+        assert!(output.contains("Type: RawPointer"));
     }
 }

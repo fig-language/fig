@@ -172,3 +172,12 @@ pub enum Type {
         err_type: Box<Type>,
     },
 }
+
+// ============================================================================
+// Generic Parameters
+// ============================================================================
+
+pub enum GenericParameter {
+    Type { name: String, bounds: Vec<Type> },
+    Const { name: String, ty: Type },
+}

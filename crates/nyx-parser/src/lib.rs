@@ -205,7 +205,6 @@ mod tests {
         assert!(result.is_ok());
     }
 
-
     #[test]
     fn test_address_of_expression() {
         let input = "&x";
@@ -316,7 +315,6 @@ mod tests {
         }
     }
 
-
     // Type parsing tests
     #[test]
     fn test_parse_primitive_type_u8() {
@@ -353,7 +351,6 @@ mod tests {
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), Type::Bool);
     }
-
 
     #[test]
     fn test_parse_primitive_type_ok() {
@@ -438,7 +435,6 @@ mod tests {
         }
     }
 
-
     #[test]
     fn test_parse_array_type() {
         let input = "[4]u8";
@@ -452,5 +448,10 @@ mod tests {
             panic!("Expected array type");
         }
     }
-}
 
+    #[test]
+    fn test_parse_generics_list() {
+        let input = "[T, U: Add[T] + Copy, V: Addressable[T, U]]";
+        let lexer = Lexer::new(input);
+    }
+}

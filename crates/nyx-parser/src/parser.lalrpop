@@ -164,18 +164,18 @@ BooleanLiteral: Expression = {
 };
 
 CharLiteral: Expression = {
-    "char" => {
-        // Note: The lexer returns the full character literal with quotes
-        // We'll store it as-is for now
-        Expression::CharLiteral(String::new())
+    <lit: "char"> => {
+        // The lexer returns the full character literal with quotes, e.g., "'a'"
+        // The AST node expects the content *with* quotes for now.
+        Expression::CharLiteral(lit)
     },
 };
 
 StringLiteral: Expression = {
-    "string" => {
-        // Note: The lexer returns the full string literal with quotes
-        // We'll store it as-is for now
-        Expression::StringLiteral(String::new())
+    <lit: "string"> => {
+        // The lexer returns the full string literal with quotes, e.g., "\"hello\""
+        // The AST node expects the content *with* quotes for now.
+        Expression::StringLiteral(lit)
     },
 };
 
@@ -184,7 +184,7 @@ OkLiteral: Expression = {
 };
 
 Identifier: Expression = {
-    "ident" => Expression::Identifier(String::new()),
+    <id: "ident"> => Expression::Identifier(id),
 };
 
 ArrayLiteral: Expression = {
@@ -192,6 +192,40 @@ ArrayLiteral: Expression = {
         Expression::ArrayLiteral(ArrayLiteralExpr::new(elements))
     },
 };
+
+// ============================================================================
+// Generic Parsing
+// ============================================================================
+GenericParameterList: Vec<GenericParameter> = {
+    "[" <params:Comma<GenericParameter>> "]" => params,
+};
+
+GenericParameter: GenericParameter = {
+    TypeParameter,
+    ConstParameter,
+};
+
+ConstParameter: GenericParameter = {
+    "const" <name: "ident"> ":" <ty: Type> => GenericParameter::Const {
+        name,
+        ty,
+    },
+};
+
+TypeParameter: GenericParameter = {
+    <name: "ident"> => GenericParameter::Type { name, bounds: Vec::new() },
+    <name: "ident"> ":" <bounds: TypeBounds> => GenericParameter::Type { name, bounds },
+};
+
+TypeBounds: Vec<Type> = {
+    <mut bounds:(<Type> "+")*> <e:Type?> => match e {
+        None => bounds,
+        Some(e) => {
+            bounds.push(e);
+            bounds
+        }
+    }
+}
 
 // ============================================================================
 // Type Parsing
@@ -219,6 +253,7 @@ ArrayType: Type = {
         size: None 
     },
     PrimitiveType,
+    NamedType,
 }
 
 /// Helper rule to parse array size as usize
@@ -227,6 +262,10 @@ ArraySize: usize = {
         // Extract the integer value and convert to usize
         lit.as_usize().unwrap_or(0)
     },
+};
+
+NamedType: Type = {
+    <name: "ident"> => Type::Named(name),
 };
 
 /// Primitive types
@@ -361,11 +400,11 @@ extern {
         "_" => Token::Underscore,
 
         // Identifiers and Literals
-        "ident" => Token::Ident,
+        "ident" => Token::Ident(<String>),
         "float" => Token::FloatLiteral(<FloatLiteral>),
         "int" => Token::IntegerLiteral(<IntegerLiteral>),
-        "string" => Token::StringLiteral,
-        "char" => Token::CharLiteral,
+        "string" => Token::StringLiteral(<String>),
+        "char" => Token::CharLiteral(<String>),
 
         // Metadata
         "@" => Token::At,

@@ -187,8 +187,8 @@ pub enum Token {
 
     // Identifiers - Must come after keywords and special identifiers to avoid false positives
     // Modified to not match a single underscore
-    #[regex("[a-zA-Z][a-zA-Z0-9_]*|_[a-zA-Z0-9_]+")]
-    Ident,
+    #[regex("[a-zA-Z][a-zA-Z0-9_]*|_[a-zA-Z0-9_]+", |lex| lex.slice().to_string())]
+    Ident(String),
 
     // ------------------------
     // Unsuffixed Literals
@@ -219,13 +219,13 @@ pub enum Token {
     IntegerLiteral(IntegerLiteral), // unsuffixed integers
 
     // String literal with basic escape sequences
-    #[regex(r#""(?:[^"\\]|\\.)*""#)]
+    #[regex(r#""(?:[^"\\]|\\.)*""#, |lex| unescape_literal(lex.slice()))]
     // This regex will NOT match unclosed strings, so Logos will emit an error for them
-    StringLiteral,
+    StringLiteral(String),
 
     // Character literal with basic escape sequences
-    #[regex(r#"'(?:[^'\\]|\\.)'"#)]
-    CharLiteral,
+    #[regex(r#"'(?:[^'\\]|\\.)'"#, |lex| unescape_literal(lex.slice()))]
+    CharLiteral(String),
 
     // Metadata prefix - '@' symbol. The identifier following it will be `Ident`.
     #[token("@")]
@@ -236,6 +236,44 @@ pub enum Token {
     #[regex(r"/\*[^*]*\*+(?:[^/*][^*]*\*+)*/", logos::skip, allow_greedy = true)]
     // Multi-line comments
     Comment,
+}
+
+// Helper function to unescape string and character literals
+fn unescape_literal(lex_slice: &str) -> String {
+    let mut unescaped = String::with_capacity(lex_slice.len());
+    // Remove leading/trailing quotes for both char and string literals
+    // The slice will be like "'a'" or "\"hello\""
+    let inner_slice = &lex_slice[1..lex_slice.len() - 1]; // Removes ' or "
+
+    let mut chars = inner_slice.chars();
+    while let Some(c) = chars.next() {
+        if c == '\\' {
+            if let Some(escaped_char) = chars.next() {
+                match escaped_char {
+                    'n' => unescaped.push('\n'),
+                    'r' => unescaped.push('\r'),
+                    't' => unescaped.push('\t'),
+                    '\\' => unescaped.push('\\'),
+                    '0' => unescaped.push('\0'),
+                    '\'' => unescaped.push('\''),
+                    '"' => unescaped.push('"'),
+                    // Add more escape sequences as needed if the language supports them
+                    _ => {
+                        // If it's an unknown escape sequence, just push the backslash and the char
+                        // This might be an error case or a future feature
+                        unescaped.push('\\');
+                        unescaped.push(escaped_char);
+                    }
+                }
+            } else {
+                // Backslash at the end of the string, which is an error or incomplete
+                unescaped.push('\\');
+            }
+        } else {
+            unescaped.push(c);
+        }
+    }
+    unescaped
 }
 
 #[cfg(test)]
@@ -374,12 +412,12 @@ mod tests {
         lexer_test_helper(
             "myVar _ another_var _123 var_name_long _leading_underscore",
             vec![
-                Token::Ident,
+                Token::Ident("myVar".to_string()),
                 Token::Underscore,
-                Token::Ident,
-                Token::Ident,
-                Token::Ident,
-                Token::Ident,
+                Token::Ident("another_var".to_string()),
+                Token::Ident("_123".to_string()),
+                Token::Ident("var_name_long".to_string()),
+                Token::Ident("_leading_underscore".to_string()),
             ],
         );
     }
@@ -618,8 +656,8 @@ mod tests {
                         .build()
                         .unwrap(),
                 ),
-                Token::CharLiteral,
-                Token::StringLiteral,
+                Token::CharLiteral("c".to_string()),
+                Token::StringLiteral("hello".to_string()),
             ],
         );
     }
@@ -629,12 +667,12 @@ mod tests {
         lexer_test_helper(
             r#"'a' '\n' '\'' '\\' "hello world" "tab\tnew\nline""#,
             vec![
-                Token::CharLiteral,
-                Token::CharLiteral,
-                Token::CharLiteral,
-                Token::CharLiteral,
-                Token::StringLiteral,
-                Token::StringLiteral,
+                Token::CharLiteral("a".to_string()),
+                Token::CharLiteral("\n".to_string()),
+                Token::CharLiteral("'".to_string()),
+                Token::CharLiteral("\\".to_string()),
+                Token::StringLiteral("hello world".to_string()),
+                Token::StringLiteral("tab\tnew\nline".to_string()),
             ],
         );
     }
@@ -645,14 +683,14 @@ mod tests {
             "@inline @deprecated(msg) @test_attr",
             vec![
                 Token::At,
-                Token::Ident,
+                Token::Ident("inline".to_string()),
                 Token::At,
-                Token::Ident,
+                Token::Ident("deprecated".to_string()),
                 Token::LParen,
-                Token::Ident,
+                Token::Ident("msg".to_string()),
                 Token::RParen,
                 Token::At,
-                Token::Ident,
+                Token::Ident("test_attr".to_string()),
             ],
         );
     }
@@ -663,7 +701,7 @@ mod tests {
             "  // single line comment\n let /*multi\nline\ncomment*/ x = 10",
             vec![
                 Token::Let,
-                Token::Ident,
+                Token::Ident("x".to_string()),
                 Token::Eq,
                 Token::IntegerLiteral(
                     IntegerLiteral::builder()
@@ -682,13 +720,13 @@ mod tests {
         let input = "fn add(a: i32, b: i32) -> i32 { return a + b; }";
         let expected = vec![
             Token::Fn,
-            Token::Ident,
+            Token::Ident("add".to_string()),
             Token::LParen,
-            Token::Ident,
+            Token::Ident("a".to_string()),
             Token::Colon,
             Token::I32,
             Token::Comma,
-            Token::Ident,
+            Token::Ident("b".to_string()),
             Token::Colon,
             Token::I32,
             Token::RParen,
@@ -696,9 +734,9 @@ mod tests {
             Token::I32,
             Token::LBrace,
             Token::Return,
-            Token::Ident,
+            Token::Ident("a".to_string()),
             Token::Plus,
-            Token::Ident,
+            Token::Ident("b".to_string()),
             Token::Semicolon,
             Token::RBrace,
         ];
@@ -710,7 +748,7 @@ mod tests {
         let input = "match value { 0 => handle_zero(), _ => handle_other() }";
         let expected = vec![
             Token::Match,
-            Token::Ident,
+            Token::Ident("value".to_string()),
             Token::LBrace,
             Token::IntegerLiteral(
                 IntegerLiteral::builder()
@@ -721,13 +759,13 @@ mod tests {
                     .unwrap(),
             ),
             Token::FatArrow,
-            Token::Ident,
+            Token::Ident("handle_zero".to_string()),
             Token::LParen,
             Token::RParen,
             Token::Comma,
             Token::Underscore,
             Token::FatArrow,
-            Token::Ident,
+            Token::Ident("handle_other".to_string()),
             Token::LParen,
             Token::RParen,
             Token::RBrace,
@@ -747,10 +785,13 @@ mod tests {
     fn test_unrecognized_character() {
         let mut lex = Token::lexer("let $invalid;"); // $ is not tokenized
         assert_eq!(lex.next().unwrap().unwrap(), Token::Let);
-        assert_eq!(lex.next().unwrap().unwrap_err(), ()); // Should be an error for $
-        assert_eq!(lex.next().unwrap().unwrap(), Token::Ident); // invalid
-        assert_eq!(lex.next().unwrap().unwrap(), Token::Semicolon);
-        assert_eq!(lex.next(), None);
+        assert_eq!(lex.next().unwrap().is_err(), true); // Should be an error for $
+        // The error token might be followed by valid tokens, depending on Logos' recovery
+        // However, we expect the next valid token to be 'invalid' if Logos recovers.
+        // For this test, we just check if it produces an error.
+        assert_eq!(lex.next().unwrap().unwrap(), Token::Ident("invalid".to_string())); // Expect 'invalid'
+        assert_eq!(lex.next().unwrap().unwrap(), Token::Semicolon); // Expect ';'
+        assert_eq!(lex.next(), None); // Now expect no more tokens
     }
 
     #[test]

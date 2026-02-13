@@ -325,6 +325,11 @@ extern {
     type Error = LexicalError;
 
     enum Token {
+        // Indentation tokens
+        "INDENT" => Token::Indent,
+        "DEDENT" => Token::Dedent,
+        "NEWLINE" => Token::Newline,
+        
         // Keywords
         "fn" => Token::Fn,
         "let" => Token::Let,

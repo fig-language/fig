@@ -7,8 +7,15 @@ pub use integer::{parse_integer, Base, IntegerLiteral, IntegerSuffix};
 use logos::Logos;
 
 #[derive(Logos, Debug, PartialEq, Clone)]
-#[logos(skip r"[ \t\n\f]+")] // Skip whitespace
+#[logos(skip r"[ \t]+")] // Skip spaces and tabs only (not newlines)
 pub enum Token {
+    // Indentation tokens (emitted by IndentLexer wrapper)
+    Indent,
+    Dedent,
+    
+    // Newline token
+    #[regex(r"\n")]
+    Newline,
     // Keywords
     #[token("fn")]
     Fn,
@@ -276,6 +283,165 @@ fn unescape_literal(lex_slice: &str) -> String {
         }
     }
     unescaped
+}
+
+/// Wrapper around Logos lexer that handles indentation-based block structure.
+/// Emits INDENT tokens when indentation increases by 4 spaces,
+/// and DEDENT tokens when indentation decreases by 4 spaces.
+pub struct IndentLexer<'source> {
+    lexer: logos::Lexer<'source, Token>,
+    source: &'source str,
+    indent_stack: Vec<usize>, // Stack of indentation levels
+    pending_tokens: Vec<Token>, // Queue of tokens to emit
+    at_line_start: bool,
+    last_was_newline: bool,
+}
+
+impl<'source> IndentLexer<'source> {
+    pub fn new(source: &'source str) -> Self {
+        Self {
+            lexer: Token::lexer(source),
+            source,
+            indent_stack: vec![0], // Start with 0 indentation
+            pending_tokens: Vec::new(),
+            at_line_start: true,
+            last_was_newline: false,
+        }
+    }
+
+    /// Get the current span of the underlying lexer
+    pub fn span(&self) -> std::ops::Range<usize> {
+        self.lexer.span()
+    }
+
+    /// Get the current slice from the underlying lexer
+    pub fn slice(&self) -> &'source str {
+        self.lexer.slice()
+    }
+
+    /// Calculate indentation level at the current position (before current token)
+    fn calculate_line_indentation(&self, token_start: usize) -> usize {
+        // Walk backwards from token_start to find the last newline
+        let mut pos = token_start;
+        while pos > 0 && self.source.as_bytes()[pos - 1] != b'\n' {
+            pos -= 1;
+        }
+        
+        // Now count spaces from pos to token_start
+        let mut indent = 0;
+        for i in pos..token_start {
+            match self.source.as_bytes()[i] {
+                b' ' => indent += 1,
+                b'\t' => indent += 4, // Tab = 4 spaces
+                _ => break,
+            }
+        }
+        
+        indent
+    }
+
+    /// Check if line is blank or only contains comments
+    fn is_blank_or_comment_line(&self, token_start: usize) -> bool {
+        // Walk backwards to find line start
+        let mut pos = token_start;
+        while pos > 0 && self.source.as_bytes()[pos - 1] != b'\n' {
+            pos -= 1;
+        }
+        
+        // Check what's between line start and current position (should be only whitespace)
+        // and what comes after current position
+        let line_before = &self.source[pos..token_start];
+        let line_after = &self.source[token_start..];
+        
+        // If current position is a newline or starts with //, it's blank or comment
+        line_before.chars().all(|c| c == ' ' || c == '\t') &&
+            (line_after.starts_with('\n') || line_after.starts_with("//"))
+    }
+
+    /// Process indentation change after seeing a newline
+    fn handle_indentation(&mut self, token_start: usize) -> Vec<Token> {
+        let indent_level = self.calculate_line_indentation(token_start);
+        let current_indent = *self.indent_stack.last().unwrap();
+        let mut tokens = Vec::new();
+
+        if indent_level > current_indent {
+            // Increased indentation
+            let diff = indent_level - current_indent;
+            let num_indents = diff / 4;
+            
+            for i in 1..=num_indents {
+                self.indent_stack.push(current_indent + (i * 4));
+                tokens.push(Token::Indent);
+            }
+        } else if indent_level < current_indent {
+            // Decreased indentation
+            while let Some(&level) = self.indent_stack.last() {
+                if level <= indent_level {
+                    break;
+                }
+                self.indent_stack.pop();
+                tokens.push(Token::Dedent);
+            }
+        }
+
+        tokens
+    }
+}
+
+impl<'source> Iterator for IndentLexer<'source> {
+    type Item = Result<Token, ()>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        // First, check if we have pending tokens to emit
+        if !self.pending_tokens.is_empty() {
+            return Some(Ok(self.pending_tokens.remove(0)));
+        }
+
+        // Get next token from underlying lexer
+        match self.lexer.next() {
+            Some(Ok(Token::Newline)) => {
+                self.last_was_newline = true;
+                self.at_line_start = true;
+                Some(Ok(Token::Newline))
+            }
+            Some(Ok(token)) => {
+                // If we're at the start of a line (after newline), handle indentation
+                if self.last_was_newline && !matches!(token, Token::Newline) {
+                    self.last_was_newline = false;
+                    
+                    let token_start = self.lexer.span().start;
+                    
+                    // Skip blank lines and comment lines for indentation purposes
+                    if !self.is_blank_or_comment_line(token_start) {
+                        let indent_tokens = self.handle_indentation(token_start);
+                        
+                        if !indent_tokens.is_empty() {
+                            // Add indent/dedent tokens to pending (all except first)
+                            for i in 1..indent_tokens.len() {
+                                self.pending_tokens.push(indent_tokens[i].clone());
+                            }
+                            // Store the real token at the end
+                            self.pending_tokens.push(token);
+                            // Return first indent/dedent token
+                            return Some(Ok(indent_tokens[0].clone()));
+                        }
+                    }
+                }
+                
+                Some(Ok(token))
+            }
+            Some(Err(e)) => Some(Err(e)),
+            None => {
+                // EOF: emit remaining dedents
+                if self.indent_stack.len() > 1 {
+                    self.indent_stack.pop();
+                    Some(Ok(Token::Dedent))
+                } else {
+                    None
+                }
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -702,6 +868,7 @@ mod tests {
         lexer_test_helper(
             "  // single line comment\n let /*multi\nline\ncomment*/ x = 10",
             vec![
+                Token::Newline,
                 Token::Let,
                 Token::Ident("x".to_string()),
                 Token::Eq,
@@ -869,5 +1036,190 @@ mod tests {
                 ),
             ],
         );
+    }
+
+    // --- Indentation Tests ---
+
+    fn indent_lexer_test_helper(input: &str, expected_tokens: Vec<Token>) {
+        let mut lexer = IndentLexer::new(input);
+        for (i, expected_token) in expected_tokens.iter().enumerate() {
+            let token = lexer.next();
+            assert!(token.is_some(), "Expected token at position {}, but got None", i);
+            let token = token.unwrap();
+            assert!(token.is_ok(), "Expected Ok token at position {}, but got Err", i);
+            assert_eq!(
+                token.unwrap(),
+                *expected_token,
+                "Token mismatch at position {}",
+                i
+            );
+        }
+        assert_eq!(lexer.next(), None, "Expected no more tokens, but got Some");
+    }
+
+    #[test]
+    fn test_basic_indentation() {
+        let input = "fn test\n    let x\n    let y";
+        let expected = vec![
+            Token::Fn,
+            Token::Ident("test".to_string()),
+            Token::Newline,
+            Token::Indent,
+            Token::Let,
+            Token::Ident("x".to_string()),
+            Token::Newline,
+            Token::Let,
+            Token::Ident("y".to_string()),
+            Token::Dedent, // EOF dedent
+        ];
+        indent_lexer_test_helper(input, expected);
+    }
+
+    #[test]
+    fn test_indentation_increase_and_decrease() {
+        let input = "fn test\n    if true\n        let x\nlet y";
+        let expected = vec![
+            Token::Fn,
+            Token::Ident("test".to_string()),
+            Token::Newline,
+            Token::Indent,
+            Token::If,
+            Token::True,
+            Token::Newline,
+            Token::Indent,
+            Token::Let,
+            Token::Ident("x".to_string()),
+            Token::Newline,
+            Token::Dedent,
+            Token::Dedent,
+            Token::Let,
+            Token::Ident("y".to_string()),
+        ];
+        indent_lexer_test_helper(input, expected);
+    }
+
+    #[test]
+    fn test_multiple_indent_levels() {
+        let input = "fn outer\n    fn middle\n        fn inner\n            let x";
+        let expected = vec![
+            Token::Fn,
+            Token::Ident("outer".to_string()),
+            Token::Newline,
+            Token::Indent,
+            Token::Fn,
+            Token::Ident("middle".to_string()),
+            Token::Newline,
+            Token::Indent,
+            Token::Fn,
+            Token::Ident("inner".to_string()),
+            Token::Newline,
+            Token::Indent,
+            Token::Let,
+            Token::Ident("x".to_string()),
+            Token::Dedent, // EOF dedents
+            Token::Dedent,
+            Token::Dedent,
+        ];
+        indent_lexer_test_helper(input, expected);
+    }
+
+    #[test]
+    fn test_dedent_multiple_levels() {
+        let input = "fn test\n    if true\n        if false\n            let x\nlet y";
+        let expected = vec![
+            Token::Fn,
+            Token::Ident("test".to_string()),
+            Token::Newline,
+            Token::Indent,
+            Token::If,
+            Token::True,
+            Token::Newline,
+            Token::Indent,
+            Token::If,
+            Token::False,
+            Token::Newline,
+            Token::Indent,
+            Token::Let,
+            Token::Ident("x".to_string()),
+            Token::Newline,
+            Token::Dedent,
+            Token::Dedent,
+            Token::Dedent,
+            Token::Let,
+            Token::Ident("y".to_string()),
+        ];
+        indent_lexer_test_helper(input, expected);
+    }
+
+    #[test]
+    fn test_no_indentation_change() {
+        let input = "let x\nlet y\nlet z";
+        let expected = vec![
+            Token::Let,
+            Token::Ident("x".to_string()),
+            Token::Newline,
+            Token::Let,
+            Token::Ident("y".to_string()),
+            Token::Newline,
+            Token::Let,
+            Token::Ident("z".to_string()),
+        ];
+        indent_lexer_test_helper(input, expected);
+    }
+
+    #[test]
+    fn test_blank_lines_ignored() {
+        let input = "fn test\n\n    let x\n\nlet y";
+        let expected = vec![
+            Token::Fn,
+            Token::Ident("test".to_string()),
+            Token::Newline,
+            Token::Newline,
+            Token::Indent,
+            Token::Let,
+            Token::Ident("x".to_string()),
+            Token::Newline,
+            Token::Newline,
+            Token::Dedent,
+            Token::Let,
+            Token::Ident("y".to_string()),
+        ];
+        indent_lexer_test_helper(input, expected);
+    }
+
+    #[test]
+    fn test_indentation_with_expressions() {
+        let input = "if x\n    let a = 1\n    let b = 2";
+        let expected = vec![
+            Token::If,
+            Token::Ident("x".to_string()),
+            Token::Newline,
+            Token::Indent,
+            Token::Let,
+            Token::Ident("a".to_string()),
+            Token::Eq,
+            Token::IntegerLiteral(
+                IntegerLiteral::builder()
+                    .base(Base::Decimal)
+                    .digits("1".to_string())
+                    .suffix(None)
+                    .build()
+                    .unwrap(),
+            ),
+            Token::Newline,
+            Token::Let,
+            Token::Ident("b".to_string()),
+            Token::Eq,
+            Token::IntegerLiteral(
+                IntegerLiteral::builder()
+                    .base(Base::Decimal)
+                    .digits("2".to_string())
+                    .suffix(None)
+                    .build()
+                    .unwrap(),
+            ),
+            Token::Dedent, // EOF dedent
+        ];
+        indent_lexer_test_helper(input, expected);
     }
 }

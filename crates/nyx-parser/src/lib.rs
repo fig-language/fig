@@ -1,6 +1,5 @@
 use lalrpop_util::lalrpop_mod;
-use logos::{Logos, SpannedIter};
-use nyx_lexer::Token;
+use nyx_lexer::{IndentLexer, Token};
 
 pub mod ast;
 pub mod pretty_print;
@@ -24,13 +23,15 @@ impl std::fmt::Display for LexicalError {
 pub type Spanned<Tok, Loc, Error> = Result<(Loc, Tok, Loc), Error>;
 
 pub struct Lexer<'input> {
-    token_stream: SpannedIter<'input, Token>,
+    indent_lexer: IndentLexer<'input>,
+    position: usize,
 }
 
 impl<'input> Lexer<'input> {
     pub fn new(input: &'input str) -> Self {
         Self {
-            token_stream: Token::lexer(input).spanned(),
+            indent_lexer: IndentLexer::new(input),
+            position: 0,
         }
     }
 }
@@ -39,10 +40,19 @@ impl<'input> Iterator for Lexer<'input> {
     type Item = Spanned<Token, usize, LexicalError>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.token_stream.next().map(|(token, span)| match token {
-            Ok(token) => Ok((span.start, token, span.end)),
-            Err(_) => Err(LexicalError::InvalidToken),
-        })
+        match self.indent_lexer.next() {
+            Some(Ok(token)) => {
+                let span = self.indent_lexer.span();
+                self.position = span.end;
+                Some(Ok((span.start, token, span.end)))
+            }
+            Some(Err(_)) => {
+                let _pos = self.position;
+                self.position += 1;
+                Some(Err(LexicalError::InvalidToken))
+            }
+            None => None,
+        }
     }
 }
 
@@ -485,5 +495,42 @@ mod tests {
         } else {
             panic!("Expected const parameter N");
         }
+    }
+
+    #[test]
+    fn test_indentation_tokens() {
+        // Test that INDENT, DEDENT, and NEWLINE tokens are properly handled
+        let input = "let x = 1\n    let y = 2\nlet z = 3";
+        let lexer = Lexer::new(input);
+        let tokens: Vec<_> = lexer.collect();
+        
+        // Should contain NEWLINE, INDENT, and DEDENT tokens
+        let has_newline = tokens.iter().any(|t| {
+            if let Ok((_, token, _)) = t {
+                matches!(token, nyx_lexer::Token::Newline)
+            } else {
+                false
+            }
+        });
+        
+        let has_indent = tokens.iter().any(|t| {
+            if let Ok((_, token, _)) = t {
+                matches!(token, nyx_lexer::Token::Indent)
+            } else {
+                false
+            }
+        });
+        
+        let has_dedent = tokens.iter().any(|t| {
+            if let Ok((_, token, _)) = t {
+                matches!(token, nyx_lexer::Token::Dedent)
+            } else {
+                false
+            }
+        });
+        
+        assert!(has_newline, "Expected NEWLINE tokens");
+        assert!(has_indent, "Expected INDENT token");
+        assert!(has_dedent, "Expected DEDENT token");
     }
 }

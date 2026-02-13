@@ -151,6 +151,9 @@ pub enum Type {
     Bool,
     Ok,
 
+    /// Self type (used in methods and interfaces)
+    SelfType,
+
     /// Raw pointer
     RawPointer,
 
@@ -158,7 +161,7 @@ pub enum Type {
     TypedPointer(Box<Type>),
 
     /// Named type (struct, union, or custom type)
-    Named(String),
+    Named{ name: String, generic_args: Vec<Type> },
 
     /// Array type with element type and optional size
     Array {
@@ -177,7 +180,81 @@ pub enum Type {
 // Generic Parameters
 // ============================================================================
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum GenericParameter {
     Type { name: String, bounds: Vec<Type> },
     Const { name: String, ty: Type },
+}
+
+// ============================================================================
+// Functions
+// ============================================================================
+
+/// Function parameter
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct Parameter {
+    /// Parameter name
+    name: String,
+    /// Whether the parameter is mutable
+    is_mutable: bool,
+    /// Parameter type
+    param_type: Type,
+}
+
+/// Function declaration (signature only)
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct FunctionDeclaration {
+    /// Function name
+    name: String,
+    /// Generic parameters
+    generic_params: Vec<GenericParameter>,
+    /// Function parameters
+    parameters: Vec<Parameter>,
+    /// Return type (None if not specified)
+    return_type: Option<Type>,
+}
+
+/// Function definition (signature + body)
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct FunctionDefinition {
+    /// Function declaration (signature)
+    declaration: FunctionDeclaration,
+    /// Function body
+    body: CodeBlock,
+}
+
+/// Code block (placeholder for statements)
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct CodeBlock {
+    /// Statements in the block (empty for now)
+    statements: Vec<Statement>,
+}
+
+/// Statement placeholder
+#[derive(Debug, Clone, PartialEq)]
+pub enum Statement {
+    /// Placeholder for future statement types
+    Empty,
+}
+
+// ============================================================================
+// Interfaces
+// ============================================================================
+
+/// Interface declaration
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct InterfaceDeclaration {
+    /// Interface name
+    name: String,
+    /// Generic parameters
+    generic_params: Vec<GenericParameter>,
+    /// Super interfaces (interfaces this interface extends)
+    super_interfaces: Vec<Type>,
+    /// Method declarations in the interface
+    methods: Vec<FunctionDeclaration>,
 }

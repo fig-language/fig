@@ -196,7 +196,7 @@ ArrayLiteral: Expression = {
 // ============================================================================
 // Generic Parsing
 // ============================================================================
-GenericParameterList: Vec<GenericParameter> = {
+pub GenericParameterList: Vec<GenericParameter> = {
     "[" <params:Comma<GenericParameter>> "]" => params,
 };
 
@@ -213,8 +213,8 @@ ConstParameter: GenericParameter = {
 };
 
 TypeParameter: GenericParameter = {
-    <name: "ident"> => GenericParameter::Type { name, bounds: Vec::new() },
     <name: "ident"> ":" <bounds: TypeBounds> => GenericParameter::Type { name, bounds },
+    <name: "ident"> => GenericParameter::Type { name, bounds: Vec::new() },
 };
 
 TypeBounds: Vec<Type> = {
@@ -226,6 +226,10 @@ TypeBounds: Vec<Type> = {
         }
     }
 }
+
+pub GenericArgumentList: Vec<Type> = {
+    "[" <args:Comma<Type>> "]" => args,
+};
 
 // ============================================================================
 // Type Parsing
@@ -265,7 +269,8 @@ ArraySize: usize = {
 };
 
 NamedType: Type = {
-    <name: "ident"> => Type::Named(name),
+    <name: "ident"> <generic_args: GenericArgumentList> => Type::Named{ name, generic_args },
+    <name: "ident"> => Type::Named{ name, generic_args: vec![] },
 };
 
 /// Primitive types
@@ -284,11 +289,95 @@ PrimitiveType: Type = {
     "f64" => Type::F64,
     "bool" => Type::Bool,
     "ok" => Type::Ok,
+    "Self" => Type::SelfType,
+};
+
+// ============================================================================
+// Function Parsing
+// ============================================================================
+
+/// Function definition (with body)
+pub FunctionDefinition: FunctionDefinition = {
+    <decl:FunctionDeclaration> <body:CodeBlock> => FunctionDefinition::new(decl, body),
+};
+
+/// Function declaration (signature only)
+pub FunctionDeclaration: FunctionDeclaration = {
+    "fn" <name:"ident"> <generics:GenericParameterList?> "(" <params:Comma<Parameter>> ")" <ret:ReturnType?> => {
+        FunctionDeclaration::new(
+            name,
+            generics.unwrap_or_default(),
+            params,
+            ret,
+        )
+    },
+};
+
+ReturnType: Type = {
+    ":" <ty:Type> => ty,
+};
+
+/// Function parameter
+Parameter: Parameter = {
+    // Regular parameter: name: Type
+    <name:"ident"> ":" <ty:Type> => Parameter::new(name, false, ty),
+    // Mutable parameter: name: mutable Type
+    <name:"ident"> ":" "mutable" <ty:Type> => Parameter::new(name, true, ty),
+    // Self parameter without explicit type annotation (for methods)
+    <name:"ident"> => {
+        // If the identifier is "self", use SelfType
+        if name == "self" {
+            Parameter::new(name, false, Type::SelfType)
+        } else {
+            // This shouldn't happen in valid code, but we need to handle it
+            // For now, treat it as an error by using a placeholder
+            Parameter::new(name, false, Type::Named { name: "INVALID".to_string(), generic_args: vec![] })
+        }
+    },
+};
+
+/// Code block (empty for now until statement parser is implemented)
+CodeBlock: CodeBlock = {
+    "{" "}" => CodeBlock::new(vec![]),
+};
+
+// ============================================================================
+// Interface Parsing
+// ============================================================================
+
+/// Interface declaration
+pub InterfaceDeclaration: InterfaceDeclaration = {
+    // Interface without super interfaces
+    "interface" <name:"ident"> <generics:GenericParameterList?> "{" <methods:FunctionDeclaration*> "}" => {
+        InterfaceDeclaration::new(
+            name,
+            generics.unwrap_or_default(),
+            vec![],
+            methods,
+        )
+    },
+    // Interface with super interfaces
+    "interface" <name:"ident"> <generics:GenericParameterList?> ":" <supers:Plus<Type>> "{" <methods:FunctionDeclaration*> "}" => {
+        InterfaceDeclaration::new(
+            name,
+            generics.unwrap_or_default(),
+            supers,
+            methods,
+        )
+    },
 };
 
 // ============================================================================
 // Helper Rules
 // ============================================================================
+
+/// Parse a plus-separated list of items  
+Plus<T>: Vec<T> = {
+    <mut v:(<T> "+")*> <e:T> => {
+        v.push(e);
+        v
+    }
+};
 
 /// Parse a comma-separated list of items (with optional trailing comma)
 Comma<T>: Vec<T> = {

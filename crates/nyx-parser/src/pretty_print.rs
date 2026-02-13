@@ -60,6 +60,27 @@ impl PrettyPrinter {
         output
     }
 
+    /// Pretty print a function declaration to a string
+    pub fn print_function_declaration(&mut self, func_decl: &FunctionDeclaration) -> String {
+        let mut output = String::new();
+        self.format_function_declaration(func_decl, &mut output, true);
+        output
+    }
+
+    /// Pretty print a function definition to a string
+    pub fn print_function_definition(&mut self, func_def: &FunctionDefinition) -> String {
+        let mut output = String::new();
+        self.format_function_definition(func_def, &mut output, true);
+        output
+    }
+
+    /// Pretty print an interface declaration to a string
+    pub fn print_interface_declaration(&mut self, interface: &InterfaceDeclaration) -> String {
+        let mut output = String::new();
+        self.format_interface_declaration(interface, &mut output, true);
+        output
+    }
+
     /// Get the current indentation string
     fn indent(&self) -> String {
         " ".repeat(self.indent_level * self.indent_size)
@@ -217,6 +238,9 @@ impl PrettyPrinter {
             Type::Ok => {
                 writeln!(output, "{}Type: Ok", prefix).unwrap();
             }
+            Type::SelfType => {
+                writeln!(output, "{}Type: Self", prefix).unwrap();
+            }
             Type::RawPointer => {
                 writeln!(output, "{}Type: RawPointer", prefix).unwrap();
             }
@@ -229,8 +253,18 @@ impl PrettyPrinter {
                 self.indent_level -= 1;
                 self.indent_level -= 1;
             }
-            Type::Named(name) => {
+            Type::Named{ name, generic_args } => {
                 writeln!(output, "{}Type: Named(\"{}\")", prefix, name).unwrap();
+                if !generic_args.is_empty() {
+                    self.indent_level += 1;
+                    writeln!(output, "{}generic_args:", self.indent()).unwrap();
+                    self.indent_level += 1;
+                    for (i, arg) in generic_args.iter().enumerate() {
+                        self.format_type(arg, output, i == generic_args.len() - 1);
+                    }
+                    self.indent_level -= 1;
+                    self.indent_level -= 1;
+                }
             }
             Type::Array { element_type, size } => {
                 writeln!(output, "{}Type: Array", prefix).unwrap();
@@ -261,6 +295,179 @@ impl PrettyPrinter {
             }
         }
     }
+
+    /// Format a parameter into the output buffer
+    fn format_parameter(&mut self, param: &Parameter, output: &mut String, is_last: bool) {
+        let prefix = if self.indent_level == 0 {
+            String::new()
+        } else {
+            format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() })
+        };
+
+        let mutability = if *param.is_mutable() { "mutable " } else { "" };
+        writeln!(output, "{}Parameter: {}{}", prefix, mutability, param.name()).unwrap();
+        self.indent_level += 1;
+        writeln!(output, "{}type:", self.indent()).unwrap();
+        self.indent_level += 1;
+        self.format_type(param.param_type(), output, true);
+        self.indent_level -= 1;
+        self.indent_level -= 1;
+    }
+
+    /// Format a function declaration into the output buffer
+    fn format_function_declaration(&mut self, func_decl: &FunctionDeclaration, output: &mut String, is_last: bool) {
+        let prefix = if self.indent_level == 0 {
+            String::new()
+        } else {
+            format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() })
+        };
+
+        writeln!(output, "{}FunctionDeclaration: {}", prefix, func_decl.name()).unwrap();
+        self.indent_level += 1;
+
+        // Generic parameters
+        if !func_decl.generic_params().is_empty() {
+            writeln!(output, "{}generic_params: {} item(s)", self.indent(), func_decl.generic_params().len()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in func_decl.generic_params().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == func_decl.generic_params().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Parameters
+        if !func_decl.parameters().is_empty() {
+            writeln!(output, "{}parameters: {} item(s)", self.indent(), func_decl.parameters().len()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in func_decl.parameters().iter().enumerate() {
+                self.format_parameter(param, output, i == func_decl.parameters().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Return type
+        if let Some(ret_type) = func_decl.return_type() {
+            writeln!(output, "{}return_type:", self.indent()).unwrap();
+            self.indent_level += 1;
+            self.format_type(ret_type, output, true);
+            self.indent_level -= 1;
+        }
+
+        self.indent_level -= 1;
+    }
+
+    /// Format a function definition into the output buffer
+    fn format_function_definition(&mut self, func_def: &FunctionDefinition, output: &mut String, is_last: bool) {
+        let prefix = if self.indent_level == 0 {
+            String::new()
+        } else {
+            format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() })
+        };
+
+        writeln!(output, "{}FunctionDefinition", prefix).unwrap();
+        self.indent_level += 1;
+        
+        writeln!(output, "{}declaration:", self.indent()).unwrap();
+        self.indent_level += 1;
+        self.format_function_declaration(func_def.declaration(), output, true);
+        self.indent_level -= 1;
+
+        writeln!(output, "{}body:", self.indent()).unwrap();
+        self.indent_level += 1;
+        self.format_code_block(func_def.body(), output, true);
+        self.indent_level -= 1;
+
+        self.indent_level -= 1;
+    }
+
+    /// Format a code block into the output buffer
+    fn format_code_block(&mut self, block: &CodeBlock, output: &mut String, is_last: bool) {
+        let prefix = if self.indent_level == 0 {
+            String::new()
+        } else {
+            format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() })
+        };
+
+        if block.statements().is_empty() {
+            writeln!(output, "{}CodeBlock (empty)", prefix).unwrap();
+        } else {
+            writeln!(output, "{}CodeBlock: {} statement(s)", prefix, block.statements().len()).unwrap();
+        }
+    }
+
+    /// Format an interface declaration into the output buffer
+    fn format_interface_declaration(&mut self, interface: &InterfaceDeclaration, output: &mut String, is_last: bool) {
+        let prefix = if self.indent_level == 0 {
+            String::new()
+        } else {
+            format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() })
+        };
+
+        writeln!(output, "{}InterfaceDeclaration: {}", prefix, interface.name()).unwrap();
+        self.indent_level += 1;
+
+        // Generic parameters
+        if !interface.generic_params().is_empty() {
+            writeln!(output, "{}generic_params: {} item(s)", self.indent(), interface.generic_params().len()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in interface.generic_params().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == interface.generic_params().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Super interfaces
+        if !interface.super_interfaces().is_empty() {
+            writeln!(output, "{}super_interfaces: {} item(s)", self.indent(), interface.super_interfaces().len()).unwrap();
+            self.indent_level += 1;
+            for (i, super_type) in interface.super_interfaces().iter().enumerate() {
+                self.format_type(super_type, output, i == interface.super_interfaces().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Methods
+        if !interface.methods().is_empty() {
+            writeln!(output, "{}methods: {} item(s)", self.indent(), interface.methods().len()).unwrap();
+            self.indent_level += 1;
+            for (i, method) in interface.methods().iter().enumerate() {
+                self.format_function_declaration(method, output, i == interface.methods().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        self.indent_level -= 1;
+    }
+
+    /// Format a generic parameter into the output buffer
+    fn format_generic_parameter(&mut self, param: &GenericParameter, output: &mut String, is_last: bool) {
+        let prefix = if self.indent_level == 0 {
+            String::new()
+        } else {
+            format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() })
+        };
+
+        match param {
+            GenericParameter::Type { name, bounds } => {
+                if bounds.is_empty() {
+                    writeln!(output, "{}TypeParameter: {}", prefix, name).unwrap();
+                } else {
+                    writeln!(output, "{}TypeParameter: {} with {} bound(s)", prefix, name, bounds.len()).unwrap();
+                    self.indent_level += 1;
+                    for (i, bound) in bounds.iter().enumerate() {
+                        self.format_type(bound, output, i == bounds.len() - 1);
+                    }
+                    self.indent_level -= 1;
+                }
+            }
+            GenericParameter::Const { name, ty } => {
+                writeln!(output, "{}ConstParameter: {} :", prefix, name).unwrap();
+                self.indent_level += 1;
+                self.format_type(ty, output, true);
+                self.indent_level -= 1;
+            }
+        }
+    }
 }
 
 /// Convenience function to pretty print an expression with default settings
@@ -282,6 +489,24 @@ impl std::fmt::Display for Expression {
 impl std::fmt::Display for Type {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", PrettyPrinter::new().print_type(self))
+    }
+}
+
+impl std::fmt::Display for FunctionDeclaration {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", PrettyPrinter::new().print_function_declaration(self))
+    }
+}
+
+impl std::fmt::Display for FunctionDefinition {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", PrettyPrinter::new().print_function_definition(self))
+    }
+}
+
+impl std::fmt::Display for InterfaceDeclaration {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", PrettyPrinter::new().print_interface_declaration(self))
     }
 }
 
@@ -444,7 +669,7 @@ mod tests {
 
     #[test]
     fn test_print_named_type() {
-        let ast_type = Type::Named("MyStruct".to_string());
+        let ast_type = Type::Named{ name: "MyStruct".to_string(), generic_args: vec![] };
         let output = PrettyPrinter::new().print_type(&ast_type);
         assert!(output.contains("Type: Named(\"MyStruct\")"));
     }
@@ -465,7 +690,7 @@ mod tests {
     #[test]
     fn test_print_array_type_dynamic_size() {
         let ast_type = Type::Array {
-            element_type: Box::new(Type::Named("Foo".to_string())),
+            element_type: Box::new(Type::Named{ name: "Foo".to_string(), generic_args: vec![] }),
             size: None,
         };
         let output = PrettyPrinter::new().print_type(&ast_type);
@@ -479,7 +704,7 @@ mod tests {
     fn test_print_result_type() {
         let ast_type = Type::Result {
             ok_type: Box::new(Type::I32),
-            err_type: Box::new(Type::Named("MyError".to_string())),
+            err_type: Box::new(Type::Named{ name: "MyError".to_string(), generic_args: vec![] }),
         };
         let output = PrettyPrinter::new().print_type(&ast_type);
         assert!(output.contains("Type: Result"));
@@ -496,5 +721,189 @@ mod tests {
         assert!(output.contains("Type: TypedPointer"));
         assert!(output.contains("element_type:"));
         assert!(output.contains("Type: RawPointer"));
+    }
+
+    #[test]
+    fn test_print_self_type() {
+        let ast_type = Type::SelfType;
+        let output = PrettyPrinter::new().print_type(&ast_type);
+        assert!(output.contains("Type: Self"));
+    }
+
+    #[test]
+    fn test_print_simple_function_declaration() {
+        use crate::ast::*;
+        let func_decl = FunctionDeclaration::new(
+            "add".to_string(),
+            vec![],
+            vec![
+                Parameter::new("a".to_string(), false, Type::I32),
+                Parameter::new("b".to_string(), false, Type::I32),
+            ],
+            Some(Type::I32),
+        );
+        let output = PrettyPrinter::new().print_function_declaration(&func_decl);
+        assert!(output.contains("FunctionDeclaration: add"));
+        assert!(output.contains("parameters: 2 item(s)"));
+        assert!(output.contains("Parameter: a"));
+        assert!(output.contains("Parameter: b"));
+        assert!(output.contains("return_type:"));
+        assert!(output.contains("Type: I32"));
+    }
+
+    #[test]
+    fn test_print_generic_function_declaration() {
+        use crate::ast::*;
+        let func_decl = FunctionDeclaration::new(
+            "identity".to_string(),
+            vec![GenericParameter::Type {
+                name: "T".to_string(),
+                bounds: vec![],
+            }],
+            vec![Parameter::new("value".to_string(), false, Type::Named {
+                name: "T".to_string(),
+                generic_args: vec![],
+            })],
+            Some(Type::Named {
+                name: "T".to_string(),
+                generic_args: vec![],
+            }),
+        );
+        let output = PrettyPrinter::new().print_function_declaration(&func_decl);
+        assert!(output.contains("FunctionDeclaration: identity"));
+        assert!(output.contains("generic_params: 1 item(s)"));
+        assert!(output.contains("TypeParameter: T"));
+    }
+
+    #[test]
+    fn test_print_function_with_mutable_param() {
+        use crate::ast::*;
+        let func_decl = FunctionDeclaration::new(
+            "toggle".to_string(),
+            vec![],
+            vec![Parameter::new("flag".to_string(), true, Type::Bool)],
+            None,
+        );
+        let output = PrettyPrinter::new().print_function_declaration(&func_decl);
+        assert!(output.contains("Parameter: mutable flag"));
+    }
+
+    #[test]
+    fn test_print_function_definition() {
+        use crate::ast::*;
+        let func_decl = FunctionDeclaration::new(
+            "main".to_string(),
+            vec![],
+            vec![],
+            None,
+        );
+        let func_def = FunctionDefinition::new(func_decl, CodeBlock::new(vec![]));
+        let output = PrettyPrinter::new().print_function_definition(&func_def);
+        assert!(output.contains("FunctionDefinition"));
+        assert!(output.contains("declaration:"));
+        assert!(output.contains("FunctionDeclaration: main"));
+        assert!(output.contains("body:"));
+        assert!(output.contains("CodeBlock (empty)"));
+    }
+
+    #[test]
+    fn test_print_simple_interface() {
+        use crate::ast::*;
+        let interface = InterfaceDeclaration::new(
+            "Writer".to_string(),
+            vec![],
+            vec![],
+            vec![],
+        );
+        let output = PrettyPrinter::new().print_interface_declaration(&interface);
+        assert!(output.contains("InterfaceDeclaration: Writer"));
+    }
+
+    #[test]
+    fn test_print_interface_with_generics() {
+        use crate::ast::*;
+        let interface = InterfaceDeclaration::new(
+            "Writer".to_string(),
+            vec![GenericParameter::Type {
+                name: "T".to_string(),
+                bounds: vec![],
+            }],
+            vec![],
+            vec![],
+        );
+        let output = PrettyPrinter::new().print_interface_declaration(&interface);
+        assert!(output.contains("InterfaceDeclaration: Writer"));
+        assert!(output.contains("generic_params: 1 item(s)"));
+        assert!(output.contains("TypeParameter: T"));
+    }
+
+    #[test]
+    fn test_print_interface_with_super_interfaces() {
+        use crate::ast::*;
+        let interface = InterfaceDeclaration::new(
+            "Serializer".to_string(),
+            vec![],
+            vec![Type::Named {
+                name: "Writer".to_string(),
+                generic_args: vec![],
+            }],
+            vec![],
+        );
+        let output = PrettyPrinter::new().print_interface_declaration(&interface);
+        assert!(output.contains("InterfaceDeclaration: Serializer"));
+        assert!(output.contains("super_interfaces: 1 item(s)"));
+        assert!(output.contains("Type: Named(\"Writer\")"));
+    }
+
+    #[test]
+    fn test_print_interface_with_methods() {
+        use crate::ast::*;
+        let method = FunctionDeclaration::new(
+            "write".to_string(),
+            vec![],
+            vec![
+                Parameter::new("self".to_string(), false, Type::SelfType),
+                Parameter::new("data".to_string(), false, Type::TypedPointer(Box::new(Type::U8))),
+            ],
+            Some(Type::USize),
+        );
+        let interface = InterfaceDeclaration::new(
+            "Writer".to_string(),
+            vec![],
+            vec![],
+            vec![method],
+        );
+        let output = PrettyPrinter::new().print_interface_declaration(&interface);
+        assert!(output.contains("InterfaceDeclaration: Writer"));
+        assert!(output.contains("methods: 1 item(s)"));
+        assert!(output.contains("FunctionDeclaration: write"));
+        assert!(output.contains("Parameter: self"));
+        assert!(output.contains("Type: Self"));
+    }
+
+    #[test]
+    fn test_display_trait_for_function_declaration() {
+        use crate::ast::*;
+        let func_decl = FunctionDeclaration::new(
+            "test".to_string(),
+            vec![],
+            vec![],
+            None,
+        );
+        let output = format!("{}", func_decl);
+        assert!(output.contains("FunctionDeclaration: test"));
+    }
+
+    #[test]
+    fn test_display_trait_for_interface_declaration() {
+        use crate::ast::*;
+        let interface = InterfaceDeclaration::new(
+            "MyInterface".to_string(),
+            vec![],
+            vec![],
+            vec![],
+        );
+        let output = format!("{}", interface);
+        assert!(output.contains("InterfaceDeclaration: MyInterface"));
     }
 }

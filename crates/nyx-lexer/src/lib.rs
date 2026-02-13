@@ -22,6 +22,8 @@ pub enum Token {
     Type,
     #[token("struct")]
     Struct,
+    #[token("enum")]
+    Enum,
     #[token("union")]
     Union,
     #[token("interface")]

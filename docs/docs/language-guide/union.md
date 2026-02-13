@@ -11,7 +11,7 @@ The primary purpose of a `union` is to store different types of data in the same
 A `union` is defined using the `union` keyword, followed by its name (which can be generic) and a list of its variants:
 
 ```nyx
-union Either<T, U> {
+union Either[T, U: Clone] {
     a: T,
     b: U
 }

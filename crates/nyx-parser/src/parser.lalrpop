@@ -244,6 +244,11 @@ pub Type: Type = {
 PointerType: Type = {
     "*" "raw" => Type::RawPointer,
     "*" <element_type:PointerType> => Type::TypedPointer(Box::new(element_type)),
+    ReferenceType,
+};
+
+ReferenceType: Type = {
+    "&" <element_type:ReferenceType> => Type::Reference(Box::new(element_type)),
     ArrayType,
 };
 
@@ -293,81 +298,6 @@ PrimitiveType: Type = {
 };
 
 // ============================================================================
-// Function Parsing
-// ============================================================================
-
-/// Function definition (with body)
-pub FunctionDefinition: FunctionDefinition = {
-    <decl:FunctionDeclaration> <body:CodeBlock> => FunctionDefinition::new(decl, body),
-};
-
-/// Function declaration (signature only)
-pub FunctionDeclaration: FunctionDeclaration = {
-    "fn" <name:"ident"> <generics:GenericParameterList?> "(" <params:Comma<Parameter>> ")" <ret:ReturnType?> => {
-        FunctionDeclaration::new(
-            name,
-            generics.unwrap_or_default(),
-            params,
-            ret,
-        )
-    },
-};
-
-ReturnType: Type = {
-    ":" <ty:Type> => ty,
-};
-
-/// Function parameter
-Parameter: Parameter = {
-    // Regular parameter: name: Type
-    <name:"ident"> ":" <ty:Type> => Parameter::new(name, false, ty),
-    // Mutable parameter: name: mutable Type
-    <name:"ident"> ":" "mutable" <ty:Type> => Parameter::new(name, true, ty),
-    // Self parameter without explicit type annotation (for methods)
-    <name:"ident"> => {
-        // If the identifier is "self", use SelfType
-        if name == "self" {
-            Parameter::new(name, false, Type::SelfType)
-        } else {
-            // This shouldn't happen in valid code, but we need to handle it
-            // For now, treat it as an error by using a placeholder
-            Parameter::new(name, false, Type::Named { name: "INVALID".to_string(), generic_args: vec![] })
-        }
-    },
-};
-
-/// Code block (empty for now until statement parser is implemented)
-CodeBlock: CodeBlock = {
-    "{" "}" => CodeBlock::new(vec![]),
-};
-
-// ============================================================================
-// Interface Parsing
-// ============================================================================
-
-/// Interface declaration
-pub InterfaceDeclaration: InterfaceDeclaration = {
-    // Interface without super interfaces
-    "interface" <name:"ident"> <generics:GenericParameterList?> "{" <methods:FunctionDeclaration*> "}" => {
-        InterfaceDeclaration::new(
-            name,
-            generics.unwrap_or_default(),
-            vec![],
-            methods,
-        )
-    },
-    // Interface with super interfaces
-    "interface" <name:"ident"> <generics:GenericParameterList?> ":" <supers:Plus<Type>> "{" <methods:FunctionDeclaration*> "}" => {
-        InterfaceDeclaration::new(
-            name,
-            generics.unwrap_or_default(),
-            supers,
-            methods,
-        )
-    },
-};
-
-// ============================================================================
 // Helper Rules
 // ============================================================================
 
@@ -402,6 +332,7 @@ extern {
         "const" => Token::Const,
         "type" => Token::Type,
         "struct" => Token::Struct,
+        "enum" => Token::Enum,
         "union" => Token::Union,
         "interface" => Token::Interface,
         "ext" => Token::Ext,

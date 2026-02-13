@@ -71,6 +71,12 @@ pub enum Token {
     SelfKeyword,
     #[token("in")]
     In,
+    #[token("where")]
+    Where,
+    #[token("requires")]
+    Requires,
+    #[token("pass")]
+    Pass,
 
     // Primitive Types
     #[token("u8")]

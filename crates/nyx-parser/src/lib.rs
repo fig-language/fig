@@ -4,6 +4,12 @@ use nyx_lexer::{IndentLexer, Token};
 pub mod ast;
 pub mod pretty_print;
 
+#[cfg(test)]
+mod struct_enum_union_tests;
+
+#[cfg(test)]
+mod function_tests;
+
 lalrpop_mod!(pub parser);
 
 pub use parser::*;

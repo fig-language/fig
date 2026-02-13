@@ -201,6 +201,7 @@ pub GenericParameterList: Vec<GenericParameter> = {
 };
 
 GenericParameter: GenericParameter = {
+    BoundedTypeParameter,
     TypeParameter,
     ConstParameter,
 };
@@ -213,8 +214,11 @@ ConstParameter: GenericParameter = {
 };
 
 TypeParameter: GenericParameter = {
-    <name: "ident"> ":" <bounds: TypeBounds> => GenericParameter::Type { name, bounds },
     <name: "ident"> => GenericParameter::Type { name, bounds: Vec::new() },
+};
+
+BoundedTypeParameter: GenericParameter = {
+    <name: "ident"> ":" <bounds: TypeBounds> => GenericParameter::Type { name, bounds },
 };
 
 TypeBounds: Vec<Type> = {
@@ -297,9 +301,146 @@ PrimitiveType: Type = {
     "Self" => Type::SelfType,
 };
 
+
+// ============================================================================
+// Clause Parsing
+// ============================================================================
+
+WhereClause: Vec<GenericParameter> = {
+    "NEWLINE" "where" "NEWLINE" "INDENT" <Newline<BoundedTypeParameter>> "DEDENT" => <>,
+};
+
+RequiresClause: Vec<Type> = {
+    "NEWLINE" "requires" "NEWLINE" "INDENT" <Newline<Type>> "DEDENT" => <>,
+};
+
+// ============================================================================
+// Type Alias Parsing
+// ============================================================================
+
+pub TypeAlias: TypeAlias = {
+    "type" <name: "ident"> <generic_params: GenericParameterList?> "=" <aliased_type: Type> <where_clause: WhereClause?> => {
+        TypeAlias::new(
+            name,
+            generic_params.unwrap_or_default(),
+            aliased_type,
+            where_clause.unwrap_or_default()
+        )
+    },
+};
+
+
+// ============================================================================
+// Enum Parsing
+// ============================================================================
+
+pub Enum: Enum = {
+    "enum" <name: "ident"> <generic_params: GenericParameterList?> <requires_clause: RequiresClause?>
+    <where_clause: WhereClause?> "NEWLINE" "INDENT" <variants: Newline<EnumVariant>> "DEDENT" => {
+        Enum::new(
+            name,
+            generic_params.unwrap_or_default(),
+            requires_clause.unwrap_or_default(),
+            where_clause.unwrap_or_default(),
+            variants
+        )
+    },
+};
+
+EnumVariant: EnumVariant = {
+    <name: "ident"> => EnumVariant::new(name, None),
+    <name: "ident"> "=" <value: Expression> => EnumVariant::new(name, Some(value)),
+};
+
+// ============================================================================
+// Union Parsing
+// ============================================================================
+
+pub Union: Union = {
+    "union" <name: "ident"> <generic_params: GenericParameterList?> <requires_clause: RequiresClause?>
+    <where_clause: WhereClause?> "NEWLINE" "INDENT" <variants: Newline<UnionVariant>> "DEDENT" => {
+        Union::new(
+            name,
+            generic_params.unwrap_or_default(),
+            requires_clause.unwrap_or_default(),
+            where_clause.unwrap_or_default(),
+            variants
+        )
+    },
+};
+
+UnionVariant: UnionVariant = {
+    <name: "ident"> ":" <ty: Type> => UnionVariant::new(name, ty),
+}
+
+// ============================================================================
+// Struct Parsing
+// ============================================================================
+
+pub Struct: Struct = {
+    "struct" <name: "ident"> <generic_params: GenericParameterList?> <requires_clause: RequiresClause?>
+    <where_clause: WhereClause?> "NEWLINE" "INDENT" <fields: Newline<StructField>> "DEDENT" => {
+        Struct::new(
+            name,
+            generic_params.unwrap_or_default(),
+            requires_clause.unwrap_or_default(),
+            where_clause.unwrap_or_default(),
+            fields
+        )
+    },
+};
+
+StructField: StructField = {
+    <name: "ident"> ":" <ty: Type> => StructField::new(name, ty),
+};
+
+// ============================================================================
+// Function Parsing
+// ============================================================================
+
+pub Function: Function = {
+    "fn" <name: "ident"> <generic_params: GenericParameterList?>
+    "(" <params: Comma<FunctionParameter>> ")"
+    <return_type: ("->" <Type>)?>
+    <where_clause: WhereClause?> ":" "NEWLINE" "INDENT"
+    <body: Block> "DEDENT" => {
+        Function::new(
+            name,
+            generic_params.unwrap_or_default(),
+            params,
+            return_type,
+            where_clause.unwrap_or_default(),
+            body
+        )
+    },
+};
+
+FunctionParameter: FunctionParameter = {
+    <name: "ident"> ":" <ty: Type> => FunctionParameter::new(name, ty),
+};
+
+Block: Block = {
+    <statements: Newline<Statement>> => Block::new(statements),
+};
+
+Statement: Statement = {
+    <name: "ident"> => Statement::Placeholder(name),
+};
+
 // ============================================================================
 // Helper Rules
 // ============================================================================
+
+/// Parse a newline-separated list of items
+Newline<T>: Vec<T> = {
+    <mut v:(<T> "NEWLINE")*> <e:T?> => match e {
+        None => v,
+        Some(e) => {
+            v.push(e);
+            v
+        }
+    }
+};
 
 /// Parse a plus-separated list of items  
 Plus<T>: Vec<T> = {
@@ -358,6 +499,9 @@ extern {
         "mutable" => Token::Mutable,
         "Self" => Token::SelfKeyword,
         "in" => Token::In,
+        "where" => Token::Where,
+        "requires" => Token::Requires,
+        "pass" => Token::Pass,
 
         // Primitive Types
         "u8" => Token::U8,

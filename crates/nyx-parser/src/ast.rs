@@ -187,3 +187,149 @@ pub enum GenericParameter {
     Type { name: String, bounds: Vec<Type> },
     Const { name: String, ty: Type },
 }
+
+// ============================================================================
+// Type Alias
+// ============================================================================
+
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct TypeAlias {
+    /// Name of the type alias
+    name: String,
+    /// Generic parameters
+    generic_params: Vec<GenericParameter>,
+    /// Type being aliased
+    aliased_type: Type,
+    /// Optional where clause bounds
+    where_clause: Vec<GenericParameter>,
+}
+
+// ============================================================================
+// Enum
+// ============================================================================
+
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct Enum {
+    /// Name of the enum
+    name: String,
+    /// Generic parameters
+    generic_params: Vec<GenericParameter>,
+    /// Optional requires clause
+    requires_clause: Vec<Type>,
+    /// Optional where clause bounds
+    where_clause: Vec<GenericParameter>,
+    /// Enum variants
+    variants: Vec<EnumVariant>,
+}
+
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct EnumVariant {
+    /// Name of the variant
+    name: String,
+    /// Optional discriminant value
+    value: Option<Expression>,
+}
+
+// ============================================================================
+// Union
+// ============================================================================
+
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct Union {
+    /// Name of the union
+    name: String,
+    /// Generic parameters
+    generic_params: Vec<GenericParameter>,
+    /// Optional requires clause
+    requires_clause: Vec<Type>,
+    /// Optional where clause bounds
+    where_clause: Vec<GenericParameter>,
+    /// Union variants
+    variants: Vec<UnionVariant>,
+}
+
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct UnionVariant {
+    /// Name of the variant
+    name: String,
+    /// Type of the variant
+    ty: Type,
+}
+
+// ============================================================================
+// Struct
+// ============================================================================
+
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct Struct {
+    /// Name of the struct
+    name: String,
+    /// Generic parameters
+    generic_params: Vec<GenericParameter>,
+    /// Optional requires clause
+    requires_clause: Vec<Type>,
+    /// Optional where clause bounds
+    where_clause: Vec<GenericParameter>,
+    /// Struct fields
+    fields: Vec<StructField>,
+}
+
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct StructField {
+    /// Name of the field
+    name: String,
+    /// Type of the field
+    ty: Type,
+}
+
+// ============================================================================
+// Function
+// ============================================================================
+
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct Function {
+    /// Name of the function
+    name: String,
+    /// Generic parameters
+    generic_params: Vec<GenericParameter>,
+    /// Function parameters
+    params: Vec<FunctionParameter>,
+    /// Return type (None for no return type)
+    return_type: Option<Type>,
+    /// Optional where clause bounds
+    where_clause: Vec<GenericParameter>,
+    /// Function body (statements)
+    body: Block,
+}
+
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct FunctionParameter {
+    /// Parameter name
+    name: String,
+    /// Parameter type
+    ty: Type,
+}
+
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct Block {
+    /// Statements in the block
+    statements: Vec<Statement>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Statement {
+    /// Placeholder for future statement types
+    Empty,
+    /// Placeholder identifier statement (for testing without full statement parsing)
+    Placeholder(String),
+}

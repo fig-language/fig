@@ -60,6 +60,48 @@ impl PrettyPrinter {
         output
     }
 
+    /// Pretty print a type alias to a string
+    pub fn print_type_alias(&mut self, type_alias: &TypeAlias) -> String {
+        let mut output = String::new();
+        self.format_type_alias(type_alias, &mut output);
+        output
+    }
+
+    /// Pretty print a generic parameter to a string
+    pub fn print_generic_parameter(&mut self, param: &GenericParameter) -> String {
+        let mut output = String::new();
+        self.format_generic_parameter(param, &mut output, true);
+        output
+    }
+
+    /// Pretty print an enum to a string
+    pub fn print_enum(&mut self, enum_decl: &Enum) -> String {
+        let mut output = String::new();
+        self.format_enum(enum_decl, &mut output);
+        output
+    }
+
+    /// Pretty print a union to a string
+    pub fn print_union(&mut self, union_decl: &Union) -> String {
+        let mut output = String::new();
+        self.format_union(union_decl, &mut output);
+        output
+    }
+
+    /// Pretty print a struct to a string
+    pub fn print_struct(&mut self, struct_decl: &Struct) -> String {
+        let mut output = String::new();
+        self.format_struct(struct_decl, &mut output);
+        output
+    }
+
+    /// Pretty print a function to a string
+    pub fn print_function(&mut self, func: &Function) -> String {
+        let mut output = String::new();
+        self.format_function(func, &mut output);
+        output
+    }
+
     /// Get the current indentation string
     fn indent(&self) -> String {
         " ".repeat(self.indent_level * self.indent_size)
@@ -283,6 +325,327 @@ impl PrettyPrinter {
             }
         }
     }
+
+    /// Format a type alias into the output buffer
+    fn format_type_alias(&mut self, type_alias: &TypeAlias, output: &mut String) {
+        writeln!(output, "TypeAlias: {}", type_alias.name()).unwrap();
+        self.indent_level += 1;
+
+        // Generic parameters
+        if !type_alias.generic_params().is_empty() {
+            writeln!(output, "{}generic_params:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in type_alias.generic_params().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == type_alias.generic_params().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Aliased type
+        writeln!(output, "{}aliased_type:", self.indent()).unwrap();
+        self.indent_level += 1;
+        self.format_type(type_alias.aliased_type(), output, true);
+        self.indent_level -= 1;
+
+        // Where clause
+        if !type_alias.where_clause().is_empty() {
+            writeln!(output, "{}where_clause:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in type_alias.where_clause().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == type_alias.where_clause().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        self.indent_level -= 1;
+    }
+
+    /// Format a generic parameter into the output buffer
+    fn format_generic_parameter(&mut self, param: &GenericParameter, output: &mut String, is_last: bool) {
+        let prefix = format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() });
+
+        match param {
+            GenericParameter::Type { name, bounds } => {
+                if bounds.is_empty() {
+                    writeln!(output, "{}TypeParam: {}", prefix, name).unwrap();
+                } else {
+                    writeln!(output, "{}TypeParam: {} with bounds", prefix, name).unwrap();
+                    self.indent_level += 1;
+                    for (i, bound) in bounds.iter().enumerate() {
+                        self.format_type(bound, output, i == bounds.len() - 1);
+                    }
+                    self.indent_level -= 1;
+                }
+            }
+            GenericParameter::Const { name, ty } => {
+                writeln!(output, "{}ConstParam: {} :", prefix, name).unwrap();
+                self.indent_level += 1;
+                self.format_type(ty, output, true);
+                self.indent_level -= 1;
+            }
+        }
+    }
+
+    /// Format an enum into the output buffer
+    fn format_enum(&mut self, enum_decl: &Enum, output: &mut String) {
+        writeln!(output, "Enum: {}", enum_decl.name()).unwrap();
+        self.indent_level += 1;
+
+        // Generic parameters
+        if !enum_decl.generic_params().is_empty() {
+            writeln!(output, "{}generic_params:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in enum_decl.generic_params().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == enum_decl.generic_params().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Requires clause
+        if !enum_decl.requires_clause().is_empty() {
+            writeln!(output, "{}requires_clause:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, ty) in enum_decl.requires_clause().iter().enumerate() {
+                self.format_type(ty, output, i == enum_decl.requires_clause().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Where clause
+        if !enum_decl.where_clause().is_empty() {
+            writeln!(output, "{}where_clause:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in enum_decl.where_clause().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == enum_decl.where_clause().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Variants
+        if !enum_decl.variants().is_empty() {
+            writeln!(output, "{}variants:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, variant) in enum_decl.variants().iter().enumerate() {
+                self.format_enum_variant(variant, output, i == enum_decl.variants().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        self.indent_level -= 1;
+    }
+
+    /// Format an enum variant into the output buffer
+    fn format_enum_variant(&mut self, variant: &EnumVariant, output: &mut String, is_last: bool) {
+        let prefix = format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() });
+        
+        if let Some(value) = variant.value() {
+            writeln!(output, "{}Variant: {} = {}", prefix, variant.name(), value).unwrap();
+        } else {
+            writeln!(output, "{}Variant: {}", prefix, variant.name()).unwrap();
+        }
+    }
+
+    /// Format a union into the output buffer
+    fn format_union(&mut self, union_decl: &Union, output: &mut String) {
+        writeln!(output, "Union: {}", union_decl.name()).unwrap();
+        self.indent_level += 1;
+
+        // Generic parameters
+        if !union_decl.generic_params().is_empty() {
+            writeln!(output, "{}generic_params:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in union_decl.generic_params().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == union_decl.generic_params().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Requires clause
+        if !union_decl.requires_clause().is_empty() {
+            writeln!(output, "{}requires_clause:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, ty) in union_decl.requires_clause().iter().enumerate() {
+                self.format_type(ty, output, i == union_decl.requires_clause().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Where clause
+        if !union_decl.where_clause().is_empty() {
+            writeln!(output, "{}where_clause:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in union_decl.where_clause().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == union_decl.where_clause().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Variants
+        if !union_decl.variants().is_empty() {
+            writeln!(output, "{}variants:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, variant) in union_decl.variants().iter().enumerate() {
+                self.format_union_variant(variant, output, i == union_decl.variants().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        self.indent_level -= 1;
+    }
+
+    /// Format a union variant into the output buffer
+    fn format_union_variant(&mut self, variant: &UnionVariant, output: &mut String, is_last: bool) {
+        let prefix = format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() });
+        writeln!(output, "{}Variant: {} :", prefix, variant.name()).unwrap();
+        self.indent_level += 1;
+        self.format_type(variant.ty(), output, true);
+        self.indent_level -= 1;
+    }
+
+    /// Format a struct into the output buffer
+    fn format_struct(&mut self, struct_decl: &Struct, output: &mut String) {
+        writeln!(output, "Struct: {}", struct_decl.name()).unwrap();
+        self.indent_level += 1;
+
+        // Generic parameters
+        if !struct_decl.generic_params().is_empty() {
+            writeln!(output, "{}generic_params:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in struct_decl.generic_params().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == struct_decl.generic_params().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Requires clause
+        if !struct_decl.requires_clause().is_empty() {
+            writeln!(output, "{}requires_clause:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, ty) in struct_decl.requires_clause().iter().enumerate() {
+                self.format_type(ty, output, i == struct_decl.requires_clause().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Where clause
+        if !struct_decl.where_clause().is_empty() {
+            writeln!(output, "{}where_clause:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in struct_decl.where_clause().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == struct_decl.where_clause().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Fields
+        if !struct_decl.fields().is_empty() {
+            writeln!(output, "{}fields:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, field) in struct_decl.fields().iter().enumerate() {
+                self.format_struct_field(field, output, i == struct_decl.fields().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        self.indent_level -= 1;
+    }
+
+    /// Format a struct field into the output buffer
+    fn format_struct_field(&mut self, field: &StructField, output: &mut String, is_last: bool) {
+        let prefix = format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() });
+        writeln!(output, "{}Field: {} :", prefix, field.name()).unwrap();
+        self.indent_level += 1;
+        self.format_type(field.ty(), output, true);
+        self.indent_level -= 1;
+    }
+
+    /// Format a function into the output buffer
+    fn format_function(&mut self, func: &Function, output: &mut String) {
+        writeln!(output, "Function: {}", func.name()).unwrap();
+        self.indent_level += 1;
+
+        // Generic parameters
+        if !func.generic_params().is_empty() {
+            writeln!(output, "{}generic_params:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in func.generic_params().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == func.generic_params().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Parameters
+        if !func.params().is_empty() {
+            writeln!(output, "{}params:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in func.params().iter().enumerate() {
+                self.format_function_parameter(param, output, i == func.params().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Return type
+        if let Some(return_type) = func.return_type() {
+            writeln!(output, "{}return_type:", self.indent()).unwrap();
+            self.indent_level += 1;
+            self.format_type(return_type, output, true);
+            self.indent_level -= 1;
+        }
+
+        // Where clause
+        if !func.where_clause().is_empty() {
+            writeln!(output, "{}where_clause:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in func.where_clause().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == func.where_clause().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Body
+        writeln!(output, "{}body:", self.indent()).unwrap();
+        self.indent_level += 1;
+        self.format_block(func.body(), output);
+        self.indent_level -= 1;
+
+        self.indent_level -= 1;
+    }
+
+    /// Format a function parameter into the output buffer
+    fn format_function_parameter(&mut self, param: &FunctionParameter, output: &mut String, is_last: bool) {
+        let prefix = format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() });
+        writeln!(output, "{}Param: {} :", prefix, param.name()).unwrap();
+        self.indent_level += 1;
+        self.format_type(param.ty(), output, true);
+        self.indent_level -= 1;
+    }
+
+    /// Format a block into the output buffer
+    fn format_block(&mut self, block: &Block, output: &mut String) {
+        if block.statements().is_empty() {
+            writeln!(output, "{}Block (empty)", self.indent()).unwrap();
+        } else {
+            writeln!(output, "{}Block with {} statement(s)", self.indent(), block.statements().len()).unwrap();
+            self.indent_level += 1;
+            for (i, stmt) in block.statements().iter().enumerate() {
+                self.format_statement(stmt, output, i == block.statements().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+    }
+
+    /// Format a statement into the output buffer
+    fn format_statement(&mut self, stmt: &Statement, output: &mut String, is_last: bool) {
+        let prefix = format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() });
+        match stmt {
+            Statement::Empty => {
+                writeln!(output, "{}Statement: Empty", prefix).unwrap();
+            }
+            Statement::Placeholder(name) => {
+                writeln!(output, "{}Statement: Placeholder(\"{}\")", prefix, name).unwrap();
+            }
+        }
+    }
 }
 
 /// Convenience function to pretty print an expression with default settings
@@ -295,6 +658,26 @@ pub fn print_expression_ascii(expr: &Expression) -> String {
     PrettyPrinter::ascii().print_expression(expr)
 }
 
+/// Convenience function to pretty print an enum with default settings
+pub fn print_enum(enum_decl: &Enum) -> String {
+    PrettyPrinter::new().print_enum(enum_decl)
+}
+
+/// Convenience function to pretty print a union with default settings
+pub fn print_union(union_decl: &Union) -> String {
+    PrettyPrinter::new().print_union(union_decl)
+}
+
+/// Convenience function to pretty print a struct with default settings
+pub fn print_struct(struct_decl: &Struct) -> String {
+    PrettyPrinter::new().print_struct(struct_decl)
+}
+
+/// Convenience function to pretty print a function with default settings
+pub fn print_function(func: &Function) -> String {
+    PrettyPrinter::new().print_function(func)
+}
+
 impl std::fmt::Display for Expression {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", print_expression(self))
@@ -304,6 +687,42 @@ impl std::fmt::Display for Expression {
 impl std::fmt::Display for Type {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", PrettyPrinter::new().print_type(self))
+    }
+}
+
+impl std::fmt::Display for TypeAlias {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", PrettyPrinter::new().print_type_alias(self))
+    }
+}
+
+impl std::fmt::Display for GenericParameter {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", PrettyPrinter::new().print_generic_parameter(self))
+    }
+}
+
+impl std::fmt::Display for Enum {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", print_enum(self))
+    }
+}
+
+impl std::fmt::Display for Union {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", print_union(self))
+    }
+}
+
+impl std::fmt::Display for Struct {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", print_struct(self))
+    }
+}
+
+impl std::fmt::Display for Function {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", print_function(self))
     }
 }
 

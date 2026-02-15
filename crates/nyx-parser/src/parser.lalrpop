@@ -314,6 +314,10 @@ RequiresClause: Vec<Type> = {
     "requires" "NEWLINE" "INDENT" <Newline<Type>> "DEDENT" => <>,
 };
 
+ExtendsClause: Vec<Type> = {
+    "extends" "NEWLINE" "INDENT" <Newline<Type>> "DEDENT" => <>,
+};
+
 // ============================================================================
 // Type Alias Parsing
 // ============================================================================
@@ -345,8 +349,7 @@ TypeAliasClause: Vec<GenericParameter> = {
 
 pub Enum: Enum = {
     "enum"
-    // Parse the enum representation here
-    // e.g. enum[u8] MyEnum
+    <representation: EnumRepr?>
     <name: "ident">
     <generic_params: GenericParameterList?>
     "NEWLINE"
@@ -358,12 +361,17 @@ pub Enum: Enum = {
     => {
         Enum::new(
             name,
+            representation,
             generic_params.unwrap_or_default(),
             requires_clause.unwrap_or_default(),
             where_clause.unwrap_or_default(),
             variants
         )
     },
+};
+
+EnumRepr: Type = {
+    "[" <repr_type: Type> "]" => repr_type,
 };
 
 EnumVariant: EnumVariant = {
@@ -433,20 +441,29 @@ StructField: StructField = {
 // ============================================================================
 
 pub Function: Function = {
+    <signature: FunctionSignature>
+    <body: Block> "DEDENT" => {
+        Function::new(
+            signature,
+            body,
+        )
+    },
+};
+
+FunctionSignature: FunctionSignature = {
     "fn" <name: "ident"> <generic_params: GenericParameterList?>
     "(" <params: Comma<FunctionParameter>> ")"
     <return_type: ("->" <Type>)?>
     "NEWLINE"
     "INDENT"
     <where_clause: WhereClause?>
-    <body: Block> "DEDENT" => {
-        Function::new(
+    => {
+        FunctionSignature::new(
             name,
             generic_params.unwrap_or_default(),
             params,
             return_type,
             where_clause.unwrap_or_default(),
-            body
         )
     },
 };
@@ -461,6 +478,51 @@ Block: Block = {
 
 Statement: Statement = {
     "pass" => Statement::Pass,
+};
+
+// ============================================================================
+// Interface Parsing
+// ============================================================================
+
+pub Interface: Interface = {
+    "interface" <name: "ident"> <generic_params: GenericParameterList?>
+    "NEWLINE"
+    "INDENT"
+    <extends_clause: ExtendsClause?>
+    <where_clause: WhereClause?>
+    <methods: Newline<FunctionSignature>>
+    "DEDENT"
+    => {
+        Interface::new(
+            name,
+            generic_params.unwrap_or_default(),
+            extends_clause.unwrap_or_default(),
+            where_clause.unwrap_or_default(),
+            methods
+        )
+    },
+};
+
+// ============================================================================
+// Namespace Parsing
+// ============================================================================
+
+pub Namespace: Namespace = {
+    "namespace" <name: "ident">
+    "NEWLINE"
+    "INDENT"
+    // <items: Newline<NamespaceItem>>
+    "DEDENT"
+    => Namespace::new(name, Vec::new())
+};
+
+NamespaceItem: NamespaceItem = {
+    <type_alias: TypeAlias> => NamespaceItem::TypeAlias(type_alias),
+    <enum_decl: Enum> => NamespaceItem::Enum(enum_decl),
+    <union_decl: Union> => NamespaceItem::Union(union_decl),
+    <struct_decl: Struct> => NamespaceItem::Struct(struct_decl),
+    // <interface_decl: Interface> => NamespaceItem::Interface(interface_decl),
+    // <function_decl: Function> => NamespaceItem::Function(function_decl),
 };
 
 // ============================================================================
@@ -542,6 +604,8 @@ extern {
         "in" => Token::In,
         "where" => Token::Where,
         "requires" => Token::Requires,
+        "extends" => Token::Extends,
+        "namespace" => Token::Namespace,
         "pass" => Token::Pass,
 
         // Primitive Types

@@ -75,6 +75,10 @@ pub enum Token {
     Where,
     #[token("requires")]
     Requires,
+    #[token("extends")]
+    Extends,
+    #[token("namespace")]
+    Namespace,
     #[token("pass")]
     Pass,
 

@@ -214,6 +214,8 @@ pub struct TypeAlias {
 pub struct Enum {
     /// Name of the enum
     name: String,
+    /// Optional enum representation
+    representation: Option<Type>,
     /// Generic parameters
     generic_params: Vec<GenericParameter>,
     /// Optional requires clause
@@ -296,6 +298,15 @@ pub struct StructField {
 #[derive(Debug, Clone, PartialEq, new, Getters)]
 #[getset(get = "pub")]
 pub struct Function {
+    /// Function signature
+    signature: FunctionSignature,
+    /// Function body (statements)
+    body: Block,
+}
+
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct FunctionSignature {
     /// Name of the function
     name: String,
     /// Generic parameters
@@ -306,8 +317,6 @@ pub struct Function {
     return_type: Option<Type>,
     /// Optional where clause bounds
     where_clause: Vec<GenericParameter>,
-    /// Function body (statements)
-    body: Block,
 }
 
 #[derive(Debug, Clone, PartialEq, new, Getters)]
@@ -326,10 +335,55 @@ pub struct Block {
     statements: Vec<Statement>,
 }
 
+// ============================================================================
+// Interfaces
+// ============================================================================
+
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct Interface {
+    /// Name of the interface
+    name: String,
+    /// Generic parameters
+    generic_params: Vec<GenericParameter>,
+    /// Optional extends clause
+    extends_clause: Vec<Type>,
+    /// Optional where clause bounds
+    where_clause: Vec<GenericParameter>,
+    /// Interface methods (not fully defined yet)
+    methods: Vec<FunctionSignature>,
+}
+
+// ============================================================================
+// Namespaces
+// ============================================================================
+
+#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[getset(get = "pub")]
+pub struct Namespace {
+    /// Name of the namespace
+    name: String,
+    /// Items in the namespace (functions, types, etc.)
+    items: Vec<NamespaceItem>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum NamespaceItem {
+    Function(Function),
+    TypeAlias(TypeAlias),
+    Struct(Struct),
+    Enum(Enum),
+    Union(Union),
+    Interface(Interface),
+    Namespace(Namespace),
+}
+
+// ============================================================================
+// Statements
+// ============================================================================
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Statement {
     /// Placeholder for future statement types
     Pass,
-    /// Placeholder identifier statement (for testing without full statement parsing)
-    Placeholder(String),
 }

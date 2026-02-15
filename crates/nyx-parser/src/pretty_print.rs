@@ -96,11 +96,11 @@ impl PrettyPrinter {
     }
 
     /// Pretty print a function to a string
-    pub fn print_function(&mut self, func: &Function) -> String {
-        let mut output = String::new();
-        self.format_function(func, &mut output);
-        output
-    }
+    // pub fn print_function(&mut self, func: &Function) -> String {
+    //     let mut output = String::new();
+    //     self.format_function(func, &mut output);
+    //     output
+    // }
 
     /// Get the current indentation string
     fn indent(&self) -> String {
@@ -560,56 +560,56 @@ impl PrettyPrinter {
     }
 
     /// Format a function into the output buffer
-    fn format_function(&mut self, func: &Function, output: &mut String) {
-        writeln!(output, "Function: {}", func.name()).unwrap();
-        self.indent_level += 1;
+    // fn format_function(&mut self, func: &Function, output: &mut String) {
+    //     writeln!(output, "Function: {}", func.name()).unwrap();
+    //     self.indent_level += 1;
 
-        // Generic parameters
-        if !func.generic_params().is_empty() {
-            writeln!(output, "{}generic_params:", self.indent()).unwrap();
-            self.indent_level += 1;
-            for (i, param) in func.generic_params().iter().enumerate() {
-                self.format_generic_parameter(param, output, i == func.generic_params().len() - 1);
-            }
-            self.indent_level -= 1;
-        }
+    //     // Generic parameters
+    //     if !func.generic_params().is_empty() {
+    //         writeln!(output, "{}generic_params:", self.indent()).unwrap();
+    //         self.indent_level += 1;
+    //         for (i, param) in func.generic_params().iter().enumerate() {
+    //             self.format_generic_parameter(param, output, i == func.generic_params().len() - 1);
+    //         }
+    //         self.indent_level -= 1;
+    //     }
 
-        // Parameters
-        if !func.params().is_empty() {
-            writeln!(output, "{}params:", self.indent()).unwrap();
-            self.indent_level += 1;
-            for (i, param) in func.params().iter().enumerate() {
-                self.format_function_parameter(param, output, i == func.params().len() - 1);
-            }
-            self.indent_level -= 1;
-        }
+    //     // Parameters
+    //     if !func.params().is_empty() {
+    //         writeln!(output, "{}params:", self.indent()).unwrap();
+    //         self.indent_level += 1;
+    //         for (i, param) in func.params().iter().enumerate() {
+    //             self.format_function_parameter(param, output, i == func.params().len() - 1);
+    //         }
+    //         self.indent_level -= 1;
+    //     }
 
-        // Return type
-        if let Some(return_type) = func.return_type() {
-            writeln!(output, "{}return_type:", self.indent()).unwrap();
-            self.indent_level += 1;
-            self.format_type(return_type, output, true);
-            self.indent_level -= 1;
-        }
+    //     // Return type
+    //     if let Some(return_type) = func.return_type() {
+    //         writeln!(output, "{}return_type:", self.indent()).unwrap();
+    //         self.indent_level += 1;
+    //         self.format_type(return_type, output, true);
+    //         self.indent_level -= 1;
+    //     }
 
-        // Where clause
-        if !func.where_clause().is_empty() {
-            writeln!(output, "{}where_clause:", self.indent()).unwrap();
-            self.indent_level += 1;
-            for (i, param) in func.where_clause().iter().enumerate() {
-                self.format_generic_parameter(param, output, i == func.where_clause().len() - 1);
-            }
-            self.indent_level -= 1;
-        }
+    //     // Where clause
+    //     if !func.where_clause().is_empty() {
+    //         writeln!(output, "{}where_clause:", self.indent()).unwrap();
+    //         self.indent_level += 1;
+    //         for (i, param) in func.where_clause().iter().enumerate() {
+    //             self.format_generic_parameter(param, output, i == func.where_clause().len() - 1);
+    //         }
+    //         self.indent_level -= 1;
+    //     }
 
-        // Body
-        writeln!(output, "{}body:", self.indent()).unwrap();
-        self.indent_level += 1;
-        self.format_block(func.body(), output);
-        self.indent_level -= 1;
+    //     // Body
+    //     writeln!(output, "{}body:", self.indent()).unwrap();
+    //     self.indent_level += 1;
+    //     self.format_block(func.body(), output);
+    //     self.indent_level -= 1;
 
-        self.indent_level -= 1;
-    }
+    //     self.indent_level -= 1;
+    // }
 
     /// Format a function parameter into the output buffer
     fn format_function_parameter(&mut self, param: &FunctionParameter, output: &mut String, is_last: bool) {
@@ -641,9 +641,6 @@ impl PrettyPrinter {
             Statement::Pass => {
                 writeln!(output, "{}Statement: Pass", prefix).unwrap();
             }
-            Statement::Placeholder(name) => {
-                writeln!(output, "{}Statement: Placeholder(\"{}\")", prefix, name).unwrap();
-            }
         }
     }
 }
@@ -673,10 +670,10 @@ pub fn print_struct(struct_decl: &Struct) -> String {
     PrettyPrinter::new().print_struct(struct_decl)
 }
 
-/// Convenience function to pretty print a function with default settings
-pub fn print_function(func: &Function) -> String {
-    PrettyPrinter::new().print_function(func)
-}
+// /// Convenience function to pretty print a function with default settings
+// pub fn print_function(func: &Function) -> String {
+//     PrettyPrinter::new().print_function(func)
+// }
 
 impl std::fmt::Display for Expression {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -720,11 +717,11 @@ impl std::fmt::Display for Struct {
     }
 }
 
-impl std::fmt::Display for Function {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", print_function(self))
-    }
-}
+// impl std::fmt::Display for Function {
+//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//         write!(f, "{}", print_function(self))
+//     }
+// }
 
 #[cfg(test)]
 mod tests {

@@ -9,7 +9,8 @@ mod struct_tests {
     fn test_simple_struct() {
         let input = "struct Point
     x: i32
-    y: i32";
+    y: i32
+";
         let lexer = Lexer::new(input);
         let result = parser::StructParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -29,7 +30,8 @@ mod struct_tests {
     #[test]
     fn test_struct_with_generic_params() {
         let input = "struct Container[T]
-    value: T";
+    value: T
+";
         let lexer = Lexer::new(input);
         let result = parser::StructParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -49,7 +51,8 @@ mod struct_tests {
     #[test]
     fn test_struct_with_bounded_generic() {
         let input = "struct Container[T: Clone]
-    value: T";
+    value: T
+";
         let lexer = Lexer::new(input);
         let result = parser::StructParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -67,7 +70,8 @@ mod struct_tests {
     fn test_struct_with_multiple_bounded_generics() {
         let input = "struct Pair[T: Clone + Copy, U: Send]
     first: T
-    second: U";
+    second: U
+";
         let lexer = Lexer::new(input);
         let result = parser::StructParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -91,7 +95,8 @@ mod struct_tests {
     #[test]
     fn test_struct_with_const_param() {
         let input = "struct Array[const N: usize]
-    data: i32";
+    data: i32
+";
         let lexer = Lexer::new(input);
         let result = parser::StructParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -113,7 +118,8 @@ mod struct_tests {
         T: Clone
         U: Copy
     first: T
-    second: U";
+    second: U
+";
         let lexer = Lexer::new(input);
         let result = parser::StructParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -145,7 +151,8 @@ mod struct_tests {
     requires
         Clone
         Send
-    value: T";
+    value: T
+";
         let lexer = Lexer::new(input);
         let result = parser::StructParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -169,7 +176,8 @@ mod struct_tests {
         T: Clone
         U: Copy
     first: T
-    second: U";
+    second: U
+";
         let lexer = Lexer::new(input);
         let result = parser::StructParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -183,7 +191,8 @@ mod struct_tests {
         let input = "struct ComplexStruct
     pointer: *i32
     array: []u8
-    reference: &bool";
+    reference: &bool
+";
         let lexer = Lexer::new(input);
         let result = parser::StructParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -219,7 +228,8 @@ mod struct_tests {
     #[test]
     fn test_struct_with_single_field() {
         let input = "struct Wrapper
-    value: i32";
+    value: i32
+";
         let lexer = Lexer::new(input);
         let result = parser::StructParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -238,7 +248,8 @@ mod enum_tests {
         let input = "enum Color
     Red
     Green
-    Blue";
+    Blue
+";
         let lexer = Lexer::new(input);
         let result = parser::EnumParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -253,6 +264,70 @@ mod enum_tests {
         assert_eq!(e.variants()[0].value(), &None);
         assert_eq!(e.variants()[1].name(), "Green");
         assert_eq!(e.variants()[2].name(), "Blue");
+        assert_eq!(e.representation(), &None);
+    }
+
+    #[test]
+    fn test_enum_with_representation() {
+        let input = "enum[u8] Color
+    Red
+    Green
+    Blue
+";
+        let lexer = Lexer::new(input);
+        let result = parser::EnumParser::new().parse(lexer);
+        assert!(result.is_ok(), "Failed to parse: {:?}", result);
+        let e = result.unwrap();
+        assert_eq!(e.name(), "Color");
+        assert_eq!(e.variants().len(), 3);
+        
+        // Check representation
+        assert_eq!(e.representation(), &Some(Type::U8));
+    }
+
+    #[test]
+    fn test_enum_with_i32_representation() {
+        let input = "enum[i32] Status
+    Ok = 0
+    Error = -1
+    Pending = 1
+";
+        let lexer = Lexer::new(input);
+        let result = parser::EnumParser::new().parse(lexer);
+        assert!(result.is_ok(), "Failed to parse: {:?}", result);
+        let e = result.unwrap();
+        assert_eq!(e.name(), "Status");
+        assert_eq!(e.representation(), &Some(Type::I32));
+        assert_eq!(e.variants().len(), 3);
+    }
+
+    #[test]
+    fn test_enum_with_usize_representation() {
+        let input = "enum[usize] Flags
+    None = 0
+    Read = 1
+    Write = 2
+    Execute = 4
+";
+        let lexer = Lexer::new(input);
+        let result = parser::EnumParser::new().parse(lexer);
+        assert!(result.is_ok(), "Failed to parse: {:?}", result);
+        let e = result.unwrap();
+        assert_eq!(e.representation(), &Some(Type::USize));
+    }
+
+    #[test]
+    fn test_enum_with_representation_and_generics() {
+        let input = "enum[u16] Option[T]
+    Some
+    None
+";
+        let lexer = Lexer::new(input);
+        let result = parser::EnumParser::new().parse(lexer);
+        assert!(result.is_ok(), "Failed to parse: {:?}", result);
+        let e = result.unwrap();
+        assert_eq!(e.representation(), &Some(Type::U16));
+        assert_eq!(e.generic_params().len(), 1);
     }
 
     #[test]
@@ -260,7 +335,8 @@ mod enum_tests {
         let input = "enum Status
     Ok = 0
     Error = 1
-    Pending = 2";
+    Pending = 2
+";
         let lexer = Lexer::new(input);
         let result = parser::EnumParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -278,7 +354,8 @@ mod enum_tests {
         let input = "enum Mixed
     A
     B = 10
-    C";
+    C
+";
         let lexer = Lexer::new(input);
         let result = parser::EnumParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -294,7 +371,8 @@ mod enum_tests {
     fn test_enum_with_generic_params() {
         let input = "enum Option[T]
     Some
-    None";
+    None
+";
         let lexer = Lexer::new(input);
         let result = parser::EnumParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -314,7 +392,8 @@ mod enum_tests {
     fn test_enum_with_bounded_generic() {
         let input = "enum Result[T: Clone, E: Copy]
     Ok
-    Err";
+    Err
+";
         let lexer = Lexer::new(input);
         let result = parser::EnumParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -341,7 +420,8 @@ mod enum_tests {
         T: Clone
         E: Send
     Some
-    None";
+    None
+";
         let lexer = Lexer::new(input);
         let result = parser::EnumParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -368,7 +448,8 @@ mod enum_tests {
         Clone
         Copy
     Variant1
-    Variant2";
+    Variant2
+";
         let lexer = Lexer::new(input);
         let result = parser::EnumParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -392,7 +473,8 @@ mod enum_tests {
         T: Clone
         E: Copy
     VariantA
-    VariantB";
+    VariantB
+";
         let lexer = Lexer::new(input);
         let result = parser::EnumParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -404,7 +486,8 @@ mod enum_tests {
     #[test]
     fn test_enum_single_variant() {
         let input = "enum Unit
-    Value";
+    Value
+";
         let lexer = Lexer::new(input);
         let result = parser::EnumParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -417,7 +500,8 @@ mod enum_tests {
     fn test_enum_with_const_param() {
         let input = "enum Array[const N: usize]
     Empty
-    Full";
+    Full
+";
         let lexer = Lexer::new(input);
         let result = parser::EnumParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -442,7 +526,8 @@ mod union_tests {
     fn test_simple_union() {
         let input = "union Value
     int_val: i32
-    float_val: f32";
+    float_val: f32
+";
         let lexer = Lexer::new(input);
         let result = parser::UnionParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -463,7 +548,8 @@ mod union_tests {
     fn test_union_with_generic_params() {
         let input = "union Container[T]
     value: T
-    pointer: *T";
+    pointer: *T
+";
         let lexer = Lexer::new(input);
         let result = parser::UnionParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -483,7 +569,8 @@ mod union_tests {
     fn test_union_with_bounded_generic() {
         let input = "union Data[T: Clone, U: Copy]
     first: T
-    second: U";
+    second: U
+";
         let lexer = Lexer::new(input);
         let result = parser::UnionParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -510,7 +597,8 @@ mod union_tests {
         T: Clone
         U: Copy
     first: T
-    second: U";
+    second: U
+";
         let lexer = Lexer::new(input);
         let result = parser::UnionParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -537,7 +625,8 @@ mod union_tests {
         Clone
         Send
     variant1: T
-    variant2: i32";
+    variant2: i32
+";
         let lexer = Lexer::new(input);
         let result = parser::UnionParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -561,7 +650,8 @@ mod union_tests {
         T: Clone
         U: Copy
     first: T
-    second: U";
+    second: U
+";
         let lexer = Lexer::new(input);
         let result = parser::UnionParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -575,7 +665,8 @@ mod union_tests {
         let input = "union ComplexUnion
     pointer: *i32
     array: []u8
-    reference: &bool";
+    reference: &bool
+";
         let lexer = Lexer::new(input);
         let result = parser::UnionParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -611,7 +702,8 @@ mod union_tests {
     #[test]
     fn test_union_single_variant() {
         let input = "union Single
-    value: i32";
+    value: i32
+";
         let lexer = Lexer::new(input);
         let result = parser::UnionParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -623,7 +715,8 @@ mod union_tests {
     fn test_union_with_const_param() {
         let input = "union Array[const N: usize]
     data: i32
-    size: usize";
+    size: usize
+";
         let lexer = Lexer::new(input);
         let result = parser::UnionParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);

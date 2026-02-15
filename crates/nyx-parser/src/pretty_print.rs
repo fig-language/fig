@@ -96,11 +96,25 @@ impl PrettyPrinter {
     }
 
     /// Pretty print a function to a string
-    // pub fn print_function(&mut self, func: &Function) -> String {
-    //     let mut output = String::new();
-    //     self.format_function(func, &mut output);
-    //     output
-    // }
+    pub fn print_function(&mut self, func: &Function) -> String {
+        let mut output = String::new();
+        self.format_function(func, &mut output);
+        output
+    }
+
+    /// Pretty print an interface to a string
+    pub fn print_interface(&mut self, interface: &Interface) -> String {
+        let mut output = String::new();
+        self.format_interface(interface, &mut output);
+        output
+    }
+
+    /// Pretty print a namespace to a string
+    pub fn print_namespace(&mut self, namespace: &Namespace) -> String {
+        let mut output = String::new();
+        self.format_namespace(namespace, &mut output);
+        output
+    }
 
     /// Get the current indentation string
     fn indent(&self) -> String {
@@ -391,6 +405,14 @@ impl PrettyPrinter {
         writeln!(output, "Enum: {}", enum_decl.name()).unwrap();
         self.indent_level += 1;
 
+        // Representation
+        if let Some(repr) = enum_decl.representation() {
+            writeln!(output, "{}representation:", self.indent()).unwrap();
+            self.indent_level += 1;
+            self.format_type(repr, output, true);
+            self.indent_level -= 1;
+        }
+
         // Generic parameters
         if !enum_decl.generic_params().is_empty() {
             writeln!(output, "{}generic_params:", self.indent()).unwrap();
@@ -560,56 +582,190 @@ impl PrettyPrinter {
     }
 
     /// Format a function into the output buffer
-    // fn format_function(&mut self, func: &Function, output: &mut String) {
-    //     writeln!(output, "Function: {}", func.name()).unwrap();
-    //     self.indent_level += 1;
+    fn format_function(&mut self, func: &Function, output: &mut String) {
+        writeln!(output, "Function: {}", func.signature().name()).unwrap();
+        self.indent_level += 1;
 
-    //     // Generic parameters
-    //     if !func.generic_params().is_empty() {
-    //         writeln!(output, "{}generic_params:", self.indent()).unwrap();
-    //         self.indent_level += 1;
-    //         for (i, param) in func.generic_params().iter().enumerate() {
-    //             self.format_generic_parameter(param, output, i == func.generic_params().len() - 1);
-    //         }
-    //         self.indent_level -= 1;
-    //     }
+        // Signature
+        writeln!(output, "{}signature:", self.indent()).unwrap();
+        self.indent_level += 1;
+        self.format_function_signature(func.signature(), output);
+        self.indent_level -= 1;
 
-    //     // Parameters
-    //     if !func.params().is_empty() {
-    //         writeln!(output, "{}params:", self.indent()).unwrap();
-    //         self.indent_level += 1;
-    //         for (i, param) in func.params().iter().enumerate() {
-    //             self.format_function_parameter(param, output, i == func.params().len() - 1);
-    //         }
-    //         self.indent_level -= 1;
-    //     }
+        // Body
+        writeln!(output, "{}body:", self.indent()).unwrap();
+        self.indent_level += 1;
+        self.format_block(func.body(), output);
+        self.indent_level -= 1;
 
-    //     // Return type
-    //     if let Some(return_type) = func.return_type() {
-    //         writeln!(output, "{}return_type:", self.indent()).unwrap();
-    //         self.indent_level += 1;
-    //         self.format_type(return_type, output, true);
-    //         self.indent_level -= 1;
-    //     }
+        self.indent_level -= 1;
+    }
 
-    //     // Where clause
-    //     if !func.where_clause().is_empty() {
-    //         writeln!(output, "{}where_clause:", self.indent()).unwrap();
-    //         self.indent_level += 1;
-    //         for (i, param) in func.where_clause().iter().enumerate() {
-    //             self.format_generic_parameter(param, output, i == func.where_clause().len() - 1);
-    //         }
-    //         self.indent_level -= 1;
-    //     }
+    /// Format a function signature into the output buffer
+    fn format_function_signature(&mut self, sig: &FunctionSignature, output: &mut String) {
+        writeln!(output, "FunctionSignature: {}", sig.name()).unwrap();
+        self.indent_level += 1;
 
-    //     // Body
-    //     writeln!(output, "{}body:", self.indent()).unwrap();
-    //     self.indent_level += 1;
-    //     self.format_block(func.body(), output);
-    //     self.indent_level -= 1;
+        // Generic parameters
+        if !sig.generic_params().is_empty() {
+            writeln!(output, "{}generic_params:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in sig.generic_params().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == sig.generic_params().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
 
-    //     self.indent_level -= 1;
-    // }
+        // Parameters
+        if !sig.params().is_empty() {
+            writeln!(output, "{}params:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in sig.params().iter().enumerate() {
+                self.format_function_parameter(param, output, i == sig.params().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Return type
+        if let Some(return_type) = sig.return_type() {
+            writeln!(output, "{}return_type:", self.indent()).unwrap();
+            self.indent_level += 1;
+            self.format_type(return_type, output, true);
+            self.indent_level -= 1;
+        }
+
+        // Where clause
+        if !sig.where_clause().is_empty() {
+            writeln!(output, "{}where_clause:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in sig.where_clause().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == sig.where_clause().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        self.indent_level -= 1;
+    }
+
+    /// Format an interface into the output buffer
+    fn format_interface(&mut self, interface: &Interface, output: &mut String) {
+        writeln!(output, "Interface: {}", interface.name()).unwrap();
+        self.indent_level += 1;
+
+        // Generic parameters
+        if !interface.generic_params().is_empty() {
+            writeln!(output, "{}generic_params:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in interface.generic_params().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == interface.generic_params().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Extends clause
+        if !interface.extends_clause().is_empty() {
+            writeln!(output, "{}extends_clause:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, ty) in interface.extends_clause().iter().enumerate() {
+                self.format_type(ty, output, i == interface.extends_clause().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Where clause
+        if !interface.where_clause().is_empty() {
+            writeln!(output, "{}where_clause:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, param) in interface.where_clause().iter().enumerate() {
+                self.format_generic_parameter(param, output, i == interface.where_clause().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        // Methods
+        if !interface.methods().is_empty() {
+            writeln!(output, "{}methods:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, method) in interface.methods().iter().enumerate() {
+                let prefix = format!("{}{}", self.indent(), if i == interface.methods().len() - 1 { self.last_branch() } else { self.branch() });
+                writeln!(output, "{}Method:", prefix).unwrap();
+                self.indent_level += 1;
+                self.format_function_signature(method, output);
+                self.indent_level -= 1;
+            }
+            self.indent_level -= 1;
+        }
+
+        self.indent_level -= 1;
+    }
+
+    /// Format a namespace into the output buffer
+    fn format_namespace(&mut self, namespace: &Namespace, output: &mut String) {
+        writeln!(output, "Namespace: {}", namespace.name()).unwrap();
+        self.indent_level += 1;
+
+        // Items
+        if !namespace.items().is_empty() {
+            writeln!(output, "{}items:", self.indent()).unwrap();
+            self.indent_level += 1;
+            for (i, item) in namespace.items().iter().enumerate() {
+                self.format_namespace_item(item, output, i == namespace.items().len() - 1);
+            }
+            self.indent_level -= 1;
+        }
+
+        self.indent_level -= 1;
+    }
+
+    /// Format a namespace item into the output buffer
+    fn format_namespace_item(&mut self, item: &NamespaceItem, output: &mut String, is_last: bool) {
+        let prefix = format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() });
+        
+        match item {
+            NamespaceItem::Function(func) => {
+                writeln!(output, "{}Function:", prefix).unwrap();
+                self.indent_level += 1;
+                self.format_function(func, output);
+                self.indent_level -= 1;
+            }
+            NamespaceItem::TypeAlias(type_alias) => {
+                writeln!(output, "{}TypeAlias:", prefix).unwrap();
+                self.indent_level += 1;
+                self.format_type_alias(type_alias, output);
+                self.indent_level -= 1;
+            }
+            NamespaceItem::Struct(struct_decl) => {
+                writeln!(output, "{}Struct:", prefix).unwrap();
+                self.indent_level += 1;
+                self.format_struct(struct_decl, output);
+                self.indent_level -= 1;
+            }
+            NamespaceItem::Enum(enum_decl) => {
+                writeln!(output, "{}Enum:", prefix).unwrap();
+                self.indent_level += 1;
+                self.format_enum(enum_decl, output);
+                self.indent_level -= 1;
+            }
+            NamespaceItem::Union(union_decl) => {
+                writeln!(output, "{}Union:", prefix).unwrap();
+                self.indent_level += 1;
+                self.format_union(union_decl, output);
+                self.indent_level -= 1;
+            }
+            NamespaceItem::Interface(interface) => {
+                writeln!(output, "{}Interface:", prefix).unwrap();
+                self.indent_level += 1;
+                self.format_interface(interface, output);
+                self.indent_level -= 1;
+            }
+            NamespaceItem::Namespace(nested) => {
+                writeln!(output, "{}Namespace:", prefix).unwrap();
+                self.indent_level += 1;
+                self.format_namespace(nested, output);
+                self.indent_level -= 1;
+            }
+        }
+    }
 
     /// Format a function parameter into the output buffer
     fn format_function_parameter(&mut self, param: &FunctionParameter, output: &mut String, is_last: bool) {
@@ -670,10 +826,20 @@ pub fn print_struct(struct_decl: &Struct) -> String {
     PrettyPrinter::new().print_struct(struct_decl)
 }
 
-// /// Convenience function to pretty print a function with default settings
-// pub fn print_function(func: &Function) -> String {
-//     PrettyPrinter::new().print_function(func)
-// }
+/// Convenience function to pretty print a function with default settings
+pub fn print_function(func: &Function) -> String {
+    PrettyPrinter::new().print_function(func)
+}
+
+/// Convenience function to pretty print an interface with default settings
+pub fn print_interface(interface: &Interface) -> String {
+    PrettyPrinter::new().print_interface(interface)
+}
+
+/// Convenience function to pretty print a namespace with default settings
+pub fn print_namespace(namespace: &Namespace) -> String {
+    PrettyPrinter::new().print_namespace(namespace)
+}
 
 impl std::fmt::Display for Expression {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -717,11 +883,23 @@ impl std::fmt::Display for Struct {
     }
 }
 
-// impl std::fmt::Display for Function {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         write!(f, "{}", print_function(self))
-//     }
-// }
+impl std::fmt::Display for Function {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", print_function(self))
+    }
+}
+
+impl std::fmt::Display for Interface {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", print_interface(self))
+    }
+}
+
+impl std::fmt::Display for Namespace {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", print_namespace(self))
+    }
+}
 
 #[cfg(test)]
 mod tests {

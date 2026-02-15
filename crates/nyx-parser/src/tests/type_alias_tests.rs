@@ -111,10 +111,11 @@ use crate::{Lexer, ast::{GenericParameter, Type}, parser};
 
     #[test]
     fn test_type_alias_with_where_clause() {
-        let input = "type MyResult[T, E] = i32
+        let input = "type MyResult[T, E]
     where
         T: Clone
-        E: Copy";
+        E: Copy
+    = i32";
         let lexer = Lexer::new(input);
         let result = parser::TypeAliasParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -148,11 +149,12 @@ use crate::{Lexer, ast::{GenericParameter, Type}, parser};
 
     #[test]
     fn test_type_alias_with_complex_where_clause() {
-        let input = "type ComplexType[T, U, V] = *T
+        let input = "type ComplexType[T, U, V] 
     where
         T: Clone + Send
         U: Copy
-        V: Debug + Display";
+        V: Debug + Display
+    = *T";
         let lexer = Lexer::new(input);
         let result = parser::TypeAliasParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -187,9 +189,10 @@ use crate::{Lexer, ast::{GenericParameter, Type}, parser};
 
     #[test]
     fn test_type_alias_with_mixed_params_and_where_clause() {
-        let input = "type MixedType[T: Clone, const N: usize] = *T
+        let input = "type MixedType[T: Clone, const N: usize]
     where
-        T: Send";
+        T: Send
+    = *T";
         let lexer = Lexer::new(input);
         let result = parser::TypeAliasParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);

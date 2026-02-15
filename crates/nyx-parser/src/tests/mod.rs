@@ -7,6 +7,12 @@ mod struct_enum_union_tests;
 #[cfg(test)]
 mod type_alias_tests;
 
+#[cfg(test)]
+mod interface_tests;
+
+#[cfg(test)]
+mod namespace_tests;
+
 use super::*;
 use crate::ast::*;
 

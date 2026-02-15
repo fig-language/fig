@@ -324,24 +324,30 @@ ExtendsClause: Vec<Type> = {
 
 pub TypeAlias: TypeAlias = {
     "type" <name: "ident"> <generic_params: GenericParameterList?> "=" <aliased_type: Type>
-    <where_clause: TypeAliasClause?>
+    // <where_clause: TypeAliasClause?>
     => {
         TypeAlias::new(
             name,
             generic_params.unwrap_or_default(),
             aliased_type,
-            where_clause.unwrap_or_default()
+            // where_clause.unwrap_or_default()
+            Vec::new()
+        )
+    },
+    "type" <name: "ident"> <generic_params: GenericParameterList?>
+    "NEWLINE" "INDENT"
+    <where_clause: WhereClause>
+    "=" <aliased_type: Type>
+    "DEDENT"
+    => {
+        TypeAlias::new(
+            name,
+            generic_params.unwrap_or_default(),
+            aliased_type,
+            where_clause
         )
     },
 };
-
-TypeAliasClause: Vec<GenericParameter> = {
-    "NEWLINE" "INDENT" 
-    <where_clause:WhereClause>
-    "DEDENT"
-    => where_clause,
-};
-
 
 // ============================================================================
 // Enum Parsing
@@ -356,7 +362,7 @@ pub Enum: Enum = {
     "INDENT"
     <requires_clause: RequiresClause?>
     <where_clause: WhereClause?>
-    <variants: Newline<EnumVariant>>
+    <variants: EachNewlinePlus<EnumVariant>>
     "DEDENT"
     => {
         Enum::new(
@@ -391,7 +397,8 @@ pub Union: Union = {
     "INDENT"
     <requires_clause: RequiresClause?>
     <where_clause: WhereClause?> 
-    <variants: Newline<UnionVariant>> "DEDENT"
+    <variants: EachNewlinePlus<UnionVariant>>
+    "DEDENT"
     => {
         Union::new(
             name,
@@ -419,7 +426,7 @@ pub Struct: Struct = {
     "INDENT"
     <requires_clause: RequiresClause?>
     <where_clause: WhereClause?>
-    <fields: Newline<StructField>>
+    <fields: EachNewlinePlus<StructField>>
     "DEDENT"
     => {
         Struct::new(
@@ -490,7 +497,7 @@ pub Interface: Interface = {
     "INDENT"
     <extends_clause: ExtendsClause?>
     <where_clause: WhereClause?>
-    <methods: Newline<FunctionSignature>>
+    <methods: EachNewlinePlus<InterfaceMethodSignature>>
     "DEDENT"
     => {
         Interface::new(
@@ -503,6 +510,21 @@ pub Interface: Interface = {
     },
 };
 
+InterfaceMethodSignature: FunctionSignature = {
+    "fn" <name: "ident"> <generic_params: GenericParameterList?>
+    "(" <params: Comma<FunctionParameter>> ")"
+    <return_type: ("->" <Type>)?>
+    => {
+        FunctionSignature::new(
+            name,
+            generic_params.unwrap_or_default(),
+            params,
+            return_type,
+            Vec::new(),  // No where clause for interface methods
+        )
+    },
+};
+
 // ============================================================================
 // Namespace Parsing
 // ============================================================================
@@ -511,18 +533,41 @@ pub Namespace: Namespace = {
     "namespace" <name: "ident">
     "NEWLINE"
     "INDENT"
-    // <items: Newline<NamespaceItem>>
+    <items: NamespaceItem*>
     "DEDENT"
-    => Namespace::new(name, Vec::new())
+    => Namespace::new(name, items)
 };
 
 NamespaceItem: NamespaceItem = {
-    <type_alias: TypeAlias> => NamespaceItem::TypeAlias(type_alias),
+    <namespace_decl: Namespace> => NamespaceItem::Namespace(namespace_decl),
     <enum_decl: Enum> => NamespaceItem::Enum(enum_decl),
     <union_decl: Union> => NamespaceItem::Union(union_decl),
     <struct_decl: Struct> => NamespaceItem::Struct(struct_decl),
-    // <interface_decl: Interface> => NamespaceItem::Interface(interface_decl),
-    // <function_decl: Function> => NamespaceItem::Function(function_decl),
+    <interface_decl: Interface> => NamespaceItem::Interface(interface_decl),
+    <function_decl: Function> => NamespaceItem::Function(function_decl),
+    // Simple type alias (single line) - needs NEWLINE after it
+    "type" <name: "ident"> <generic_params: GenericParameterList?> "=" <aliased_type: Type> "NEWLINE" => {
+        NamespaceItem::TypeAlias(TypeAlias::new(
+            name,
+            generic_params.unwrap_or_default(),
+            aliased_type,
+            Vec::new()
+        ))
+    },
+    // Type alias with where clause (multi-line) - already ends with DEDENT
+    "type" <name: "ident"> <generic_params: GenericParameterList?>
+    "NEWLINE" "INDENT"
+    <where_clause: WhereClause>
+    "NEWLINE"
+    "=" <aliased_type: Type>
+    "DEDENT" => {
+        NamespaceItem::TypeAlias(TypeAlias::new(
+            name,
+            generic_params.unwrap_or_default(),
+            aliased_type,
+            where_clause
+        ))
+    },
 };
 
 // ============================================================================
@@ -532,6 +577,11 @@ NamespaceItem: NamespaceItem = {
 /// Parse a list of items each of which ends in a newline, even the last one
 EachNewline<T>: Vec<T> = {
     (<T> "NEWLINE")*
+};
+
+/// Parse a non-empty list of items each of which ends in a newline
+EachNewlinePlus<T>: Vec<T> = {
+    (<T> "NEWLINE")+
 };
 
 /// Parse a newline-separated list of items

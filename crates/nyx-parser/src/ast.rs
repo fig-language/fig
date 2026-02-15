@@ -369,13 +369,13 @@ pub struct Namespace {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum NamespaceItem {
+    Namespace(Namespace),
     Function(Function),
     TypeAlias(TypeAlias),
     Struct(Struct),
     Enum(Enum),
     Union(Union),
     Interface(Interface),
-    Namespace(Namespace),
 }
 
 // ============================================================================

@@ -20,8 +20,8 @@ fn Vector2::add(a: i32) -> i32:
 fn some_string[T]() -> string:
     where
         T: Display
-        U: Ord + Clone + Hash
-    $"Hello {10}!"
+        U: Display + Ord + Clone + Hash
+    $"This is a string with type {T.display()} and {U.display()}"
 
 fn nop() -> ok:
     pass

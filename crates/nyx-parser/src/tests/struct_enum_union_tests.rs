@@ -2,8 +2,8 @@
 
 #[cfg(test)]
 mod struct_tests {
-    use crate::{Lexer, parser};
     use crate::ast::*;
+    use crate::{Lexer, parser};
 
     #[test]
     fn test_simple_struct() {
@@ -19,7 +19,7 @@ mod struct_tests {
         assert_eq!(s.generic_params().len(), 0);
         assert_eq!(s.where_clause().len(), 0);
         assert_eq!(s.requires_clause().len(), 0);
-        
+
         assert_eq!(s.fields()[0].name(), "x");
         assert_eq!(s.fields()[0].ty(), &Type::I32);
         assert_eq!(s.fields()[1].name(), "y");
@@ -37,7 +37,7 @@ mod struct_tests {
         assert_eq!(s.name(), "Container");
         assert_eq!(s.generic_params().len(), 1);
         assert_eq!(s.fields().len(), 1);
-        
+
         if let GenericParameter::Type { name, bounds } = &s.generic_params()[0] {
             assert_eq!(name, "T");
             assert_eq!(bounds.len(), 0);
@@ -54,7 +54,7 @@ mod struct_tests {
         let result = parser::StructParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let s = result.unwrap();
-        
+
         if let GenericParameter::Type { name, bounds } = &s.generic_params()[0] {
             assert_eq!(name, "T");
             assert_eq!(bounds.len(), 1);
@@ -74,13 +74,13 @@ mod struct_tests {
         let s = result.unwrap();
         assert_eq!(s.generic_params().len(), 2);
         assert_eq!(s.fields().len(), 2);
-        
+
         // Check T: Clone + Copy
         if let GenericParameter::Type { name, bounds } = &s.generic_params()[0] {
             assert_eq!(name, "T");
             assert_eq!(bounds.len(), 2);
         }
-        
+
         // Check U: Send
         if let GenericParameter::Type { name, bounds } = &s.generic_params()[1] {
             assert_eq!(name, "U");
@@ -97,7 +97,7 @@ mod struct_tests {
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let s = result.unwrap();
         assert_eq!(s.generic_params().len(), 1);
-        
+
         if let GenericParameter::Const { name, ty } = &s.generic_params()[0] {
             assert_eq!(name, "N");
             assert_eq!(ty, &Type::USize);
@@ -119,16 +119,19 @@ mod struct_tests {
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let s = result.unwrap();
         assert_eq!(s.where_clause().len(), 2);
-        
+
         // Check T: Clone
         if let GenericParameter::Type { name, bounds } = &s.where_clause()[0] {
             assert_eq!(name, "T");
             assert_eq!(bounds.len(), 1);
-            if let Type::Named { name: bound_name, .. } = &bounds[0] {
+            if let Type::Named {
+                name: bound_name, ..
+            } = &bounds[0]
+            {
                 assert_eq!(bound_name, "Clone");
             }
         }
-        
+
         // Check U: Copy
         if let GenericParameter::Type { name, bounds } = &s.where_clause()[1] {
             assert_eq!(name, "U");
@@ -148,7 +151,7 @@ mod struct_tests {
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let s = result.unwrap();
         assert_eq!(s.requires_clause().len(), 2);
-        
+
         if let Type::Named { name, .. } = &s.requires_clause()[0] {
             assert_eq!(name, "Clone");
         }
@@ -186,7 +189,7 @@ mod struct_tests {
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let s = result.unwrap();
         assert_eq!(s.fields().len(), 3);
-        
+
         // Check pointer field
         assert_eq!(s.fields()[0].name(), "pointer");
         if let Type::TypedPointer(inner) = s.fields()[0].ty() {
@@ -194,7 +197,7 @@ mod struct_tests {
         } else {
             panic!("Expected pointer type");
         }
-        
+
         // Check array field
         assert_eq!(s.fields()[1].name(), "array");
         if let Type::Array { element_type, size } = s.fields()[1].ty() {
@@ -203,7 +206,7 @@ mod struct_tests {
         } else {
             panic!("Expected array type");
         }
-        
+
         // Check reference field
         assert_eq!(s.fields()[2].name(), "reference");
         if let Type::Reference(inner) = s.fields()[2].ty() {
@@ -227,8 +230,8 @@ mod struct_tests {
 
 #[cfg(test)]
 mod enum_tests {
-    use crate::{Lexer, parser};
     use crate::ast::*;
+    use crate::{Lexer, parser};
 
     #[test]
     fn test_simple_enum() {
@@ -245,7 +248,7 @@ mod enum_tests {
         assert_eq!(e.generic_params().len(), 0);
         assert_eq!(e.where_clause().len(), 0);
         assert_eq!(e.requires_clause().len(), 0);
-        
+
         assert_eq!(e.variants()[0].name(), "Red");
         assert_eq!(e.variants()[0].value(), &None);
         assert_eq!(e.variants()[1].name(), "Green");
@@ -263,7 +266,7 @@ mod enum_tests {
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let e = result.unwrap();
         assert_eq!(e.variants().len(), 3);
-        
+
         // Check that variants have values
         assert!(e.variants()[0].value().is_some());
         assert!(e.variants()[1].value().is_some());
@@ -281,7 +284,7 @@ mod enum_tests {
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let e = result.unwrap();
         assert_eq!(e.variants().len(), 3);
-        
+
         assert!(e.variants()[0].value().is_none());
         assert!(e.variants()[1].value().is_some());
         assert!(e.variants()[2].value().is_none());
@@ -298,7 +301,7 @@ mod enum_tests {
         let e = result.unwrap();
         assert_eq!(e.name(), "Option");
         assert_eq!(e.generic_params().len(), 1);
-        
+
         if let GenericParameter::Type { name, bounds } = &e.generic_params()[0] {
             assert_eq!(name, "T");
             assert_eq!(bounds.len(), 0);
@@ -317,13 +320,13 @@ mod enum_tests {
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let e = result.unwrap();
         assert_eq!(e.generic_params().len(), 2);
-        
+
         // Check T: Clone
         if let GenericParameter::Type { name, bounds } = &e.generic_params()[0] {
             assert_eq!(name, "T");
             assert_eq!(bounds.len(), 1);
         }
-        
+
         // Check E: Copy
         if let GenericParameter::Type { name, bounds } = &e.generic_params()[1] {
             assert_eq!(name, "E");
@@ -344,13 +347,13 @@ mod enum_tests {
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let e = result.unwrap();
         assert_eq!(e.where_clause().len(), 2);
-        
+
         // Check T: Clone
         if let GenericParameter::Type { name, bounds } = &e.where_clause()[0] {
             assert_eq!(name, "T");
             assert_eq!(bounds.len(), 1);
         }
-        
+
         // Check E: Send
         if let GenericParameter::Type { name, bounds } = &e.where_clause()[1] {
             assert_eq!(name, "E");
@@ -371,7 +374,7 @@ mod enum_tests {
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let e = result.unwrap();
         assert_eq!(e.requires_clause().len(), 2);
-        
+
         if let Type::Named { name, .. } = &e.requires_clause()[0] {
             assert_eq!(name, "Clone");
         }
@@ -420,7 +423,7 @@ mod enum_tests {
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let e = result.unwrap();
         assert_eq!(e.generic_params().len(), 1);
-        
+
         if let GenericParameter::Const { name, ty } = &e.generic_params()[0] {
             assert_eq!(name, "N");
             assert_eq!(ty, &Type::USize);
@@ -432,8 +435,8 @@ mod enum_tests {
 
 #[cfg(test)]
 mod union_tests {
-    use crate::{Lexer, parser};
     use crate::ast::*;
+    use crate::{Lexer, parser};
 
     #[test]
     fn test_simple_union() {
@@ -449,7 +452,7 @@ mod union_tests {
         assert_eq!(u.generic_params().len(), 0);
         assert_eq!(u.where_clause().len(), 0);
         assert_eq!(u.requires_clause().len(), 0);
-        
+
         assert_eq!(u.variants()[0].name(), "int_val");
         assert_eq!(u.variants()[0].ty(), &Type::I32);
         assert_eq!(u.variants()[1].name(), "float_val");
@@ -467,7 +470,7 @@ mod union_tests {
         let u = result.unwrap();
         assert_eq!(u.name(), "Container");
         assert_eq!(u.generic_params().len(), 1);
-        
+
         if let GenericParameter::Type { name, bounds } = &u.generic_params()[0] {
             assert_eq!(name, "T");
             assert_eq!(bounds.len(), 0);
@@ -486,13 +489,13 @@ mod union_tests {
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let u = result.unwrap();
         assert_eq!(u.generic_params().len(), 2);
-        
+
         // Check T: Clone
         if let GenericParameter::Type { name, bounds } = &u.generic_params()[0] {
             assert_eq!(name, "T");
             assert_eq!(bounds.len(), 1);
         }
-        
+
         // Check U: Copy
         if let GenericParameter::Type { name, bounds } = &u.generic_params()[1] {
             assert_eq!(name, "U");
@@ -513,13 +516,13 @@ mod union_tests {
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let u = result.unwrap();
         assert_eq!(u.where_clause().len(), 2);
-        
+
         // Check T: Clone
         if let GenericParameter::Type { name, bounds } = &u.where_clause()[0] {
             assert_eq!(name, "T");
             assert_eq!(bounds.len(), 1);
         }
-        
+
         // Check U: Copy
         if let GenericParameter::Type { name, bounds } = &u.where_clause()[1] {
             assert_eq!(name, "U");
@@ -540,7 +543,7 @@ mod union_tests {
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let u = result.unwrap();
         assert_eq!(u.requires_clause().len(), 2);
-        
+
         if let Type::Named { name, .. } = &u.requires_clause()[0] {
             assert_eq!(name, "Clone");
         }
@@ -578,7 +581,7 @@ mod union_tests {
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let u = result.unwrap();
         assert_eq!(u.variants().len(), 3);
-        
+
         // Check pointer variant
         assert_eq!(u.variants()[0].name(), "pointer");
         if let Type::TypedPointer(inner) = u.variants()[0].ty() {
@@ -586,7 +589,7 @@ mod union_tests {
         } else {
             panic!("Expected pointer type");
         }
-        
+
         // Check array variant
         assert_eq!(u.variants()[1].name(), "array");
         if let Type::Array { element_type, size } = u.variants()[1].ty() {
@@ -595,7 +598,7 @@ mod union_tests {
         } else {
             panic!("Expected array type");
         }
-        
+
         // Check reference variant
         assert_eq!(u.variants()[2].name(), "reference");
         if let Type::Reference(inner) = u.variants()[2].ty() {
@@ -626,7 +629,7 @@ mod union_tests {
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
         let u = result.unwrap();
         assert_eq!(u.generic_params().len(), 1);
-        
+
         if let GenericParameter::Const { name, ty } = &u.generic_params()[0] {
             assert_eq!(name, "N");
             assert_eq!(ty, &Type::USize);

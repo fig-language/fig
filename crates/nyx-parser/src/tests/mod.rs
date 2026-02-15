@@ -4,6 +4,9 @@ mod function_tests;
 #[cfg(test)]
 mod struct_enum_union_tests;
 
+#[cfg(test)]
+mod type_alias_tests;
+
 use super::*;
 use crate::ast::*;
 

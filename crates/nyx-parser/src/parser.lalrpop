@@ -307,11 +307,11 @@ PrimitiveType: Type = {
 // ============================================================================
 
 WhereClause: Vec<GenericParameter> = {
-    "NEWLINE" "where" "NEWLINE" "INDENT" <Newline<BoundedTypeParameter>> "DEDENT" => <>,
+    "where" "NEWLINE" "INDENT" <Newline<BoundedTypeParameter>> "DEDENT" => <>,
 };
 
 RequiresClause: Vec<Type> = {
-    "NEWLINE" "requires" "NEWLINE" "INDENT" <Newline<Type>> "DEDENT" => <>,
+    "requires" "NEWLINE" "INDENT" <Newline<Type>> "DEDENT" => <>,
 };
 
 // ============================================================================
@@ -319,7 +319,9 @@ RequiresClause: Vec<Type> = {
 // ============================================================================
 
 pub TypeAlias: TypeAlias = {
-    "type" <name: "ident"> <generic_params: GenericParameterList?> "=" <aliased_type: Type> <where_clause: WhereClause?> => {
+    "type" <name: "ident"> <generic_params: GenericParameterList?> "=" <aliased_type: Type>
+    <where_clause: TypeAliasClause?>
+    => {
         TypeAlias::new(
             name,
             generic_params.unwrap_or_default(),
@@ -329,14 +331,31 @@ pub TypeAlias: TypeAlias = {
     },
 };
 
+TypeAliasClause: Vec<GenericParameter> = {
+    "NEWLINE" "INDENT" 
+    <where_clause:WhereClause>
+    "DEDENT"
+    => where_clause,
+};
+
 
 // ============================================================================
 // Enum Parsing
 // ============================================================================
 
 pub Enum: Enum = {
-    "enum" <name: "ident"> <generic_params: GenericParameterList?> <requires_clause: RequiresClause?>
-    <where_clause: WhereClause?> "NEWLINE" "INDENT" <variants: Newline<EnumVariant>> "DEDENT" => {
+    "enum"
+    // Parse the enum representation here
+    // e.g. enum[u8] MyEnum
+    <name: "ident">
+    <generic_params: GenericParameterList?>
+    "NEWLINE"
+    "INDENT"
+    <requires_clause: RequiresClause?>
+    <where_clause: WhereClause?>
+    <variants: Newline<EnumVariant>>
+    "DEDENT"
+    => {
         Enum::new(
             name,
             generic_params.unwrap_or_default(),
@@ -357,8 +376,15 @@ EnumVariant: EnumVariant = {
 // ============================================================================
 
 pub Union: Union = {
-    "union" <name: "ident"> <generic_params: GenericParameterList?> <requires_clause: RequiresClause?>
-    <where_clause: WhereClause?> "NEWLINE" "INDENT" <variants: Newline<UnionVariant>> "DEDENT" => {
+    "union"
+    <name: "ident">
+    <generic_params: GenericParameterList?>
+    "NEWLINE"
+    "INDENT"
+    <requires_clause: RequiresClause?>
+    <where_clause: WhereClause?> 
+    <variants: Newline<UnionVariant>> "DEDENT"
+    => {
         Union::new(
             name,
             generic_params.unwrap_or_default(),
@@ -378,8 +404,16 @@ UnionVariant: UnionVariant = {
 // ============================================================================
 
 pub Struct: Struct = {
-    "struct" <name: "ident"> <generic_params: GenericParameterList?> <requires_clause: RequiresClause?>
-    <where_clause: WhereClause?> "NEWLINE" "INDENT" <fields: Newline<StructField>> "DEDENT" => {
+    "struct"
+    <name: "ident">
+    <generic_params: GenericParameterList?>
+    "NEWLINE"
+    "INDENT"
+    <requires_clause: RequiresClause?>
+    <where_clause: WhereClause?>
+    <fields: Newline<StructField>>
+    "DEDENT"
+    => {
         Struct::new(
             name,
             generic_params.unwrap_or_default(),
@@ -402,7 +436,9 @@ pub Function: Function = {
     "fn" <name: "ident"> <generic_params: GenericParameterList?>
     "(" <params: Comma<FunctionParameter>> ")"
     <return_type: ("->" <Type>)?>
-    <where_clause: WhereClause?> ":" "NEWLINE" "INDENT"
+    "NEWLINE"
+    "INDENT"
+    <where_clause: WhereClause?>
     <body: Block> "DEDENT" => {
         Function::new(
             name,
@@ -424,12 +460,17 @@ Block: Block = {
 };
 
 Statement: Statement = {
-    <name: "ident"> => Statement::Placeholder(name),
+    "pass" => Statement::Pass,
 };
 
 // ============================================================================
 // Helper Rules
 // ============================================================================
+
+/// Parse a list of items each of which ends in a newline, even the last one
+EachNewline<T>: Vec<T> = {
+    (<T> "NEWLINE")*
+};
 
 /// Parse a newline-separated list of items
 Newline<T>: Vec<T> = {

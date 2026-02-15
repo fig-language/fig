@@ -638,8 +638,8 @@ impl PrettyPrinter {
     fn format_statement(&mut self, stmt: &Statement, output: &mut String, is_last: bool) {
         let prefix = format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() });
         match stmt {
-            Statement::Empty => {
-                writeln!(output, "{}Statement: Empty", prefix).unwrap();
+            Statement::Pass => {
+                writeln!(output, "{}Statement: Pass", prefix).unwrap();
             }
             Statement::Placeholder(name) => {
                 writeln!(output, "{}Statement: Placeholder(\"{}\")", prefix, name).unwrap();

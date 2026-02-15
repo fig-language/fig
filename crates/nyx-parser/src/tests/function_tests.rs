@@ -5,7 +5,7 @@ use crate::{Lexer, parser};
 
 #[test]
 fn test_simple_function() {
-    let input = "fn add(x: i32, y: i32) -> i32:
+    let input = "fn add(x: i32, y: i32) -> i32
     pass";
     let lexer = Lexer::new(input);
     let result = parser::FunctionParser::new().parse(lexer);
@@ -24,8 +24,22 @@ fn test_simple_function() {
 }
 
 #[test]
+fn test_most_basic_function() {
+    let input = "fn main()
+
+    pass";
+    let lexer = Lexer::new(input);
+    let result = parser::FunctionParser::new().parse(lexer);
+    assert!(result.is_ok(), "Failed to parse: {:?}", result);
+    let f = result.unwrap();
+    assert_eq!(f.name(), "main");
+    assert_eq!(f.params().len(), 0);
+    assert_eq!(f.return_type(), &None);
+}
+
+#[test]
 fn test_function_no_params() {
-    let input = "fn main() -> i32:
+    let input = "fn main() -> i32
     pass";
     let lexer = Lexer::new(input);
     let result = parser::FunctionParser::new().parse(lexer);
@@ -38,7 +52,7 @@ fn test_function_no_params() {
 
 #[test]
 fn test_function_no_return_type() {
-    let input = "fn print(x: i32):
+    let input = "fn print(x: i32)
     pass";
     let lexer = Lexer::new(input);
     let result = parser::FunctionParser::new().parse(lexer);
@@ -51,7 +65,7 @@ fn test_function_no_return_type() {
 
 #[test]
 fn test_function_with_generic_params() {
-    let input = "fn identity[T](x: T) -> T:
+    let input = "fn identity[T](x: T) -> T
     pass";
     let lexer = Lexer::new(input);
     let result = parser::FunctionParser::new().parse(lexer);
@@ -71,7 +85,7 @@ fn test_function_with_generic_params() {
 
 #[test]
 fn test_function_with_bounded_generic() {
-    let input = "fn clone[T: Clone](x: T) -> T:
+    let input = "fn clone[T: Clone](x: T) -> T
     pass";
     let lexer = Lexer::new(input);
     let result = parser::FunctionParser::new().parse(lexer);
@@ -95,7 +109,7 @@ fn test_function_with_bounded_generic() {
 
 #[test]
 fn test_function_with_multiple_generics() {
-    let input = "fn pair[T, U](x: T, y: U) -> T:
+    let input = "fn pair[T, U](x: T, y: U) -> T
     pass";
     let lexer = Lexer::new(input);
     let result = parser::FunctionParser::new().parse(lexer);
@@ -108,9 +122,9 @@ fn test_function_with_multiple_generics() {
 #[test]
 fn test_function_with_where_clause() {
     let input = "fn process[T, U](x: T, y: U) -> T
-where
-    T: Clone
-    U: Copy:
+    where
+        T: Clone
+        U: Copy
     pass";
     let lexer = Lexer::new(input);
     let result = parser::FunctionParser::new().parse(lexer);
@@ -149,7 +163,7 @@ where
 
 #[test]
 fn test_function_with_complex_types() {
-    let input = "fn process(ptr: *i32, arr: []u8, ref_val: &bool) -> *u32:
+    let input = "fn process(ptr: *i32, arr: []u8, ref_val: &bool) -> *u32
     pass";
     let lexer = Lexer::new(input);
     let result = parser::FunctionParser::new().parse(lexer);
@@ -192,7 +206,7 @@ fn test_function_with_complex_types() {
 
 #[test]
 fn test_function_with_array_return() {
-    let input = "fn get_array() -> []i32:
+    let input = "fn get_array() -> []i32
     pass";
     let lexer = Lexer::new(input);
     let result = parser::FunctionParser::new().parse(lexer);
@@ -209,7 +223,7 @@ fn test_function_with_array_return() {
 
 #[test]
 fn test_function_with_const_param() {
-    let input = "fn array_func[const N: usize](x: i32) -> i32:
+    let input = "fn array_func[const N: usize](x: i32) -> i32
     pass";
     let lexer = Lexer::new(input);
     let result = parser::FunctionParser::new().parse(lexer);
@@ -227,7 +241,7 @@ fn test_function_with_const_param() {
 
 #[test]
 fn test_function_with_mixed_generics() {
-    let input = "fn complex[T: Clone, const N: usize, U](x: T, y: U) -> T:
+    let input = "fn complex[T: Clone, const N: usize, U](x: T, y: U) -> T
     pass";
     let lexer = Lexer::new(input);
     let result = parser::FunctionParser::new().parse(lexer);
@@ -256,7 +270,7 @@ fn test_function_with_mixed_generics() {
 
 #[test]
 fn test_function_with_multiple_bounds() {
-    let input = "fn multi_bound[T: Clone + Copy + Send](x: T) -> T:
+    let input = "fn multi_bound[T: Clone + Copy + Send](x: T) -> T
     pass";
     let lexer = Lexer::new(input);
     let result = parser::FunctionParser::new().parse(lexer);
@@ -292,7 +306,7 @@ fn test_function_with_multiple_bounds() {
 
 #[test]
 fn test_function_with_single_param() {
-    let input = "fn square(x: i32) -> i32:
+    let input = "fn square(x: i32) -> i32
     pass";
     let lexer = Lexer::new(input);
     let result = parser::FunctionParser::new().parse(lexer);
@@ -303,7 +317,7 @@ fn test_function_with_single_param() {
 
 #[test]
 fn test_function_with_trailing_comma() {
-    let input = "fn add(x: i32, y: i32,) -> i32:
+    let input = "fn add(x: i32, y: i32,) -> i32
     pass";
     let lexer = Lexer::new(input);
     let result = parser::FunctionParser::new().parse(lexer);

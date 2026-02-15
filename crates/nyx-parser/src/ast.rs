@@ -329,7 +329,7 @@ pub struct Block {
 #[derive(Debug, Clone, PartialEq)]
 pub enum Statement {
     /// Placeholder for future statement types
-    Empty,
+    Pass,
     /// Placeholder identifier statement (for testing without full statement parsing)
     Placeholder(String),
 }

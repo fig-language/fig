@@ -14,7 +14,7 @@ pub enum Token {
     Dedent,
     
     // Newline token
-    #[regex(r"\n")]
+    #[regex(r"\n+")]
     Newline,
     // Keywords
     #[token("fn")]
@@ -1179,13 +1179,11 @@ mod tests {
         let expected = vec![
             Token::Fn,
             Token::Ident("test".to_string()),
-            Token::Newline,
-            Token::Newline,
+            Token::Newline,  // Multiple newlines collapsed into one
             Token::Indent,
             Token::Let,
             Token::Ident("x".to_string()),
-            Token::Newline,
-            Token::Newline,
+            Token::Newline,  // Multiple newlines collapsed into one
             Token::Dedent,
             Token::Let,
             Token::Ident("y".to_string()),

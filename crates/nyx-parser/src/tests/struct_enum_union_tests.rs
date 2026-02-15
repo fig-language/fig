@@ -108,10 +108,10 @@ mod struct_tests {
 
     #[test]
     fn test_struct_with_where_clause() {
-        let input = "struct Container[T, U] where
-    T: Clone
-    U: Copy
-
+        let input = "struct Container[T, U]
+    where
+        T: Clone
+        U: Copy
     first: T
     second: U";
         let lexer = Lexer::new(input);
@@ -141,10 +141,10 @@ mod struct_tests {
 
     #[test]
     fn test_struct_with_requires_clause() {
-        let input = "struct Container[T] requires
-    Clone
-    Send
-
+        let input = "struct Container[T]
+    requires
+        Clone
+        Send
     value: T";
         let lexer = Lexer::new(input);
         let result = parser::StructParser::new().parse(lexer);
@@ -162,12 +162,12 @@ mod struct_tests {
 
     #[test]
     fn test_struct_with_requires_and_where() {
-        let input = "struct Complex[T, U] requires
-    Debug
- where
-    T: Clone
-    U: Copy
-
+        let input = "struct Complex[T, U] 
+    requires
+        Debug
+    where
+        T: Clone
+        U: Copy
     first: T
     second: U";
         let lexer = Lexer::new(input);
@@ -336,10 +336,10 @@ mod enum_tests {
 
     #[test]
     fn test_enum_with_where_clause() {
-        let input = "enum Container[T, E] where
-    T: Clone
-    E: Send
-
+        let input = "enum Container[T, E]
+    where
+        T: Clone
+        E: Send
     Some
     None";
         let lexer = Lexer::new(input);
@@ -363,10 +363,10 @@ mod enum_tests {
 
     #[test]
     fn test_enum_with_requires_clause() {
-        let input = "enum MyEnum[T] requires
-    Clone
-    Copy
-
+        let input = "enum MyEnum[T]
+    requires
+        Clone
+        Copy
     Variant1
     Variant2";
         let lexer = Lexer::new(input);
@@ -385,12 +385,12 @@ mod enum_tests {
 
     #[test]
     fn test_enum_with_requires_and_where() {
-        let input = "enum Complex[T, E] requires
-    Debug
- where
-    T: Clone
-    E: Copy
-
+        let input = "enum Complex[T, E] 
+    requires
+        Debug
+    where
+        T: Clone
+        E: Copy
     VariantA
     VariantB";
         let lexer = Lexer::new(input);
@@ -505,10 +505,10 @@ mod union_tests {
 
     #[test]
     fn test_union_with_where_clause() {
-        let input = "union Container[T, U] where
-    T: Clone
-    U: Copy
-
+        let input = "union Container[T, U]
+    where
+        T: Clone
+        U: Copy
     first: T
     second: U";
         let lexer = Lexer::new(input);
@@ -532,10 +532,10 @@ mod union_tests {
 
     #[test]
     fn test_union_with_requires_clause() {
-        let input = "union MyUnion[T] requires
-    Clone
-    Send
-
+        let input = "union MyUnion[T]
+    requires
+        Clone
+        Send
     variant1: T
     variant2: i32";
         let lexer = Lexer::new(input);
@@ -554,12 +554,12 @@ mod union_tests {
 
     #[test]
     fn test_union_with_requires_and_where() {
-        let input = "union Complex[T, U] requires
-    Debug
- where
-    T: Clone
-    U: Copy
-
+        let input = "union Complex[T, U]
+    requires
+        Debug
+    where
+        T: Clone
+        U: Copy
     first: T
     second: U";
         let lexer = Lexer::new(input);

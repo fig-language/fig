@@ -3,10 +3,10 @@
 use nyx_parser::Lexer;
 
 fn main() {
-    let input = "struct Container[T, U] where
-    T: Clone
-    U: Copy
-
+    let input = "struct Container[T, U]
+    where
+        T: Clone
+        U: Copy
     first: T
     second: U";
     

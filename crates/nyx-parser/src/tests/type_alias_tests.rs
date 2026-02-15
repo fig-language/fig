@@ -1,9 +1,6 @@
 // Additional tests for type aliases in nyx-parser
 
-#[cfg(test)]
-mod type_alias_tests {
-    use nyx_parser::{Lexer, parser};
-    use nyx_parser::ast::*;
+use crate::{Lexer, ast::{GenericParameter, Type}, parser};
 
     #[test]
     fn test_simple_type_alias() {
@@ -114,7 +111,10 @@ mod type_alias_tests {
 
     #[test]
     fn test_type_alias_with_where_clause() {
-        let input = "type MyResult[T, E] = i32\nwhere\n    T: Clone\n    E: Copy";
+        let input = "type MyResult[T, E] = i32
+    where
+        T: Clone
+        E: Copy";
         let lexer = Lexer::new(input);
         let result = parser::TypeAliasParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -148,7 +148,11 @@ mod type_alias_tests {
 
     #[test]
     fn test_type_alias_with_complex_where_clause() {
-        let input = "type ComplexType[T, U, V] = *T\nwhere\n    T: Clone + Send\n    U: Copy\n    V: Debug + Display";
+        let input = "type ComplexType[T, U, V] = *T
+    where
+        T: Clone + Send
+        U: Copy
+        V: Debug + Display";
         let lexer = Lexer::new(input);
         let result = parser::TypeAliasParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -183,7 +187,9 @@ mod type_alias_tests {
 
     #[test]
     fn test_type_alias_with_mixed_params_and_where_clause() {
-        let input = "type MixedType[T: Clone, const N: usize] = *T\nwhere\n    T: Send";
+        let input = "type MixedType[T: Clone, const N: usize] = *T
+    where
+        T: Send";
         let lexer = Lexer::new(input);
         let result = parser::TypeAliasParser::new().parse(lexer);
         assert!(result.is_ok(), "Failed to parse: {:?}", result);
@@ -241,4 +247,3 @@ mod type_alias_tests {
             panic!("Expected array type");
         }
     }
-}

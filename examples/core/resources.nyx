@@ -1,0 +1,44 @@
+namespace core::resources
+
+/// A marker interface to indicate that a type is a resource that can be used by
+/// an effectful function. This is used so that the user can implement their own
+/// resource types and use them with effectful functions.
+/// This is a marker interface, so it has no methods or associated items. It is
+/// used purely for type checking and documentation purposes.
+///
+/// Despite being an empty interface, and the language having implicit 
+/// implementation of interfaces, this interface is opt-in.
+/// In fact, any empty interface in the language is opt-in, and the
+/// compiler will complain, unless you add the #marker annotation to it.
+/// This is to prevent programmers being confused about why an empty
+/// interface is not implemented by all types, and to make it clear that the
+/// interface is meant to be a marker interface, and not a regular interface that
+/// just happens to be empty.
+#marker
+interface Resource
+
+/// Currently are not correclty parsing interfaces with clauses but without
+/// and functions (also structs with clauses but without fields), so we
+/// need to temporarily add a dummy function to each resource interface,
+/// to make sure they are parsed correctly.
+
+/// The Io resource represents a function which performs input/output operations.
+#marker
+interface Io
+    extends
+        Resource
+
+/// The Heap resource represents a function which performs heap allocations.
+#marker
+interface Heap
+    extends
+        Resource
+
+// The Timer resource represents a function which performs timing operations,
+// such as sleeping or measuring time.
+#marker
+interface Timer
+    extends
+        Resource
+
+

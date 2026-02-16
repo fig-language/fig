@@ -1,0 +1,6 @@
+union Either[U, V]
+    requires
+        Display
+        Debug
+    Left: U
+    Right: V

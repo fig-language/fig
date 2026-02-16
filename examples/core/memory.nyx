@@ -1,0 +1,78 @@
+namespace core::memory
+
+/// External low-level C functions
+namespace c
+    extern fn! malloc(size: usize) -> *mut u8
+        uses Heap
+    extern fn! free(ptr: *mut u8)
+        uses Heap
+    extern fn! memcpy(dest: *mut u8, src: *u8, n: usize)
+        uses Heap
+    extern fn! memset(dest: *mut u8, value: u8, n: usize)
+        uses Heap
+    extern fn! realloc(ptr: *mut u8, new_size: usize) -> *mut u8
+        uses Heap
+    extern fn! memcmp(ptr1: *u8, ptr2: *u8, n: usize) -> i32
+        uses Heap
+
+/// The Allocator interface, inspired by Odin and Zig.
+/// Any heap allocator must implement these methods.
+interface Allocator
+    /// Allocate `size` bytes on the heap. Returns a pointer to the memory.
+    fn! allocate(self: Self, size: usize) -> *mut u8
+
+    /// Deallocate memory previously allocated by this allocator.
+    fn! deallocate(self: Self, ptr: *mut u8)
+
+    /// Allocate `size` bytes and initialize them to zero.
+    fn! allocate_zeroed(self: Self, size: usize) -> *mut u8
+
+    /// Reallocate a previously allocated block to a new size.
+    fn! reallocate(self: Self, ptr: *mut u8, new_size: usize) -> *mut u8
+
+    /// Copy memory from `src` to `dest`, similar to `memcpy`.
+    fn! copy(self: Self, dest: *mut u8, src: *u8, n: usize)
+
+    /// Fill `n` bytes at `dest` with `value`, similar to `memset`.
+    fn! fill(self: Self, dest: *mut u8, value: u8, n: usize)
+
+    /// Compare `n` bytes at `ptr1` and `ptr2`, similar to `memcmp`.
+    fn! compare(self: Self, ptr1: *u8, ptr2: *u8, n: usize) -> i32
+
+
+// A simple system allocator that uses the C standard library functions for memory management.
+struct SystemAllocator
+    requires
+        Allocator
+    nil: ?*u8 // temporary dummy field since fails to parse empty struct with clauses
+
+fn! SystemAllocator::allocate(self: Self, size: usize) -> *mut u8
+    uses Heap
+    c::malloc(size)
+
+fn! SystemAllocator::deallocate(self: Self, ptr: *mut u8)
+    uses Heap
+    c::free(ptr)
+
+fn! SystemAllocator::allocate_zeroed(self: Self, size: usize) -> *mut u8
+    uses Heap
+    let ptr = c::malloc(size)
+    if ptr != null
+        c::memset(ptr, 0u8, size)
+    ptr
+
+fn! SystemAllocator::reallocate(self: Self, ptr: *mut u8, new_size: usize) -> *mut u8
+    uses Heap
+    c::realloc(ptr, new_size)
+
+fn! SystemAllocator::copy(self: Self, dest: *mut u8, src: *u8, n: usize)
+    uses Heap
+    c::memcpy(dest, src, n)
+
+fn! SystemAllocator::fill(self: Self, dest: *mut u8, value: u8, n: usize)
+    uses Heap
+    c::memset(dest, value, n)
+
+fn! SystemAllocator::compare(self: Self, ptr1: *u8, ptr2: *u8, n: usize) -> i32
+    uses Heap
+    c::memcmp(ptr1, ptr2, n)

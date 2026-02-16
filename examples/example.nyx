@@ -2,9 +2,11 @@
 type Array[T] = []T
 type string = Array[u8]
 
-struct Vector2[T: Numeric]
+struct Vector2[T]
     requires
-        Display:
+        Display
+    where
+        T: Numeric
     x: T
     y: T
 
@@ -21,19 +23,16 @@ fn Vector2::zero() -> Vector2[T]:
         x: T::zero()
         y: T::zero()
 
-fn Vector2::display(self) -> string:
+fn Vector2::display(self) -> String:
     $"({self.x}, {self.y})"
 
-// Displays the implemented type as a type that can be converted into a string
 interface Display[T]
     where
-        T: Into[string]:
-    fn display(self) -> T
+        T: Into[String]
+    fn display() -> T
 
-// An example of an interface with generic bounds and which requires multiple
-// other interfaces to be implemented by the type that implements it
 interface Numeric[T]
-    requires
+    extends
         Add,
         Sub,
         Mul,
@@ -41,7 +40,7 @@ interface Numeric[T]
         Neg,
         Display
     where
-        T: Sized:
+        T: Sized
     fn add(self: T, other: T) -> T
     fn sub(self: T, other: T) -> T
     fn mul(self: T, other: T) -> T
@@ -96,7 +95,7 @@ struct Matrix[T, U, V, W, X, Y, Z]:
         W: Signed
         X: Hash
         Y: Eq
-        Z: Ord:
+        Z: Ord
     rows: i32
     cols: i32
     data: [][]T

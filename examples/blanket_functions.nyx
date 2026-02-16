@@ -1,0 +1,68 @@
+interface Math
+    fn add(self: Self, other: Self) -> Self
+    fn sub(self: Self, other: Self) -> Self
+
+interface AddTo[T]
+    fn add[Scale](self: Self, other: T, scale: Scale) -> Self
+
+struct Vector2
+    x: f64
+    y: f64
+
+fn Vector2.add(other: Vector2) -> Vector2
+    self.x += other.x
+    self.y += other.y
+    self
+
+fn Vector2.sub(other: Vector2) -> Vector2
+    self.x -= other.x
+    self.y -= other.y
+    self
+
+
+fn[T] ::*T::add_to[Scale](other: i32, scale: Scale) -> *T
+    pass
+
+
+// These functions belong to the global namespace and so
+// it means *T will NOT satisfy the Math interface because
+// these functions are not methods of *T, they are just free
+// functions that take *T as parameters.
+fn add[T](self: *T, other: *T) -> *T
+    pass
+
+fn sub[T](self: *T, other: *T) -> *T
+    pass
+
+
+// Each individual function below defines a whole class of
+// methods, each with a different type T. So the first add
+// function defines the method *T.add for every type T, and
+// the second add function defines the method *T.sub for every
+// type T. This means that *T will satisfy the Math interface
+// for all T.
+fn[T] ::*T::add(other: *T) -> *T
+    pass
+
+fn[T] ::*T::sub(other: *T) -> *T
+    pass
+
+// Undecided
+fn[T] ::*T::add(self: *T, other: *T) -> *T
+    pass
+
+fn[T] ::*T::sub(self: *T, other: *T) -> *T
+    pass
+
+
+struct Array[T]
+    data: []T
+    len: usize
+
+fn something::Array[T]::insert(value: T) -> ok
+    pass
+
+fn Array[i32]::cool_insert(value: i32) -> ok
+    pass
+
+

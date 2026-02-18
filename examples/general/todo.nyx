@@ -1,0 +1,73 @@
+
+// TODO: Make namespaces unified. For example, a struct has an associated namespace,
+// and all of its methods are just functions in that namespace which happen to take
+// a `self` parameter with the struct type. This way we can have free functions and
+// methods in the same namespace. Additionally, each file has a namespace, so we can
+// have free functions not associated with any type in the namespace.
+//
+// All of the
+// struct, enum, union, and interface types defined in a namespace, have what is called
+// an `associated namespace` which is a child namespace of the parent namespace, with
+// the same name as the type. So for example, if we have a struct called `Vector` defined
+// in the `math` namespace, then there will be a child namespace called `math::Vector`
+// which is the associated namespace of the `Vector` struct. All of the methods of the
+// `Vector` struct are just functions in the `math::Vector` namespace which take a `self`
+// parameter of type `Vector`. This way we can have free functions and methods in the 
+// same namespace, and we can also have multiple types with the same name in different
+// namespaces without any conflicts. For example, we can have a `Vector` struct in both 
+// the `math` and `physics` namespaces, and they will not conflict with each other
+// because they are in different namespaces. Additionally, we can have free functions
+// in the `math` namespace that are not associated with any type, and they will not 
+// conflict with any methods in the `math::Vector` namespace because they are in different
+// namespaces.
+//
+// Of course, namespace members should be private by default, and we can have a keyword
+// like `pub` to make them public. Since methods of a type are just functions in the
+// associated namespace of the type, it follows that the same rules of privacy apply
+// to method calls. We can things other than functions in the associated namespace of
+// a type. For example, we can have constants as well.
+//
+// Since types like structs are just namespaces, it means we can use the `using`
+// keyword to bring the members of the associated namespace of a type into scope.
+// For example, if we have a struct called `Vector` defined in the `math` namespace,
+// then we can write `using math::Vector` to bring all of the members of the 
+// `math::Vector` namespace into the current scope, which means we can call the
+// methods of the `Vector` struct without having to write `Vector::` or `Vector.`
+// before the method name. Essentially they become available as if they were free
+// functions in the current namespace.
+//
+// This also means that we can use the `namespace` keyword to directly add members
+// to the associated namespace of a type. For example, if we have a struct called
+// `Vector` defined in the `math` namespace, then we can write `namespace math::Vector`
+// to directly add members to the associated namespace of the `Vector` struct, 
+// which means we can define methods for the `Vector` struct without having to write 
+// `fn Vector::method` syntax. This is just a more concise way of defining methods
+// for a type, as it naturally groups all related things being implemented for
+// that type together in the same namespace block.
+//
+// Now consider the case where we have a type with generic type parameters, for
+// example `struct Seq[T]`. In this case, the associated namespace of the type
+// also has the same generic type parameters. So when using the `namespace`
+// syntax, we also have to specify the generic type parameters. For example,
+// if we have a struct called `Seq[T]` defined in the `collections` namespace,
+// then we can write `namespace collections::Seq[i32]` to directly add members 
+// to the associated namespace of the `Seq[i32]` type. However, what if we
+// would like to add members to the associated namespace of the `Seq[T]` type
+// for all T? In this case, we can use the `namespace` syntax which introduces
+// a new universally quantified type parameter. For example, we can write 
+// `namespace[T] collections::Seq[T]` to directly add members to the associated
+// namespace of the `Seq[T]` type.
+//
+// Furthermore, we should have a way of constraining this universally quantified
+// type parameter. We can do this with a `where` clause like we can for any
+// other statement that accepts generic parameters. For example, we might want 
+// to add members to the associated namespace of the `Seq[T]` type for all T 
+// that implement a certain interface. In this case, we can write 
+// `namespace[T] collections::Seq[T] 
+//      where
+//          T: SomeInterface`
+// Note that when using the `namespace` syntax, to add members to an associated
+// namespace, the type must have already been defined previously. Everything
+// mentioned above also applies to enums, unions, and interfaces as well.
+// However, there are some restrictions on what kinds of types we can add to
+// the associated namespace of other types.

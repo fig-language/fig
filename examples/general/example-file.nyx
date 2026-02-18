@@ -1,4 +1,8 @@
-fn main[T, U, V](x: i32, y: i32)
+fn main::[T, U, V](x: i32, y: i32)
+    where
+        T: Copy
+        U: Display
+        V: Debug + Clone
     let x: u64 = 5
     const PI: f64 = 3.14
     let y = 10
@@ -11,6 +15,9 @@ fn main[T, U, V](x: i32, y: i32)
     io.println(msg)
 
 fn add(a: i32, b: i32) -> i32
+    where
+        T: Add[T]
+        U: Display
     let something = a + (b / 10) == 10
     $"Result is {a.add(b)::C}"
 
@@ -19,13 +26,18 @@ extern fn! free(ptr: *mut u8)
 extern fn! memcpy(dest: *mut u8, src: *u8, n: usize) -> *mut u8
 
 fn Vector2::add(a: i32) -> i32
-    let x = 10
+    where
+        T: Add[T]
+    self.x += a
+    self.y += a
 
-fn! Vector2.scale(factor: f64) -> Self
+fn Vector2.scale(factor: f64[T]) -> Self
+    where
+        T: Mul[T]
     self.x *= factor
     self.y *= factor
 
-fn some_string[T]() -> String
+fn some_string::[T]() -> String
     where
         T: Display
         U: Display + Ord + Clone + Hash
@@ -58,12 +70,14 @@ union std::Either[U, V]
     requires
         Display
         Debug
-    Left: U
-    Right: V
+    left: U
+    right: V
 
 struct Vector[T]
     arr: []T
     len: usize
+
+struct Test[T]
 
 packed struct Bits
     a: u8

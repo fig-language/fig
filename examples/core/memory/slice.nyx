@@ -1,0 +1,141 @@
+namespace core::memory::slice
+    
+using core::memory
+
+// ----------------------
+// Basic slice types
+// ----------------------
+
+struct Slice[T]
+    ptr: *T
+    len: usize
+
+fn[T] Slice[T]::new(ptr: *T, len: usize) -> Slice[T]
+    return Slice(ptr, len)
+
+fn[T] Slice[T].as_ptr(*self) -> *T
+    return self.ptr
+
+fn[T] Slice[T].len(*self) -> usize
+    return self.len
+
+fn[T] Slice[T].get(*self, index: usize) -> ?*T
+    if index < self.len
+        self.ptr + index
+
+fn[T] Slice[T].first(*self) -> ?*T
+    if self.len > 0
+        self.ptr
+
+fn[T] Slice[T].last(*self) -> ?*T
+    if self.len > 0
+        self.ptr + (self.len - 1)
+
+fn[T] Slice[T].iter(*self) -> SliceIterator[*T]
+    return SliceIterator::new(self.ptr, self.len)
+
+fn[T] Slice[T].iter_shared(self: Shared[Self]) -> SliceIteratorShared[T]
+    return SliceIteratorShared::new(self)
+
+fn[T] Slice[T].as_bytes(*self) -> Slice[u8]
+    return Slice(self.ptr as *u8, self.len * sizeof(T))
+
+
+struct MutSlice[T]
+    ptr: *mut T
+    len: usize
+
+fn[T] MutSlice[T]::new(ptr: *mut T, len: usize) -> MutSlice[T]
+    return MutSlice(ptr, len)
+
+fn[T] MutSlice[T].as_ptr(*self) -> *T
+    return self.ptr as *T
+
+fn[T] MutSlice[T].as_mut_ptr(*mut self) -> *mut T
+    return self.ptr
+
+fn[T] MutSlice[T].as_slice(*self) -> Slice[T]
+    return Slice::new(self.ptr as *T, self.len)
+
+fn[T] MutSlice[T].len(*self) -> usize
+    return self.len
+
+fn[T] MutSlice[T].get(*self, index: usize) -> ?*T
+    if index < self.len
+        (self.ptr + index) as *T
+
+fn[T] MutSlice[T].get_mut(*mut self, index: usize) -> ?*mut T
+    if index < self.len
+        self.ptr + index
+
+fn[T] MutSlice[T].iter(*self) -> SliceIterator[*T]
+    return SliceIterator::new(self.ptr as *T, self.len)
+
+fn[T] MutSlice[T].iter_mut(*self) -> SliceIterator[*mut T]
+    return SliceIterator::new(self.ptr, self.len)
+
+fn[T] MutSlice[T]::iter_shared(self: Shared[Self]) -> SliceIteratorShared[*mut T]
+    return SliceIteratorShared::new(self)
+
+fn[T] MutSlice[T]::as_bytes(*self) -> Slice[u8]
+    return Slice(self.ptr as *u8, self.len * sizeof(T))
+
+fn[T] MutSlice[T]::as_mut_bytes(*self) -> MutSlice[u8]
+    return MutSlice(self.ptr as *mut u8, self.len * sizeof(T))
+
+
+// ----------------------
+// Pointer offset trait
+// ----------------------
+
+interface Offsettable
+    fn offset(*self, count: usize) -> Self
+
+fn[T] ::*T::offset(self: *T, count: usize) -> *T
+    return self + count
+
+fn[T] ::*mut T::offset(self: *mut T, count: usize) -> *mut T
+    return self + count
+
+
+// ----------------------
+// Raw pointer slice iterator
+// ----------------------
+
+struct SliceIterator[P]
+    where
+        P: Offsettable
+    requires
+        Iterator[P]
+    ptr: P
+    len: usize
+    index: usize
+
+fn[P] SliceIterator[P]::new(ptr: P, len: usize) -> SliceIterator[P]
+    return SliceIterator(ptr, len, 0)
+
+fn![P] SliceIterator[P]::next(*mut self) -> ?P
+    if self.index < self.len
+        let item = self.ptr.offset(self.index)
+        self.index += 1
+        return item
+
+
+// ----------------------
+// Shared (safe) slice iterator
+// ----------------------
+
+struct SliceIteratorShared[T]
+    slice: Shared[Slice[T]]
+    index: usize
+
+fn[T] SliceIteratorShared[T]::new(slice: Shared[Slice[T]]) -> SliceIteratorShared[T]
+    return SliceIteratorShared(slice.clone(), 0)
+
+fn![T] SliceIteratorShared[T]::next(*mut self) -> ?*T
+    let s = self.slice.borrow()
+    if self.index < s.len()
+        let item = s.ptr + self.index
+        self.index += 1
+        return item
+

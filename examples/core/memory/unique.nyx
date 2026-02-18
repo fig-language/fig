@@ -1,0 +1,48 @@
+namespace std::memory::unique
+    
+using core::memory
+
+// ----------------------
+// Inner Unique structure
+// ----------------------
+struct Unique[T]
+    inner: ?*mut T
+
+// ----------------------
+// Create a new Unique
+// ----------------------
+fn![T] Unique[T]::new(value: T) -> Unique[T]
+    let ptr: *mut T = SystemAllocator.allocate![T]()
+    *ptr = value
+    return Unique(ptr)
+
+// ----------------------
+// Drop the Unique (free memory)
+// ----------------------
+fn![T] Unique[T]::drop(self: *mut Self)
+    if self.inner != null
+        SystemAllocator.deallocate(self.inner as *mut u8)
+        self.inner = null
+
+// ----------------------
+// Move semantics
+// ----------------------
+
+// Moving a Unique transfers ownership
+fn![T] Unique[T]::move(self: *mut Self) -> Unique[T]
+    let u = Unique(self.inner)
+    self.inner = null
+    return u
+
+// ----------------------
+// Access the inner value
+// ----------------------
+
+// Immutable borrow
+fn[T] Unique[T]::get(self: *Self) -> *T
+    return self.inner
+
+// Mutable borrow
+fn[T] Unique[T]::get_mut(self: *mut Self) -> *mut T
+    return self.inner
+

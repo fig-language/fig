@@ -1,0 +1,6 @@
+namespace core::collections
+
+    
+interface Indexable[T]
+    fn get(*self, index: usize) -> ?T
+    fn len(*self) -> usize

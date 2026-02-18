@@ -136,14 +136,22 @@ impl PrettyPrinter {
         let prefix = if self.indent_level == 0 {
             String::new()
         } else {
-            format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() })
+            format!(
+                "{}{}",
+                self.indent(),
+                if is_last {
+                    self.last_branch()
+                } else {
+                    self.branch()
+                }
+            )
         };
 
         match expr {
             Expression::IntegerLiteral(lit) => {
                 writeln!(output, "{}IntegerLiteral: {}", prefix, lit).unwrap();
             }
-            
+
             Expression::FloatLiteral(lit) => {
                 writeln!(output, "{}FloatLiteral: {}", prefix, lit).unwrap();
             }
@@ -175,7 +183,13 @@ impl PrettyPrinter {
                 if elements.is_empty() {
                     writeln!(output, "{}└─ (empty)", self.indent()).unwrap();
                 } else {
-                    writeln!(output, "{}elements: {} item(s)", self.indent(), elements.len()).unwrap();
+                    writeln!(
+                        output,
+                        "{}elements: {} item(s)",
+                        self.indent(),
+                        elements.len()
+                    )
+                    .unwrap();
                     self.indent_level += 1;
                     for (i, elem) in elements.iter().enumerate() {
                         let is_last_elem = i == elements.len() - 1;
@@ -189,17 +203,17 @@ impl PrettyPrinter {
             Expression::BinaryOp(op) => {
                 writeln!(output, "{}BinaryOp: {:?}", prefix, op.op()).unwrap();
                 self.indent_level += 1;
-                
+
                 writeln!(output, "{}left:", self.indent()).unwrap();
                 self.indent_level += 1;
                 self.format_expression(op.lhs(), output, true);
                 self.indent_level -= 1;
-                
+
                 writeln!(output, "{}right:", self.indent()).unwrap();
                 self.indent_level += 1;
                 self.format_expression(op.rhs(), output, true);
                 self.indent_level -= 1;
-                
+
                 self.indent_level -= 1;
             }
 
@@ -227,7 +241,15 @@ impl PrettyPrinter {
         let prefix = if self.indent_level == 0 {
             String::new()
         } else {
-            format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() })
+            format!(
+                "{}{}",
+                self.indent(),
+                if is_last {
+                    self.last_branch()
+                } else {
+                    self.branch()
+                }
+            )
         };
 
         match ast_type {
@@ -297,7 +319,7 @@ impl PrettyPrinter {
                 self.indent_level -= 1;
                 self.indent_level -= 1;
             }
-            Type::Named{ name, generic_args } => {
+            Type::Named { name, generic_args } => {
                 writeln!(output, "{}Type: Named(\"{}\")", prefix, name).unwrap();
                 if !generic_args.is_empty() {
                     self.indent_level += 1;
@@ -350,7 +372,11 @@ impl PrettyPrinter {
             writeln!(output, "{}generic_params:", self.indent()).unwrap();
             self.indent_level += 1;
             for (i, param) in type_alias.generic_params().iter().enumerate() {
-                self.format_generic_parameter(param, output, i == type_alias.generic_params().len() - 1);
+                self.format_generic_parameter(
+                    param,
+                    output,
+                    i == type_alias.generic_params().len() - 1,
+                );
             }
             self.indent_level -= 1;
         }
@@ -366,7 +392,11 @@ impl PrettyPrinter {
             writeln!(output, "{}where_clause:", self.indent()).unwrap();
             self.indent_level += 1;
             for (i, param) in type_alias.where_clause().iter().enumerate() {
-                self.format_generic_parameter(param, output, i == type_alias.where_clause().len() - 1);
+                self.format_generic_parameter(
+                    param,
+                    output,
+                    i == type_alias.where_clause().len() - 1,
+                );
             }
             self.indent_level -= 1;
         }
@@ -375,8 +405,21 @@ impl PrettyPrinter {
     }
 
     /// Format a generic parameter into the output buffer
-    fn format_generic_parameter(&mut self, param: &GenericParameter, output: &mut String, is_last: bool) {
-        let prefix = format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() });
+    fn format_generic_parameter(
+        &mut self,
+        param: &GenericParameter,
+        output: &mut String,
+        is_last: bool,
+    ) {
+        let prefix = format!(
+            "{}{}",
+            self.indent(),
+            if is_last {
+                self.last_branch()
+            } else {
+                self.branch()
+            }
+        );
 
         match param {
             GenericParameter::Type { name, bounds } => {
@@ -418,7 +461,11 @@ impl PrettyPrinter {
             writeln!(output, "{}generic_params:", self.indent()).unwrap();
             self.indent_level += 1;
             for (i, param) in enum_decl.generic_params().iter().enumerate() {
-                self.format_generic_parameter(param, output, i == enum_decl.generic_params().len() - 1);
+                self.format_generic_parameter(
+                    param,
+                    output,
+                    i == enum_decl.generic_params().len() - 1,
+                );
             }
             self.indent_level -= 1;
         }
@@ -438,7 +485,11 @@ impl PrettyPrinter {
             writeln!(output, "{}where_clause:", self.indent()).unwrap();
             self.indent_level += 1;
             for (i, param) in enum_decl.where_clause().iter().enumerate() {
-                self.format_generic_parameter(param, output, i == enum_decl.where_clause().len() - 1);
+                self.format_generic_parameter(
+                    param,
+                    output,
+                    i == enum_decl.where_clause().len() - 1,
+                );
             }
             self.indent_level -= 1;
         }
@@ -458,8 +509,16 @@ impl PrettyPrinter {
 
     /// Format an enum variant into the output buffer
     fn format_enum_variant(&mut self, variant: &EnumVariant, output: &mut String, is_last: bool) {
-        let prefix = format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() });
-        
+        let prefix = format!(
+            "{}{}",
+            self.indent(),
+            if is_last {
+                self.last_branch()
+            } else {
+                self.branch()
+            }
+        );
+
         if let Some(value) = variant.value() {
             writeln!(output, "{}Variant: {} = {}", prefix, variant.name(), value).unwrap();
         } else {
@@ -477,7 +536,11 @@ impl PrettyPrinter {
             writeln!(output, "{}generic_params:", self.indent()).unwrap();
             self.indent_level += 1;
             for (i, param) in union_decl.generic_params().iter().enumerate() {
-                self.format_generic_parameter(param, output, i == union_decl.generic_params().len() - 1);
+                self.format_generic_parameter(
+                    param,
+                    output,
+                    i == union_decl.generic_params().len() - 1,
+                );
             }
             self.indent_level -= 1;
         }
@@ -497,7 +560,11 @@ impl PrettyPrinter {
             writeln!(output, "{}where_clause:", self.indent()).unwrap();
             self.indent_level += 1;
             for (i, param) in union_decl.where_clause().iter().enumerate() {
-                self.format_generic_parameter(param, output, i == union_decl.where_clause().len() - 1);
+                self.format_generic_parameter(
+                    param,
+                    output,
+                    i == union_decl.where_clause().len() - 1,
+                );
             }
             self.indent_level -= 1;
         }
@@ -517,7 +584,15 @@ impl PrettyPrinter {
 
     /// Format a union variant into the output buffer
     fn format_union_variant(&mut self, variant: &UnionVariant, output: &mut String, is_last: bool) {
-        let prefix = format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() });
+        let prefix = format!(
+            "{}{}",
+            self.indent(),
+            if is_last {
+                self.last_branch()
+            } else {
+                self.branch()
+            }
+        );
         writeln!(output, "{}Variant: {} :", prefix, variant.name()).unwrap();
         self.indent_level += 1;
         self.format_type(variant.ty(), output, true);
@@ -534,7 +609,11 @@ impl PrettyPrinter {
             writeln!(output, "{}generic_params:", self.indent()).unwrap();
             self.indent_level += 1;
             for (i, param) in struct_decl.generic_params().iter().enumerate() {
-                self.format_generic_parameter(param, output, i == struct_decl.generic_params().len() - 1);
+                self.format_generic_parameter(
+                    param,
+                    output,
+                    i == struct_decl.generic_params().len() - 1,
+                );
             }
             self.indent_level -= 1;
         }
@@ -554,7 +633,11 @@ impl PrettyPrinter {
             writeln!(output, "{}where_clause:", self.indent()).unwrap();
             self.indent_level += 1;
             for (i, param) in struct_decl.where_clause().iter().enumerate() {
-                self.format_generic_parameter(param, output, i == struct_decl.where_clause().len() - 1);
+                self.format_generic_parameter(
+                    param,
+                    output,
+                    i == struct_decl.where_clause().len() - 1,
+                );
             }
             self.indent_level -= 1;
         }
@@ -574,7 +657,15 @@ impl PrettyPrinter {
 
     /// Format a struct field into the output buffer
     fn format_struct_field(&mut self, field: &StructField, output: &mut String, is_last: bool) {
-        let prefix = format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() });
+        let prefix = format!(
+            "{}{}",
+            self.indent(),
+            if is_last {
+                self.last_branch()
+            } else {
+                self.branch()
+            }
+        );
         writeln!(output, "{}Field: {} :", prefix, field.name()).unwrap();
         self.indent_level += 1;
         self.format_type(field.ty(), output, true);
@@ -657,7 +748,11 @@ impl PrettyPrinter {
             writeln!(output, "{}generic_params:", self.indent()).unwrap();
             self.indent_level += 1;
             for (i, param) in interface.generic_params().iter().enumerate() {
-                self.format_generic_parameter(param, output, i == interface.generic_params().len() - 1);
+                self.format_generic_parameter(
+                    param,
+                    output,
+                    i == interface.generic_params().len() - 1,
+                );
             }
             self.indent_level -= 1;
         }
@@ -677,7 +772,11 @@ impl PrettyPrinter {
             writeln!(output, "{}where_clause:", self.indent()).unwrap();
             self.indent_level += 1;
             for (i, param) in interface.where_clause().iter().enumerate() {
-                self.format_generic_parameter(param, output, i == interface.where_clause().len() - 1);
+                self.format_generic_parameter(
+                    param,
+                    output,
+                    i == interface.where_clause().len() - 1,
+                );
             }
             self.indent_level -= 1;
         }
@@ -687,7 +786,15 @@ impl PrettyPrinter {
             writeln!(output, "{}methods:", self.indent()).unwrap();
             self.indent_level += 1;
             for (i, method) in interface.methods().iter().enumerate() {
-                let prefix = format!("{}{}", self.indent(), if i == interface.methods().len() - 1 { self.last_branch() } else { self.branch() });
+                let prefix = format!(
+                    "{}{}",
+                    self.indent(),
+                    if i == interface.methods().len() - 1 {
+                        self.last_branch()
+                    } else {
+                        self.branch()
+                    }
+                );
                 writeln!(output, "{}Method:", prefix).unwrap();
                 self.indent_level += 1;
                 self.format_function_signature(method, output);
@@ -719,8 +826,16 @@ impl PrettyPrinter {
 
     /// Format a namespace item into the output buffer
     fn format_namespace_item(&mut self, item: &NamespaceItem, output: &mut String, is_last: bool) {
-        let prefix = format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() });
-        
+        let prefix = format!(
+            "{}{}",
+            self.indent(),
+            if is_last {
+                self.last_branch()
+            } else {
+                self.branch()
+            }
+        );
+
         match item {
             NamespaceItem::Function(func) => {
                 writeln!(output, "{}Function:", prefix).unwrap();
@@ -768,8 +883,21 @@ impl PrettyPrinter {
     }
 
     /// Format a function parameter into the output buffer
-    fn format_function_parameter(&mut self, param: &FunctionParameter, output: &mut String, is_last: bool) {
-        let prefix = format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() });
+    fn format_function_parameter(
+        &mut self,
+        param: &FunctionParameter,
+        output: &mut String,
+        is_last: bool,
+    ) {
+        let prefix = format!(
+            "{}{}",
+            self.indent(),
+            if is_last {
+                self.last_branch()
+            } else {
+                self.branch()
+            }
+        );
         writeln!(output, "{}Param: {} :", prefix, param.name()).unwrap();
         self.indent_level += 1;
         self.format_type(param.ty(), output, true);
@@ -781,7 +909,13 @@ impl PrettyPrinter {
         if block.statements().is_empty() {
             writeln!(output, "{}Block (empty)", self.indent()).unwrap();
         } else {
-            writeln!(output, "{}Block with {} statement(s)", self.indent(), block.statements().len()).unwrap();
+            writeln!(
+                output,
+                "{}Block with {} statement(s)",
+                self.indent(),
+                block.statements().len()
+            )
+            .unwrap();
             self.indent_level += 1;
             for (i, stmt) in block.statements().iter().enumerate() {
                 self.format_statement(stmt, output, i == block.statements().len() - 1);
@@ -792,7 +926,15 @@ impl PrettyPrinter {
 
     /// Format a statement into the output buffer
     fn format_statement(&mut self, stmt: &Statement, output: &mut String, is_last: bool) {
-        let prefix = format!("{}{}", self.indent(), if is_last { self.last_branch() } else { self.branch() });
+        let prefix = format!(
+            "{}{}",
+            self.indent(),
+            if is_last {
+                self.last_branch()
+            } else {
+                self.branch()
+            }
+        );
         match stmt {
             Statement::Pass => {
                 writeln!(output, "{}Statement: Pass", prefix).unwrap();
@@ -904,7 +1046,7 @@ impl std::fmt::Display for Namespace {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use nyx_lexer::{IntegerLiteral, Base};
+    use nyx_lexer::{Base, IntegerLiteral};
 
     #[test]
     fn test_print_integer_literal() {
@@ -933,13 +1075,13 @@ mod tests {
             IntegerLiteral::builder()
                 .digits("1".to_string())
                 .build()
-                .unwrap()
+                .unwrap(),
         ));
         let right = Box::new(Expression::IntegerLiteral(
             IntegerLiteral::builder()
                 .digits("2".to_string())
                 .build()
-                .unwrap()
+                .unwrap(),
         ));
         let expr = Expression::BinaryOp(BinaryOpExpr::new(left, BinaryOperator::Add, right));
         let output = print_expression(&expr);
@@ -954,7 +1096,7 @@ mod tests {
             IntegerLiteral::builder()
                 .digits("5".to_string())
                 .build()
-                .unwrap()
+                .unwrap(),
         ));
         let expr = Expression::UnaryOp(UnaryOpExpr::new(UnaryOperator::Negate, operand));
         let output = print_expression(&expr);
@@ -966,13 +1108,22 @@ mod tests {
     fn test_print_array_literal() {
         let elements = vec![
             Expression::IntegerLiteral(
-                IntegerLiteral::builder().digits("1".to_string()).build().unwrap()
+                IntegerLiteral::builder()
+                    .digits("1".to_string())
+                    .build()
+                    .unwrap(),
             ),
             Expression::IntegerLiteral(
-                IntegerLiteral::builder().digits("2".to_string()).build().unwrap()
+                IntegerLiteral::builder()
+                    .digits("2".to_string())
+                    .build()
+                    .unwrap(),
             ),
             Expression::IntegerLiteral(
-                IntegerLiteral::builder().digits("3".to_string()).build().unwrap()
+                IntegerLiteral::builder()
+                    .digits("3".to_string())
+                    .build()
+                    .unwrap(),
             ),
         ];
         let expr = Expression::ArrayLiteral(ArrayLiteralExpr::new(elements));
@@ -993,19 +1144,33 @@ mod tests {
     fn test_print_nested_expression() {
         // (1 + 2) * 3
         let add_left = Box::new(Expression::IntegerLiteral(
-            IntegerLiteral::builder().digits("1".to_string()).build().unwrap()
+            IntegerLiteral::builder()
+                .digits("1".to_string())
+                .build()
+                .unwrap(),
         ));
         let add_right = Box::new(Expression::IntegerLiteral(
-            IntegerLiteral::builder().digits("2".to_string()).build().unwrap()
+            IntegerLiteral::builder()
+                .digits("2".to_string())
+                .build()
+                .unwrap(),
         ));
-        let add_expr = Expression::BinaryOp(BinaryOpExpr::new(add_left, BinaryOperator::Add, add_right));
-        
+        let add_expr =
+            Expression::BinaryOp(BinaryOpExpr::new(add_left, BinaryOperator::Add, add_right));
+
         let mul_left = Box::new(Expression::Parenthesized(Box::new(add_expr)));
         let mul_right = Box::new(Expression::IntegerLiteral(
-            IntegerLiteral::builder().digits("3".to_string()).build().unwrap()
+            IntegerLiteral::builder()
+                .digits("3".to_string())
+                .build()
+                .unwrap(),
         ));
-        let expr = Expression::BinaryOp(BinaryOpExpr::new(mul_left, BinaryOperator::Multiply, mul_right));
-        
+        let expr = Expression::BinaryOp(BinaryOpExpr::new(
+            mul_left,
+            BinaryOperator::Multiply,
+            mul_right,
+        ));
+
         let output = print_expression(&expr);
         assert!(output.contains("BinaryOp: Multiply"));
         assert!(output.contains("Parenthesized"));
@@ -1024,7 +1189,9 @@ mod tests {
     #[test]
     fn test_custom_indent_size() {
         let expr = Expression::BooleanLiteral(false);
-        let output = PrettyPrinter::new().with_indent_size(4).print_expression(&expr);
+        let output = PrettyPrinter::new()
+            .with_indent_size(4)
+            .print_expression(&expr);
         assert!(output.contains("BooleanLiteral: false"));
     }
 
@@ -1060,7 +1227,10 @@ mod tests {
 
     #[test]
     fn test_print_named_type() {
-        let ast_type = Type::Named{ name: "MyStruct".to_string(), generic_args: vec![] };
+        let ast_type = Type::Named {
+            name: "MyStruct".to_string(),
+            generic_args: vec![],
+        };
         let output = PrettyPrinter::new().print_type(&ast_type);
         assert!(output.contains("Type: Named(\"MyStruct\")"));
     }
@@ -1081,7 +1251,10 @@ mod tests {
     #[test]
     fn test_print_array_type_dynamic_size() {
         let ast_type = Type::Array {
-            element_type: Box::new(Type::Named{ name: "Foo".to_string(), generic_args: vec![] }),
+            element_type: Box::new(Type::Named {
+                name: "Foo".to_string(),
+                generic_args: vec![],
+            }),
             size: None,
         };
         let output = PrettyPrinter::new().print_type(&ast_type);
@@ -1095,7 +1268,10 @@ mod tests {
     fn test_print_result_type() {
         let ast_type = Type::Result {
             ok_type: Box::new(Type::I32),
-            err_type: Box::new(Type::Named{ name: "MyError".to_string(), generic_args: vec![] }),
+            err_type: Box::new(Type::Named {
+                name: "MyError".to_string(),
+                generic_args: vec![],
+            }),
         };
         let output = PrettyPrinter::new().print_type(&ast_type);
         assert!(output.contains("Type: Result"));

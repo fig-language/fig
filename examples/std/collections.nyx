@@ -1,0 +1,42 @@
+namespace std::collections
+    
+using core::memory
+using core::iter
+
+interface List[T]
+    fn! push(self: *mut Self, item: T)
+    fn! pop(self: *mut Self) -> ?T
+    fn! insert(self: *mut Self, index: usize, item: T)
+    fn! remove(self: *mut Self, index: usize) -> ?T
+    fn! clear(self: *mut Self)
+
+    fn peek(self: *Self) -> ?*T
+    fn peek_mut(self: *mut Self) -> ?*mut T
+    fn get(self: *Self, index: usize) -> ?*T
+    fn get_mut(self: *mut Self, index: usize) -> ?*mut T
+    fn len(self: *Self) -> usize
+
+    fn iter(self: *Self) -> Iterator[T]
+    fn iter_mut(self: *mut Self) -> Iterator[T]
+
+    fn contains(self: *Self, item: T) -> bool
+    fn index_of(self: *Self, item: T) -> ?usize
+
+
+struct Seq[T]
+    requires
+        List[T]
+    items: SliceMut[T]
+    len: usize
+
+const[T] Seq[T]::DEFAULT_CAPACITY: usize = 4
+
+fn![T] Seq[T]::new() -> Seq[T]
+    // Allocate a new empty internal array on the heap using the system allocator.
+    let capacity = Seq[T]::DEFAULT_CAPACITY
+    let items_ptr: *mut T = SystemAllocator.allocate_array![T](capacity)
+    let items = SliceMut::new(items_ptr, capacity)
+    return Seq(items, 0)
+
+fn![T] Seq[T]::push(self: *mut Self, item: T)
+    pass

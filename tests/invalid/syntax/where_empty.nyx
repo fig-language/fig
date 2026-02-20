@@ -1,0 +1,5 @@
+// INVALID: where clause missing type constraint body
+// Expected parse error: constraint body needed inside where
+func bad[T](x: T) -> T
+    where
+    pass

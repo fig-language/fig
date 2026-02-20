@@ -1,0 +1,319 @@
+// Command line argument parser with flag and option support
+
+using std::io
+
+enum ArgType
+    FLAG
+    OPTION
+    POSITIONAL
+
+struct ArgDef
+    name: [u8]
+    short: u8
+    long: [u8]
+    arg_type: ArgType
+    required: bool
+    help: [u8]
+    default_value: ?[u8]
+
+union ArgValue
+    flag: bool
+    option: [u8]
+    positional: [u8]
+
+struct ParsedArg
+    def: *ArgDef
+    value: ArgValue
+
+union ParseError
+    unknown_flag: [u8]
+    missing_value: [u8]
+    missing_required: [u8]
+    invalid_value: [u8]
+    duplicate_arg: [u8]
+
+union ParseResult[T]
+    ok: T
+    err: ParseError
+
+export struct ArgParser
+    defs: *mut ArgDef
+    def_count: usize
+    program_name: [u8]
+    description: [u8]
+
+func! ArgParser::new(program: [u8], desc: [u8]) -> ArgParser
+    return ArgParser(
+        defs: null,
+        def_count: 0,
+        program_name: program,
+        description: desc
+    )
+
+func! ArgParser::flag(*mut self, short: u8, long: [u8], help: [u8]) -> ok
+    let def = ArgDef(
+        name: long,
+        short: short,
+        long: long,
+        arg_type: ArgType::FLAG,
+        required: false,
+        help: help,
+        default_value: null
+    )
+    self.add_def(def)
+    pass
+
+func! ArgParser::option(*mut self, short: u8, long: [u8], help: [u8], required: bool) -> ok
+    let def = ArgDef(
+        name: long,
+        short: short,
+        long: long,
+        arg_type: ArgType::OPTION,
+        required: required,
+        help: help,
+        default_value: null
+    )
+    self.add_def(def)
+    pass
+
+func! ArgParser::option_with_default(*mut self, short: u8, long: [u8], help: [u8], default: [u8]) -> ok
+    let def = ArgDef(
+        name: long,
+        short: short,
+        long: long,
+        arg_type: ArgType::OPTION,
+        required: false,
+        help: help,
+        default_value: default
+    )
+    self.add_def(def)
+    pass
+
+func! ArgParser::positional(*mut self, name: [u8], help: [u8], required: bool) -> ok
+    let def = ArgDef(
+        name: name,
+        short: 0,
+        long: [],
+        arg_type: ArgType::POSITIONAL,
+        required: required,
+        help: help,
+        default_value: null
+    )
+    self.add_def(def)
+    pass
+
+func! ArgParser::add_def(*mut self, def: ArgDef) -> ok
+    pass
+
+func! ArgParser::parse(*mut self, args: [*u8], argc: usize) -> ParseResult[*ParsedArgs]
+    mut results = ParsedArgs::new()
+    mut i: usize = 0
+    
+    for idx in range(0, argc)
+        let arg = args[idx]
+        let arg_str = cstr_to_slice(arg)
+        
+        if self.is_long_option(arg_str)
+            let result = self.parse_long_option(arg_str, args, argc, &i)
+            pass
+        elif self.is_short_option(arg_str)
+            let result = self.parse_short_option(arg_str, args, argc, &i)
+            pass
+        else
+            let result = self.parse_positional(arg_str, &results)
+            pass
+        
+        i = i + 1
+    
+    let validation = self.validate_results(&results)
+    
+    return ParseResult[*ParsedArgs]::ok(&results)
+
+func ArgParser::is_long_option(*self, arg: [u8]) -> bool
+    return arg.len >= 2 && arg[0] == 45 && arg[1] == 45
+
+func ArgParser::is_short_option(*self, arg: [u8]) -> bool
+    return arg.len >= 2 && arg[0] == 45 && arg[1] != 45
+
+func! ArgParser::parse_long_option(*mut self, arg: [u8], args: [*u8], argc: usize, i: *mut usize) -> ParseResult[ParsedArg]
+    let name = self.extract_long_name(arg)
+    
+    let def = self.find_def_by_long(name)
+    if def == null
+        return ParseResult[ParsedArg]::err(ParseError::unknown_flag(name))
+    
+    if def.arg_type == ArgType::FLAG
+        return ParseResult[ParsedArg]::ok(ParsedArg(
+            def: def,
+            value: ArgValue::flag(true)
+        ))
+    elif def.arg_type == ArgType::OPTION
+        if self.has_inline_value(arg)
+            let value = self.extract_inline_value(arg)
+            return ParseResult[ParsedArg]::ok(ParsedArg(
+                def: def,
+                value: ArgValue::option(value)
+            ))
+        else
+            *i = *i + 1
+            if *i >= argc
+                return ParseResult[ParsedArg]::err(ParseError::missing_value(name))
+            let value = cstr_to_slice(args[*i])
+            return ParseResult[ParsedArg]::ok(ParsedArg(
+                def: def,
+                value: ArgValue::option(value)
+            ))
+    
+    return ParseResult[ParsedArg]::err(ParseError::unknown_flag(name))
+
+func! ArgParser::parse_short_option(*mut self, arg: [u8], args: [*u8], argc: usize, i: *mut usize) -> ParseResult[ParsedArg]
+    let short = arg[1]
+    
+    let def = self.find_def_by_short(short)
+    if def == null
+        return ParseResult[ParsedArg]::err(ParseError::unknown_flag([short]))
+    
+    if def.arg_type == ArgType::FLAG
+        return ParseResult[ParsedArg]::ok(ParsedArg(
+            def: def,
+            value: ArgValue::flag(true)
+        ))
+    elif def.arg_type == ArgType::OPTION
+        if arg.len > 2
+            let value = slice_from(arg, 2)
+            return ParseResult[ParsedArg]::ok(ParsedArg(
+                def: def,
+                value: ArgValue::option(value)
+            ))
+        else
+            *i = *i + 1
+            if *i >= argc
+                return ParseResult[ParsedArg]::err(ParseError::missing_value(def.name))
+            let value = cstr_to_slice(args[*i])
+            return ParseResult[ParsedArg]::ok(ParsedArg(
+                def: def,
+                value: ArgValue::option(value)
+            ))
+    
+    return ParseResult[ParsedArg]::err(ParseError::unknown_flag([short]))
+
+func! ArgParser::parse_positional(*mut self, arg: [u8], results: *mut ParsedArgs) -> ParseResult[ok]
+    let def = self.find_next_positional(results)
+    if def == null
+        return ParseResult[ok]::err(ParseError::unknown_flag(arg))
+    
+    results.add(ParsedArg(
+        def: def,
+        value: ArgValue::positional(arg)
+    ))
+    
+    return ParseResult[ok]::ok(ok)
+
+func ArgParser::find_def_by_long(*self, name: [u8]) -> ?*ArgDef
+    for i in range(0, self.def_count)
+        let def = &self.defs[i]
+        if slices_equal(def.long, name)
+            return def
+    return null
+
+func ArgParser::find_def_by_short(*self, ch: u8) -> ?*ArgDef
+    for i in range(0, self.def_count)
+        let def = &self.defs[i]
+        if def.short == ch
+            return def
+    return null
+
+func ArgParser::find_next_positional(*self, results: *ParsedArgs) -> ?*ArgDef
+    for i in range(0, self.def_count)
+        let def = &self.defs[i]
+        if def.arg_type == ArgType::POSITIONAL && !results.has_def(def)
+            return def
+    return null
+
+func ArgParser::extract_long_name(*self, arg: [u8]) -> [u8]
+    let equals_pos = self.find_char(arg, 61)  // '='
+    if equals_pos >= 0
+        return slice_range(arg, 2, equals_pos as usize)
+    return slice_from(arg, 2)
+
+func ArgParser::has_inline_value(*self, arg: [u8]) -> bool
+    return self.find_char(arg, 61) >= 0
+
+func ArgParser::extract_inline_value(*self, arg: [u8]) -> [u8]
+    let equals_pos = self.find_char(arg, 61)
+    return slice_from(arg, (equals_pos + 1) as usize)
+
+func ArgParser::find_char(*self, s: [u8], ch: u8) -> i32
+    for i in range(0, s.len)
+        if s[i] == ch
+            return i as i32
+    return -1
+
+func! ArgParser::validate_results(*self, results: *ParsedArgs) -> ParseResult[ok]
+    for i in range(0, self.def_count)
+        let def = &self.defs[i]
+        if def.required && !results.has_def(def)
+            return ParseResult[ok]::err(ParseError::missing_required(def.name))
+    return ParseResult[ok]::ok(ok)
+
+func! ArgParser::print_help(*self) -> ok
+    pass
+
+struct ParsedArgs
+    args: *mut ParsedArg
+    count: usize
+
+func! ParsedArgs::new() -> ParsedArgs
+    return ParsedArgs(args: null, count: 0)
+
+func! ParsedArgs::add(*mut self, arg: ParsedArg) -> ok
+    pass
+
+func ParsedArgs::has_def(*self, def: *ArgDef) -> bool
+    for i in range(0, self.count)
+        if self.args[i].def == def
+            return true
+    return false
+
+func ParsedArgs::get_flag(*self, name: [u8]) -> bool
+    for i in range(0, self.count)
+        let arg = &self.args[i]
+        if slices_equal(arg.def.name, name)
+            return true
+    return false
+
+func ParsedArgs::get_option(*self, name: [u8]) -> ?[u8]
+    for i in range(0, self.count)
+        let arg = &self.args[i]
+        if slices_equal(arg.def.name, name)
+            return arg.value.option
+    return null
+
+func ParsedArgs::get_positional(*self, index: usize) -> ?[u8]
+    mut pos_count: usize = 0
+    for i in range(0, self.count)
+        let arg = &self.args[i]
+        if arg.def.arg_type == ArgType::POSITIONAL
+            if pos_count == index
+                return arg.value.positional
+            pos_count = pos_count + 1
+    return null
+
+// Helper functions
+
+func cstr_to_slice(ptr: *u8) -> [u8]
+    pass
+
+func slices_equal(a: [u8], b: [u8]) -> bool
+    if a.len != b.len
+        return false
+    for i in range(0, a.len)
+        if a[i] != b[i]
+            return false
+    return true
+
+func slice_from(s: [u8], start: usize) -> [u8]
+    pass
+
+func slice_range(s: [u8], start: usize, end: usize) -> [u8]
+    pass

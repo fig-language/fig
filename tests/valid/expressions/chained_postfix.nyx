@@ -1,0 +1,6 @@
+// Complex chained postfix: field + call + index + generic args
+func complex_postfix(v: *mut Vec[i32]) -> ok
+    let len = v.len()
+    let item = v.get(0)
+    v.push(42)
+    pass

@@ -1,0 +1,259 @@
+// Slab allocator for efficient fixed-size allocation
+
+using core::memory
+
+const SLAB_SIZE: usize = 4096
+const MAX_CACHE_SIZE: usize = 64
+
+export struct SlabAllocator
+    slabs: [Slab]
+    free_slabs: [*mut Slab]
+    cache: SlabCache
+
+struct Slab
+    memory: *mut u8
+    size: usize
+    object_size: usize
+    objects_per_slab: usize
+    free_list: ?*mut FreeNode
+    allocated_count: usize
+    cache: ?*mut SlabCache
+
+struct FreeNode
+    next: ?*mut FreeNode
+
+struct SlabCache
+    object_size: usize
+    slabs: [*mut Slab]
+    partial_slabs: [*mut Slab]
+    full_slabs: [*mut Slab]
+    free_slabs: [*mut Slab]
+    total_objects: usize
+    allocated_objects: usize
+
+func! SlabAllocator::new() -> SlabAllocator
+    return SlabAllocator(
+        slabs: [],
+        free_slabs: [],
+        cache: SlabCache::new(0)
+    )
+
+func! SlabAllocator::create_cache(*mut self, object_size: usize) -> *mut SlabCache
+    let cache = SlabCache::new(object_size)
+    return &mut self.cache
+
+func! SlabAllocator::allocate(*mut self, cache: *mut SlabCache) -> ?*mut u8
+    let slab = cache.get_partial_slab()
+    
+    if slab == null
+        let new_slab = self.allocate_slab(cache.object_size)
+        if new_slab == null
+            return null
+        
+        cache.add_slab(new_slab)
+        return self.allocate_from_slab(new_slab)
+    
+    return self.allocate_from_slab(slab)
+
+func! SlabAllocator::free(*mut self, ptr: *mut u8, cache: *mut SlabCache) -> ok
+    let slab = self.find_slab_for_pointer(ptr)
+    
+    if slab == null
+        return ok
+    
+    self.free_to_slab(slab, ptr)
+    
+    cache.update_slab_state(slab)
+    
+    pass
+
+func! SlabAllocator::allocate_slab(*mut self, object_size: usize) -> ?*mut Slab
+    let memory = allocate_aligned(SLAB_SIZE, 16)
+    
+    if memory == null
+        return null
+    
+    let slab = Slab::new(memory, SLAB_SIZE, object_size)
+    self.slabs.push(slab)
+    
+    return &mut self.slabs[self.slabs.len - 1]
+
+func! SlabAllocator::allocate_from_slab(*mut self, slab: *mut Slab) -> ?*mut u8
+    if slab.free_list == null
+        return null
+    
+    let node = slab.free_list
+    slab.free_list = node.next
+    slab.allocated_count = slab.allocated_count + 1
+    
+    return node as *mut u8
+
+func! SlabAllocator::free_to_slab(*mut self, slab: *mut Slab, ptr: *mut u8) -> ok
+    let node = ptr as *mut FreeNode
+    node.next = slab.free_list
+    slab.free_list = node
+    
+    if slab.allocated_count > 0
+        slab.allocated_count = slab.allocated_count - 1
+    
+    pass
+
+func SlabAllocator::find_slab_for_pointer(*self, ptr: *mut u8) -> ?*mut Slab
+    for i in range(0, self.slabs.len)
+        let slab = &self.slabs[i]
+        
+        let slab_start = slab.memory as usize
+        let slab_end = slab_start + slab.size
+        let ptr_addr = ptr as usize
+        
+        if ptr_addr >= slab_start && ptr_addr < slab_end
+            return &mut self.slabs[i]
+    
+    return null
+
+// Slab implementation
+
+func! Slab::new(memory: *mut u8, size: usize, object_size: usize) -> Slab
+    let objects_per_slab = size / object_size
+    
+    mut slab = Slab(
+        memory: memory,
+        size: size,
+        object_size: object_size,
+        objects_per_slab: objects_per_slab,
+        free_list: null,
+        allocated_count: 0,
+        cache: null
+    )
+    
+    slab.initialize_free_list()
+    
+    return slab
+
+func! Slab::initialize_free_list(*mut self) -> ok
+    let mut_ptr = self.memory
+    
+    for i in range(0, self.objects_per_slab)
+        let offset = i * self.object_size
+        let node = (mut_ptr as usize + offset) as *mut FreeNode
+        
+        if i + 1 < self.objects_per_slab
+            let next_offset = (i + 1) * self.object_size
+            node.next = (mut_ptr as usize + next_offset) as *mut FreeNode
+        else
+            node.next = null
+    
+    self.free_list = self.memory as *mut FreeNode
+    
+    pass
+
+func Slab::is_full(*self) -> bool
+    return self.allocated_count >= self.objects_per_slab
+
+func Slab::is_empty(*self) -> bool
+    return self.allocated_count == 0
+
+func Slab::is_partial(*self) -> bool
+    return self.allocated_count > 0 && self.allocated_count < self.objects_per_slab
+
+// SlabCache implementation
+
+func! SlabCache::new(object_size: usize) -> SlabCache
+    return SlabCache(
+        object_size: object_size,
+        slabs: [],
+        partial_slabs: [],
+        full_slabs: [],
+        free_slabs: [],
+        total_objects: 0,
+        allocated_objects: 0
+    )
+
+func! SlabCache::add_slab(*mut self, slab: *mut Slab) -> ok
+    self.slabs.push(slab)
+    self.partial_slabs.push(slab)
+    self.total_objects = self.total_objects + slab.objects_per_slab
+    pass
+
+func SlabCache::get_partial_slab(*mut self) -> ?*mut Slab
+    if self.partial_slabs.len > 0
+        return self.partial_slabs[0]
+    
+    return null
+
+func! SlabCache::update_slab_state(*mut self, slab: *mut Slab) -> ok
+    self.remove_from_all_lists(slab)
+    
+    if slab.is_full()
+        self.full_slabs.push(slab)
+    elif slab.is_empty()
+        self.free_slabs.push(slab)
+    else
+        self.partial_slabs.push(slab)
+    
+    pass
+
+func! SlabCache::remove_from_all_lists(*mut self, slab: *mut Slab) -> ok
+    self.remove_from_list(&mut self.partial_slabs, slab)
+    self.remove_from_list(&mut self.full_slabs, slab)
+    self.remove_from_list(&mut self.free_slabs, slab)
+    pass
+
+func! SlabCache::remove_from_list(*mut self, list: *mut [*mut Slab], slab: *mut Slab) -> ok
+    for i in range(0, list.len)
+        if list[i] as usize == slab as usize
+            list.remove(i)
+            break
+    pass
+
+func SlabCache::utilization(*self) -> f64
+    if self.total_objects == 0
+        return 0.0
+    
+    return (self.allocated_objects as f64) / (self.total_objects as f64)
+
+// Object pool for type-safe allocation
+
+export struct ObjectPool[T]
+    allocator: SlabAllocator
+    cache: *mut SlabCache
+    object_size: usize
+
+func! ObjectPool[T]::new() -> ObjectPool[T]
+    mut allocator = SlabAllocator::new()
+    let object_size = size_of[T]()
+    let cache = allocator.create_cache(object_size)
+    
+    return ObjectPool[T](
+        allocator: allocator,
+        cache: cache,
+        object_size: object_size
+    )
+
+func! ObjectPool[T]::allocate(*mut self) -> ?*mut T
+    let ptr = self.allocator.allocate(self.cache)
+    
+    if ptr == null
+        return null
+    
+    return ptr as *mut T
+
+func! ObjectPool[T]::free(*mut self, ptr: *mut T) -> ok
+    self.allocator.free(ptr as *mut u8, self.cache)
+    pass
+
+func! ObjectPool[T]::allocate_init(*mut self, value: T) -> ?*mut T
+    let ptr = self.allocate()
+    
+    if ptr != null
+        ptr = value
+    
+    return ptr
+
+// Helper functions
+
+func! allocate_aligned(size: usize, alignment: usize) -> *mut u8
+    pass
+
+func size_of[T]() -> usize
+    pass

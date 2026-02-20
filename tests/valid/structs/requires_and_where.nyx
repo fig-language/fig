@@ -1,0 +1,10 @@
+// Struct with both requires and where clauses
+struct Vector[T]
+    requires
+        Display
+        Debug
+    where
+        T: Numeric + Sized
+    data: [T]
+    len: usize
+    cap: usize

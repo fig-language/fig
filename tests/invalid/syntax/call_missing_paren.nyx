@@ -1,0 +1,8 @@
+// INVALID: Missing closing ) in function call
+// Expected parse error: ) required
+func foo(x: i32) -> i32
+    return x
+
+func bar() -> ok
+    let r = foo(42
+    pass

@@ -1,0 +1,5 @@
+// INVALID: Binary operator with missing right operand
+// Expected parse error: right-hand side of binary expression required
+func bad(x: i32) -> ok
+    let y = x +
+    pass

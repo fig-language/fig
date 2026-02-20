@@ -1,0 +1,17 @@
+// Namespace containing struct, enum and union definitions
+namespace shapes
+    public struct Circle
+        cx: f64
+        cy: f64
+        radius: f64
+
+    public struct Rect
+        x: f64
+        y: f64
+        w: f64
+        h: f64
+
+    public enum ShapeKind
+        CIRCLE
+        RECT
+        TRIANGLE

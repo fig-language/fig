@@ -160,7 +160,7 @@ fn test_interface_with_method_parameters() {
 #[test]
 fn test_interface_with_complex_types() {
     let input = "interface Processor[T]
-    fn process(input: &T) -> *T
+    fn process(input: ?*mut T) -> *T
     fn batch_process(inputs: []T) -> []T
 ";
     let lexer = Lexer::new(input);
@@ -171,15 +171,18 @@ fn test_interface_with_complex_types() {
     assert_eq!(interface.methods().len(), 2);
     
     // Check first method has reference parameter
-    if let Type::Reference(_) = interface.methods()[0].params()[0].ty() {
-        // Expected
+    if let Type::Pointer { element_type, nullable, mutable } = interface.methods()[0].params()[0].ty() {
+        assert_eq!(nullable, &true);
+        assert_eq!(mutable, &true);
+        assert_eq!(**element_type, Type::Named { name: "T".to_string(), generic_args: vec![] });
     } else {
         panic!("Expected reference type for first parameter");
     }
     
     // Check second method has array parameters
-    if let Type::Array { .. } = interface.methods()[1].params()[0].ty() {
-        // Expected
+    if let Type::Array { element_type, size } = interface.methods()[1].params()[0].ty() {
+        assert_eq!(size, &None);
+        assert_eq!(**element_type, Type::Named { name: "T".to_string(), generic_args: vec![] });
     } else {
         panic!("Expected array type for parameter");
     }

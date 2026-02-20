@@ -1,0 +1,10 @@
+// Self reference in expressions
+struct Node
+    value: i32
+    next: ?*Node
+
+func Node::has_next(*self) -> bool
+    return self.next != null
+
+func Node::get_value(*self) -> i32
+    return self.value

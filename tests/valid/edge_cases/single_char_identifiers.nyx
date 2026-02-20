@@ -1,0 +1,9 @@
+// Edge case: single-character identifier names
+let a = 1
+let b = 2
+let c = a + b
+mut x = 0
+mut y = 0
+
+func f(a: i32, b: i32) -> i32
+    return a + b

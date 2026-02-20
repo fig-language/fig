@@ -1,0 +1,40 @@
+// Integration: Simple hash map interface and skeleton
+interface Hasher
+    func hash(*self, data: *u8, len: usize) -> u64
+
+interface Map[K, V]
+    where
+        K: Hash + Eq
+    func! insert(*mut self, key: K, value: V) -> ok
+    func get(*self, key: *K) -> ?*V
+    func! remove(*mut self, key: *K) -> ?V
+    func contains(*self, key: *K) -> bool
+    func len(*self) -> usize
+    func is_empty(*self) -> bool
+
+struct HashMap[K, V]
+    where
+        K: Hash + Eq
+    buckets: *mut Bucket[K, V]
+    bucket_count: usize
+    len: usize
+
+struct Bucket[K, V]
+    key: K
+    value: V
+    next: ?*Bucket[K, V]
+
+func! HashMap[K, V]::new() -> HashMap[K, V]
+    where
+        K: Hash + Eq
+    pass
+
+func! HashMap[K, V]::insert(*mut self, key: K, value: V) -> ok
+    where
+        K: Hash + Eq
+    pass
+
+func HashMap[K, V]::get(*self, key: *K) -> ?*V
+    where
+        K: Hash + Eq
+    pass

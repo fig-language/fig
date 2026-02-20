@@ -1,0 +1,10 @@
+// Enum with explicit integer values
+enum Color
+    RED = 0
+    GREEN = 1
+    BLUE = 2
+
+enum HttpStatus
+    OK = 200
+    NOT_FOUND = 404
+    INTERNAL_SERVER_ERROR = 500

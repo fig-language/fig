@@ -1,0 +1,19 @@
+// Integration: Error handling patterns using unions
+union IoError
+    not_found: ok
+    permission_denied: ok
+    io_failure: i32
+
+union Result[T]
+    ok: T
+    err: IoError
+
+func! open_file(path: [u8]) -> Result[[u8]]
+    pass
+
+func! read_file(path: [u8]) -> Result[[u8]]
+    let result = open_file(path)
+    pass
+
+func! write_file(path: [u8], data: [u8]) -> Result[ok]
+    pass

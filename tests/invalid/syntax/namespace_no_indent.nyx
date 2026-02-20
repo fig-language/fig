@@ -1,0 +1,5 @@
+// INVALID: namespace body without indentation
+// Expected parse error: indented block required
+namespace bad
+func foo() -> ok
+    pass

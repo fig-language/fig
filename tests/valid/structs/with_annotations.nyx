@@ -1,0 +1,15 @@
+// Struct with annotations
+#repr(C)
+struct CStruct
+    x: i32
+    y: i32
+
+#align(16)
+struct AlignedBuffer
+    data: [u8; 64]
+
+#packed
+#repr(C)
+struct PackedCStruct
+    a: u8
+    b: u32

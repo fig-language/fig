@@ -1,0 +1,9 @@
+// Effect marker combined with generic params and self
+func! Seq[T]::push(*mut self, item: T) -> ok
+    pass
+
+func! Seq[T]::pop(*mut self) -> ?T
+    pass
+
+func! Seq[T]::grow(*mut self) -> ok
+    pass

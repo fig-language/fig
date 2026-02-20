@@ -1,0 +1,9 @@
+// Enum with requires clause
+enum[u8] Error
+    requires
+        Display
+        Debug
+    NONE = 0
+    IO_ERROR = 1
+    PARSE_ERROR = 2
+    NOT_FOUND = 3

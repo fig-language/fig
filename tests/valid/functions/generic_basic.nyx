@@ -1,0 +1,9 @@
+// Generic functions — explicit generic params
+func identity[T](x: T) -> T
+    pass
+
+func swap[A, B](a: A, b: B) -> ok
+    pass
+
+func first[T](slice: [T]) -> ?T
+    pass

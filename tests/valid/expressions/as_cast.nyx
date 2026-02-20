@@ -1,0 +1,7 @@
+// as-cast expressions
+func cast_ops(x: i32) -> ok
+    let as_u8 = x as u8
+    let as_f64 = x as f64
+    let as_usize = x as usize
+    let chain = x as i64 as f64
+    pass

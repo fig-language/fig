@@ -1,0 +1,424 @@
+// HTTP request and response types with header parsing
+
+using std::io
+using std::collections
+
+enum HttpMethod
+    GET
+    POST
+    PUT
+    DELETE
+    PATCH
+    HEAD
+    OPTIONS
+    TRACE
+    CONNECT
+
+enum HttpVersion
+    HTTP_0_9
+    HTTP_1_0
+    HTTP_1_1
+    HTTP_2_0
+    HTTP_3_0
+
+struct HttpHeader
+    name: [u8]
+    value: [u8]
+
+struct HttpHeaders
+    entries: *mut HttpHeader
+    count: usize
+    capacity: usize
+
+export struct HttpRequest
+    method: HttpMethod
+    path: [u8]
+    query_string: ?[u8]
+    version: HttpVersion
+    headers: HttpHeaders
+    body: ?[u8]
+
+export struct HttpResponse
+    version: HttpVersion
+    status_code: u16
+    status_message: [u8]
+    headers: HttpHeaders
+    body: ?[u8]
+
+union ParseError
+    invalid_method: [u8]
+    invalid_version: [u8]
+    invalid_header: [u8]
+    malformed_request: [u8]
+    incomplete_request: ok
+
+union ParseResult[T]
+    ok: T
+    err: ParseError
+
+func! HttpRequest::new(method: HttpMethod, path: [u8]) -> HttpRequest
+    return HttpRequest(
+        method: method,
+        path: path,
+        query_string: null,
+        version: HttpVersion::HTTP_1_1,
+        headers: HttpHeaders::new(),
+        body: null
+    )
+
+func! HttpRequest::parse(data: [u8]) -> ParseResult[HttpRequest]
+    mut parser = RequestParser::new(data)
+    return parser.parse()
+
+func! HttpRequest::add_header(*mut self, name: [u8], value: [u8]) -> ok
+    self.headers.add(name, value)
+    pass
+
+func HttpRequest::get_header(*self, name: [u8]) -> ?[u8]
+    return self.headers.get(name)
+
+func HttpRequest::has_header(*self, name: [u8]) -> bool
+    return self.headers.contains(name)
+
+func! HttpRequest::set_body(*mut self, body: [u8]) -> ok
+    self.body = body
+    self.add_header("Content-Length", u64_to_string(body.len as u64))
+    pass
+
+func! HttpRequest::to_bytes(*self) -> [u8]
+    mut buffer: [u8] = []
+    
+    buffer.append(self.method_string())
+    buffer.append(" ")
+    buffer.append(self.path)
+    
+    if self.query_string != null
+        buffer.append("?")
+        buffer.append(self.query_string)
+    
+    buffer.append(" ")
+    buffer.append(self.version_string())
+    buffer.append("\r\n")
+    
+    for i in range(0, self.headers.count)
+        let header = &self.headers.entries[i]
+        buffer.append(header.name)
+        buffer.append(": ")
+        buffer.append(header.value)
+        buffer.append("\r\n")
+    
+    buffer.append("\r\n")
+    
+    if self.body != null
+        buffer.append(self.body)
+    
+    return buffer
+
+func HttpRequest::method_string(*self) -> [u8]
+    if self.method == HttpMethod::GET
+        return "GET"
+    elif self.method == HttpMethod::POST
+        return "POST"
+    elif self.method == HttpMethod::PUT
+        return "PUT"
+    elif self.method == HttpMethod::DELETE
+        return "DELETE"
+    elif self.method == HttpMethod::PATCH
+        return "PATCH"
+    elif self.method == HttpMethod::HEAD
+        return "HEAD"
+    elif self.method == HttpMethod::OPTIONS
+        return "OPTIONS"
+    elif self.method == HttpMethod::TRACE
+        return "TRACE"
+    elif self.method == HttpMethod::CONNECT
+        return "CONNECT"
+    return "UNKNOWN"
+
+func HttpRequest::version_string(*self) -> [u8]
+    if self.version == HttpVersion::HTTP_1_0
+        return "HTTP/1.0"
+    elif self.version == HttpVersion::HTTP_1_1
+        return "HTTP/1.1"
+    elif self.version == HttpVersion::HTTP_2_0
+        return "HTTP/2.0"
+    return "HTTP/1.1"
+
+struct RequestParser
+    data: [u8]
+    pos: usize
+
+func! RequestParser::new(data: [u8]) -> RequestParser
+    return RequestParser(data: data, pos: 0)
+
+func! RequestParser::parse(*mut self) -> ParseResult[HttpRequest]
+    let method_result = self.parse_method()
+    
+    self.skip_whitespace()
+    
+    let path_result = self.parse_path()
+    
+    self.skip_whitespace()
+    
+    let version_result = self.parse_version()
+    
+    self.expect_crlf()
+    
+    let headers_result = self.parse_headers()
+    
+    let body = self.parse_body()
+    
+    let request = HttpRequest(
+        method: HttpMethod::GET,
+        path: "/",
+        query_string: null,
+        version: HttpVersion::HTTP_1_1,
+        headers: HttpHeaders::new(),
+        body: body
+    )
+    
+    return ParseResult[HttpRequest]::ok(request)
+
+func! RequestParser::parse_method(*mut self) -> ParseResult[HttpMethod]
+    let word = self.read_until_whitespace()
+    
+    if word == "GET"
+        return ParseResult[HttpMethod]::ok(HttpMethod::GET)
+    elif word == "POST"
+        return ParseResult[HttpMethod]::ok(HttpMethod::POST)
+    elif word == "PUT"
+        return ParseResult[HttpMethod]::ok(HttpMethod::PUT)
+    elif word == "DELETE"
+        return ParseResult[HttpMethod]::ok(HttpMethod::DELETE)
+    elif word == "PATCH"
+        return ParseResult[HttpMethod]::ok(HttpMethod::PATCH)
+    elif word == "HEAD"
+        return ParseResult[HttpMethod]::ok(HttpMethod::HEAD)
+    elif word == "OPTIONS"
+        return ParseResult[HttpMethod]::ok(HttpMethod::OPTIONS)
+    elif word == "TRACE"
+        return ParseResult[HttpMethod]::ok(HttpMethod::TRACE)
+    elif word == "CONNECT"
+        return ParseResult[HttpMethod]::ok(HttpMethod::CONNECT)
+    
+    return ParseResult[HttpMethod]::err(ParseError::invalid_method(word))
+
+func! RequestParser::parse_path(*mut self) -> ParseResult[[u8]]
+    let path = self.read_until_whitespace()
+    
+    let query_pos = find_byte(path, 63)  // '?'
+    if query_pos >= 0
+        return ParseResult[[u8]]::ok(slice_before(path, query_pos as usize))
+    
+    return ParseResult[[u8]]::ok(path)
+
+func! RequestParser::parse_version(*mut self) -> ParseResult[HttpVersion]
+    let word = self.read_until_crlf()
+    
+    if word == "HTTP/1.0"
+        return ParseResult[HttpVersion]::ok(HttpVersion::HTTP_1_0)
+    elif word == "HTTP/1.1"
+        return ParseResult[HttpVersion]::ok(HttpVersion::HTTP_1_1)
+    elif word == "HTTP/2.0"
+        return ParseResult[HttpVersion]::ok(HttpVersion::HTTP_2_0)
+    
+    return ParseResult[HttpVersion]::err(ParseError::invalid_version(word))
+
+func! RequestParser::parse_headers(*mut self) -> ParseResult[HttpHeaders]
+    mut headers = HttpHeaders::new()
+    
+    for i in range(0, 100)
+        if self.peek() == 13  // '\r'
+            self.expect_crlf()
+            break
+        
+        let name = self.read_until_byte(58)  // ':'
+        self.advance()
+        
+        self.skip_whitespace()
+        
+        let value = self.read_until_crlf()
+        
+        headers.add(name, value)
+    
+    return ParseResult[HttpHeaders]::ok(headers)
+
+func! RequestParser::parse_body(*mut self) -> ?[u8]
+    if self.is_eof()
+        return null
+    
+    let remaining = slice_from(self.data, self.pos)
+    return remaining
+
+func! RequestParser::read_until_whitespace(*mut self) -> [u8]
+    let start = self.pos
+    for i in range(0, 1000)
+        if self.is_eof() || self.is_whitespace(self.peek())
+            break
+        self.advance()
+    return slice_range(self.data, start, self.pos)
+
+func! RequestParser::read_until_crlf(*mut self) -> [u8]
+    let start = self.pos
+    for i in range(0, 10000)
+        if self.is_eof() || self.peek() == 13
+            break
+        self.advance()
+    return slice_range(self.data, start, self.pos)
+
+func! RequestParser::read_until_byte(*mut self, byte: u8) -> [u8]
+    let start = self.pos
+    for i in range(0, 10000)
+        if self.is_eof() || self.peek() == byte
+            break
+        self.advance()
+    return slice_range(self.data, start, self.pos)
+
+func! RequestParser::skip_whitespace(*mut self) -> ok
+    for i in range(0, 1000)
+        if self.is_eof() || !self.is_whitespace(self.peek())
+            break
+        self.advance()
+    pass
+
+func! RequestParser::expect_crlf(*mut self) -> ok
+    if self.peek() == 13  // '\r'
+        self.advance()
+    if self.peek() == 10  // '\n'
+        self.advance()
+    pass
+
+func RequestParser::is_whitespace(*self, ch: u8) -> bool
+    return ch == 32 || ch == 9
+
+func RequestParser::peek(*self) -> u8
+    if self.is_eof()
+        return 0
+    return self.data[self.pos]
+
+func! RequestParser::advance(*mut self) -> ok
+    if !self.is_eof()
+        self.pos = self.pos + 1
+    pass
+
+func RequestParser::is_eof(*self) -> bool
+    return self.pos >= self.data.len
+
+// HttpResponse implementation
+
+func! HttpResponse::new(status: u16) -> HttpResponse
+    return HttpResponse(
+        version: HttpVersion::HTTP_1_1,
+        status_code: status,
+        status_message: status_message_for_code(status),
+        headers: HttpHeaders::new(),
+        body: null
+    )
+
+func! HttpResponse::ok() -> HttpResponse
+    return HttpResponse::new(200)
+
+func! HttpResponse::created() -> HttpResponse
+    return HttpResponse::new(201)
+
+func! HttpResponse::not_found() -> HttpResponse
+    return HttpResponse::new(404)
+
+func! HttpResponse::internal_error() -> HttpResponse
+    return HttpResponse::new(500)
+
+func! HttpResponse::add_header(*mut self, name: [u8], value: [u8]) -> ok
+    self.headers.add(name, value)
+    pass
+
+func! HttpResponse::set_body(*mut self, body: [u8]) -> ok
+    self.body = body
+    self.add_header("Content-Length", u64_to_string(body.len as u64))
+    pass
+
+func! HttpResponse::to_bytes(*self) -> [u8]
+    mut buffer: [u8] = []
+    
+    buffer.append("HTTP/1.1 ")
+    buffer.append(u64_to_string(self.status_code as u64))
+    buffer.append(" ")
+    buffer.append(self.status_message)
+    buffer.append("\r\n")
+    
+    for i in range(0, self.headers.count)
+        let header = &self.headers.entries[i]
+        buffer.append(header.name)
+        buffer.append(": ")
+        buffer.append(header.value)
+        buffer.append("\r\n")
+    
+    buffer.append("\r\n")
+    
+    if self.body != null
+        buffer.append(self.body)
+    
+    return buffer
+
+// HttpHeaders implementation
+
+func! HttpHeaders::new() -> HttpHeaders
+    return HttpHeaders(entries: null, count: 0, capacity: 0)
+
+func! HttpHeaders::add(*mut self, name: [u8], value: [u8]) -> ok
+    pass
+
+func HttpHeaders::get(*self, name: [u8]) -> ?[u8]
+    for i in range(0, self.count)
+        let header = &self.entries[i]
+        if header_name_equals(header.name, name)
+            return header.value
+    return null
+
+func HttpHeaders::contains(*self, name: [u8]) -> bool
+    return self.get(name) != null
+
+func header_name_equals(a: [u8], b: [u8]) -> bool
+    if a.len != b.len
+        return false
+    for i in range(0, a.len)
+        let ca = to_lowercase(a[i])
+        let cb = to_lowercase(b[i])
+        if ca != cb
+            return false
+    return true
+
+func to_lowercase(ch: u8) -> u8
+    if ch >= 65 && ch <= 90
+        return ch + 32
+    return ch
+
+// Helper functions
+
+func status_message_for_code(code: u16) -> [u8]
+    if code == 200
+        return "OK"
+    elif code == 201
+        return "Created"
+    elif code == 404
+        return "Not Found"
+    elif code == 500
+        return "Internal Server Error"
+    return "Unknown"
+
+func find_byte(s: [u8], b: u8) -> i32
+    for i in range(0, s.len)
+        if s[i] == b
+            return i as i32
+    return -1
+
+func slice_before(s: [u8], pos: usize) -> [u8]
+    pass
+
+func slice_range(s: [u8], start: usize, end: usize) -> [u8]
+    pass
+
+func slice_from(s: [u8], start: usize) -> [u8]
+    pass
+
+func u64_to_string(n: u64) -> [u8]
+    pass

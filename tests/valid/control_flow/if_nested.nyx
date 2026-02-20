@@ -1,0 +1,10 @@
+// Nested if statements
+func nested_if(x: i32, y: i32) -> ok
+    if x > 0
+        if y > 0
+            pass
+        else
+            pass
+    else
+        if y < 0
+            pass

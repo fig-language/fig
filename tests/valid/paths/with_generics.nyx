@@ -1,0 +1,6 @@
+// Paths with generic arguments
+func generic_paths() -> ok
+    let a: Vec[i32] = Vec[i32]::new()
+    let b: Map[i32, bool] = Map[i32, bool]::new()
+    let c: Option[*u8] = Option[*u8]::none()
+    pass

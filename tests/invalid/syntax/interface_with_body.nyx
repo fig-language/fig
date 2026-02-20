@@ -1,0 +1,4 @@
+// Invalid: Interface with function body
+interface BadInterface
+    func method(*self) -> ok
+        pass

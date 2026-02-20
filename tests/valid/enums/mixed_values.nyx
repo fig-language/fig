@@ -1,0 +1,6 @@
+// Enum with mixed explicit and auto-assigned values
+enum Priority
+    LOW = 0
+    MEDIUM
+    HIGH
+    CRITICAL = 100

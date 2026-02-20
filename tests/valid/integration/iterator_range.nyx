@@ -1,0 +1,25 @@
+// Integration: Iterator interface and range implementation
+interface Iterator[T]
+    func next(*mut self) -> ?T
+    func has_next(*self) -> bool
+
+struct Range
+    current: i64
+    end: i64
+    step: i64
+
+func Range::new(start: i64, end: i64, step: i64) -> Range
+    pass
+
+func Range::next(*mut self) -> ?i64
+    if self.current >= self.end
+        return null
+    let val = self.current
+    self.current = self.current + self.step
+    return val
+
+func Range::has_next(*self) -> bool
+    return self.current < self.end
+
+func collect_range(start: i64, end: i64) -> [i64]
+    pass

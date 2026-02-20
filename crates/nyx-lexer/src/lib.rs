@@ -1,12 +1,16 @@
 mod float;
 mod integer;
+mod error;
 
 pub use float::{parse_float, FloatExponent, FloatLiteral, FloatSuffix};
 pub use integer::{parse_integer, Base, IntegerLiteral, IntegerSuffix};
+pub use error::LexicalError;
 
 use logos::Logos;
+use serde::Serialize;
 
-#[derive(Logos, Debug, PartialEq, Clone)]
+#[derive(Logos, Debug, PartialEq, Clone, Serialize)]
+#[logos(error = LexicalError)]
 #[logos(skip r"[ \t]+")] // Skip spaces and tabs only (not newlines)
 pub enum Token {
     // Indentation tokens (emitted by IndentLexer wrapper)
@@ -14,7 +18,7 @@ pub enum Token {
     Dedent,
     
     // Newline token
-    #[regex(r"\n+")]
+    #[regex(r"(\r?\n)+")]
     Newline,
     // Keywords
     #[token("fn")]
@@ -177,6 +181,8 @@ pub enum Token {
     Arrow, // Function return type
     #[token("=>")]
     FatArrow,
+    #[token("?")]
+    Question,
 
     // Delimiters and Punctuation
     #[token("(")]
@@ -238,17 +244,17 @@ pub enum Token {
     IntegerLiteral(IntegerLiteral), // unsuffixed integers
 
     // String literal with basic escape sequences
-    #[regex(r#""(?:[^"\\]|\\.)*""#, |lex| unescape_literal(lex.slice()))]
+    #[regex(r#""(?:[^"\\]|\\.)*""#, unescape_literal)]
     // This regex will NOT match unclosed strings, so Logos will emit an error for them
     StringLiteral(String),
 
     // Character literal with basic escape sequences
-    #[regex(r#"'(?:[^'\\]|\\.)'"#, |lex| unescape_literal(lex.slice()))]
+    #[regex(r#"'(?:[^'\\]|\\.)'"#, unescape_literal)]
     CharLiteral(String),
 
-    // Metadata prefix - '@' symbol. The identifier following it will be `Ident`.
-    #[token("@")]
-    At,
+    // Metadata prefix - '#' symbol for annotations. The identifier following it will be `Ident`.
+    #[token("#")]
+    Hash,
 
     // Whitespace and Comments - Skipped by Logos
     #[regex(r"//[^\n]*", logos::skip, allow_greedy = true)] // Single-line comments
@@ -258,13 +264,16 @@ pub enum Token {
 }
 
 // Helper function to unescape string and character literals
-fn unescape_literal(lex_slice: &str) -> String {
+fn unescape_literal(lex: &mut logos::Lexer<Token>) -> Result<String, LexicalError> {
+    let lex_slice = lex.slice();
+    let span = lex.span();
     let mut unescaped = String::with_capacity(lex_slice.len());
+    
     // Remove leading/trailing quotes for both char and string literals
     // The slice will be like "'a'" or "\"hello\""
     let inner_slice = &lex_slice[1..lex_slice.len() - 1]; // Removes ' or "
 
-    let mut chars = inner_slice.chars();
+    let mut chars = inner_slice.chars().peekable();
     while let Some(c) = chars.next() {
         if c == '\\' {
             if let Some(escaped_char) = chars.next() {
@@ -276,23 +285,26 @@ fn unescape_literal(lex_slice: &str) -> String {
                     '0' => unescaped.push('\0'),
                     '\'' => unescaped.push('\''),
                     '"' => unescaped.push('"'),
-                    // Add more escape sequences as needed if the language supports them
                     _ => {
-                        // If it's an unknown escape sequence, just push the backslash and the char
-                        // This might be an error case or a future feature
-                        unescaped.push('\\');
-                        unescaped.push(escaped_char);
+                        // Invalid escape sequence
+                        return Err(LexicalError::InvalidEscapeSequence {
+                            span,
+                            sequence: format!("\\{}", escaped_char),
+                        });
                     }
                 }
             } else {
-                // Backslash at the end of the string, which is an error or incomplete
-                unescaped.push('\\');
+                // Backslash at the end of the string, which is an error
+                return Err(LexicalError::InvalidEscapeSequence {
+                    span,
+                    sequence: "\\".to_string(),
+                });
             }
         } else {
             unescaped.push(c);
         }
     }
-    unescaped
+    Ok(unescaped)
 }
 
 /// Wrapper around Logos lexer that handles indentation-based block structure.
@@ -399,7 +411,7 @@ impl<'source> IndentLexer<'source> {
 }
 
 impl<'source> Iterator for IndentLexer<'source> {
-    type Item = Result<Token, ()>;
+    type Item = Result<Token, LexicalError>;
 
     fn next(&mut self) -> Option<Self::Item> {
         // First, check if we have pending tokens to emit
@@ -858,16 +870,16 @@ mod tests {
     #[test]
     fn test_metadata() {
         lexer_test_helper(
-            "@inline @deprecated(msg) @test_attr",
+            "#inline #deprecated(msg) #test_attr",
             vec![
-                Token::At,
+                Token::Hash,
                 Token::Ident("inline".to_string()),
-                Token::At,
+                Token::Hash,
                 Token::Ident("deprecated".to_string()),
                 Token::LParen,
                 Token::Ident("msg".to_string()),
                 Token::RParen,
-                Token::At,
+                Token::Hash,
                 Token::Ident("test_attr".to_string()),
             ],
         );

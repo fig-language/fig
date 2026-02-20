@@ -1,0 +1,4 @@
+// Simple union (tagged union / discriminated union)
+union IntOrFloat
+    integer: i32
+    floating: f64

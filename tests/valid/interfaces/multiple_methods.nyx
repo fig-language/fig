@@ -1,0 +1,5 @@
+// Interface with multiple method declarations
+interface Display[T]
+    func display(*self) -> T
+    func to_string(*self) -> [u8]
+    func format(*self, fmt: [u8]) -> [u8]

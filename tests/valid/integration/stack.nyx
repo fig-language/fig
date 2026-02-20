@@ -1,0 +1,32 @@
+// Integration: A simple stack built on top of a dynamic array
+struct Stack[T]
+    data: *mut T
+    len: usize
+    cap: usize
+
+const Stack[T]::INITIAL_CAP: usize = 8
+
+func! Stack[T]::new() -> Stack[T]
+    pass
+
+func Stack[T]::is_empty(*self) -> bool
+    return self.len == 0
+
+func Stack[T]::len(*self) -> usize
+    return self.len
+
+func! Stack[T]::push(*mut self, val: T) -> ok
+    pass
+
+func! Stack[T]::pop(*mut self) -> ?T
+    if self.is_empty()
+        return null
+    pass
+
+func Stack[T]::peek(*self) -> ?*T
+    if self.is_empty()
+        return null
+    pass
+
+func! Stack[T]::free(*mut self) -> ok
+    pass

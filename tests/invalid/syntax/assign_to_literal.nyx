@@ -1,0 +1,4 @@
+// Invalid: Assignment to literal value
+func assign_to_literal() -> ok
+    5 = 10
+    pass

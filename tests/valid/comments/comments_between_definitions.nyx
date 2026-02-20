@@ -1,0 +1,15 @@
+// Comment on same logical line as a statement (after indented block)
+func greet()
+    // inner comment
+    pass
+
+// Comment before a struct
+struct Point
+    x: i32
+    y: i32
+
+// Comment before an enum
+enum Color
+    RED
+    GREEN
+    BLUE

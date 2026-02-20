@@ -1,0 +1,9 @@
+// Struct with slice fields
+struct Buffer
+    data: [u8]
+    len: usize
+
+struct Matrix
+    rows: usize
+    cols: usize
+    data: [f64]

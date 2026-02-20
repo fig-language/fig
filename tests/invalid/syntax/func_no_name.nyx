@@ -1,0 +1,4 @@
+// INVALID: func keyword alone (no name)
+// Expected parse error: function name path required
+func () -> ok
+    pass

@@ -1,0 +1,4 @@
+// INVALID: func declaration missing parameter type annotation
+// Expected parse error: type annotation required for parameter
+func bad_func(x) -> i32
+    return x

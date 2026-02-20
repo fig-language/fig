@@ -1,0 +1,8 @@
+// Edge case: underscore-prefixed identifiers
+let _unused = 42
+mut _counter = 0
+let __low = true
+let _x_ = 99
+
+func _helper(_arg: i32) -> i32
+    return _arg * 2

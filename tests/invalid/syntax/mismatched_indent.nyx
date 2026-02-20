@@ -1,0 +1,6 @@
+// Invalid: Mismatched indentation in block
+func bad_indent() -> ok
+    let x = 5
+      let y = 10
+    let z = 15
+    pass

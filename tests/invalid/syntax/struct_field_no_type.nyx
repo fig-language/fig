@@ -1,0 +1,5 @@
+// INVALID: struct field missing type annotation
+// Expected parse error: colon + type required
+struct Bad
+    x
+    y: i32

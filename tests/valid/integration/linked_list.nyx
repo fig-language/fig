@@ -1,0 +1,26 @@
+// Integration: A linked list implementation
+struct Node[T]
+    value: T
+    next: ?*mut Node[T]
+
+struct LinkedList[T]
+    head: ?*mut Node[T]
+    len: usize
+
+func! LinkedList[T]::new() -> LinkedList[T]
+    pass
+
+func! LinkedList[T]::push_front(*mut self, value: T) -> ok
+    pass
+
+func! LinkedList[T]::pop_front(*mut self) -> ?T
+    pass
+
+func LinkedList[T]::len(*self) -> usize
+    return self.len
+
+func LinkedList[T]::is_empty(*self) -> bool
+    return self.len == 0
+
+func LinkedList[T]::peek_front(*self) -> ?*T
+    pass

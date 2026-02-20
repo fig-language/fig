@@ -298,24 +298,12 @@ impl PrettyPrinter {
             Type::SelfType => {
                 writeln!(output, "{}Type: Self", prefix).unwrap();
             }
-            Type::RawPointer => {
-                writeln!(output, "{}Type: RawPointer", prefix).unwrap();
-            }
-            Type::TypedPointer(inner_type) => {
-                writeln!(output, "{}Type: TypedPointer", prefix).unwrap();
+            Type::Pointer{ element_type, nullable: _, mutable: _ } => {
+                writeln!(output, "{}Type: Pointer", prefix).unwrap();
                 self.indent_level += 1;
                 writeln!(output, "{}element_type:", self.indent()).unwrap();
                 self.indent_level += 1;
-                self.format_type(inner_type, output, true);
-                self.indent_level -= 1;
-                self.indent_level -= 1;
-            }
-            Type::Reference(inner_type) => {
-                writeln!(output, "{}Type: Reference", prefix).unwrap();
-                self.indent_level += 1;
-                writeln!(output, "{}element_type:", self.indent()).unwrap();
-                self.indent_level += 1;
-                self.format_type(inner_type, output, true);
+                self.format_type(element_type, output, true);
                 self.indent_level -= 1;
                 self.indent_level -= 1;
             }
@@ -1210,17 +1198,10 @@ mod tests {
     }
 
     #[test]
-    fn test_print_raw_pointer_type() {
-        let ast_type = Type::RawPointer;
-        let output = PrettyPrinter::new().print_type(&ast_type);
-        assert!(output.contains("Type: RawPointer"));
-    }
-
-    #[test]
     fn test_print_typed_pointer_type() {
-        let ast_type = Type::TypedPointer(Box::new(Type::Bool));
+        let ast_type = Type::Pointer{ element_type: Box::new(Type::Bool), nullable: false, mutable: false };
         let output = PrettyPrinter::new().print_type(&ast_type);
-        assert!(output.contains("Type: TypedPointer"));
+        assert!(output.contains("Type: Pointer"));
         assert!(output.contains("element_type:"));
         assert!(output.contains("Type: Bool"));
     }
@@ -1283,11 +1264,10 @@ mod tests {
 
     #[test]
     fn test_display_trait_for_type() {
-        let ast_type = Type::TypedPointer(Box::new(Type::RawPointer));
+        let ast_type = Type::Pointer{ element_type: Box::new(Type::Pointer{ element_type: Box::new(Type::I32), nullable: false, mutable: false }), nullable: false, mutable: false };
         let output = format!("{}", ast_type);
-        assert!(output.contains("Type: TypedPointer"));
+        assert!(output.contains("Type: Pointer"));
         assert!(output.contains("element_type:"));
-        assert!(output.contains("Type: RawPointer"));
     }
 
     #[test]

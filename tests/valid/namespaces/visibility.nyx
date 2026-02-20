@@ -1,0 +1,8 @@
+// Namespace with visibility modifier
+public namespace api
+    func version() -> u32
+    func help() -> ok
+
+export namespace runtime
+    export func init() -> ok
+    public func shutdown() -> ok

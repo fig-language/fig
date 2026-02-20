@@ -1,0 +1,13 @@
+// Edge case: interface with only clauses, no methods
+interface RequiresAllocator
+    requires
+        Allocator
+
+interface MustBeOrdered
+    where
+        Self: Ord
+
+interface ExtendsOnly
+    extends
+        Display
+        Debug

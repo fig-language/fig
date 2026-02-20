@@ -1,0 +1,6 @@
+// for loop with body containing multiple statements
+func process(data: [i32]) -> ok
+    for item in data
+        let doubled = item * 2
+        let clamped = doubled
+        pass

@@ -1,0 +1,4 @@
+// INVALID: interface method declarations must have func keyword
+// Expected parse error: func required for interface method
+interface Bad
+    do_thing(*self) -> ok

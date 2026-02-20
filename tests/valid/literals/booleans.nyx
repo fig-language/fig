@@ -1,0 +1,5 @@
+// Boolean literals
+let t = true
+let f = false
+let condition = true
+let flag = false

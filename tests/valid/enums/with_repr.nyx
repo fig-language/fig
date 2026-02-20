@@ -1,0 +1,14 @@
+// Enum with repr type annotation
+enum[u8] SmallEnum
+    A = 0
+    B = 127
+    C = 255
+
+enum[u16] MediumEnum
+    FIRST = 0
+    LAST = 65535
+
+enum[i32] SignedEnum
+    NEG = -1
+    ZERO = 0
+    POS = 1

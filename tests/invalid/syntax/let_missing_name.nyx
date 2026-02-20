@@ -1,0 +1,3 @@
+// INVALID: let with no name
+// Expected parse error: identifier required
+let = 10

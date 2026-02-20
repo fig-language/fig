@@ -1,0 +1,13 @@
+// Enum with annotation
+#repr(C)
+enum CEnum
+    FIRST
+    SECOND
+    THIRD
+
+#derive(Debug, Clone)
+enum Season
+    SPRING = 0
+    SUMMER = 1
+    AUTUMN = 2
+    WINTER = 3

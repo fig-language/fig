@@ -1,0 +1,292 @@
+// Ring buffer implementation for fixed-size queues
+
+using core::memory
+
+export struct RingBuffer[T]
+    data: *mut T
+    capacity: usize
+    head: usize
+    tail: usize
+    full: bool
+
+func! RingBuffer[T]::new(capacity: usize) -> RingBuffer[T]
+    return RingBuffer[T](
+        data: allocate_array[T](capacity),
+        capacity: capacity,
+        head: 0,
+        tail: 0,
+        full: false
+    )
+
+func! RingBuffer[T]::with_capacity(capacity: usize) -> RingBuffer[T]
+    return RingBuffer[T]::new(capacity)
+
+func! RingBuffer[T]::push(*mut self, value: T) -> bool
+    if self.is_full()
+        return false
+    
+    self.data[self.tail] = value
+    self.tail = (self.tail + 1) % self.capacity
+    
+    if self.tail == self.head
+        self.full = true
+    
+    return true
+
+func! RingBuffer[T]::push_overwrite(*mut self, value: T) -> ok
+    if self.is_full()
+        self.pop()
+    
+    self.push(value)
+    pass
+
+func! RingBuffer[T]::pop(*mut self) -> ?T
+    if self.is_empty()
+        return null
+    
+    let value = self.data[self.head]
+    self.head = (self.head + 1) % self.capacity
+    self.full = false
+    
+    return value
+
+func RingBuffer[T]::peek(*self) -> ?*T
+    if self.is_empty()
+        return null
+    
+    return &self.data[self.head]
+
+func RingBuffer[T]::peek_at(*self, index: usize) -> ?*T
+    if index >= self.len()
+        return null
+    
+    let actual_index = (self.head + index) % self.capacity
+    return &self.data[actual_index]
+
+func RingBuffer[T]::is_empty(*self) -> bool
+    return !self.full && self.head == self.tail
+
+func RingBuffer[T]::is_full(*self) -> bool
+    return self.full
+
+func RingBuffer[T]::len(*self) -> usize
+    if self.full
+        return self.capacity
+    
+    if self.tail >= self.head
+        return self.tail - self.head
+    
+    return self.capacity - self.head + self.tail
+
+func RingBuffer[T]::capacity(*self) -> usize
+    return self.capacity
+
+func RingBuffer[T]::available(*self) -> usize
+    return self.capacity - self.len()
+
+func! RingBuffer[T]::clear(*mut self) -> ok
+    self.head = 0
+    self.tail = 0
+    self.full = false
+    pass
+
+func! RingBuffer[T]::iter(*self) -> RingBufferIter[T]
+    return RingBufferIter[T](
+        buffer: self,
+        index: 0
+    )
+
+func! RingBuffer[T]::to_array(*self) -> [T]
+    mut arr: [T] = []
+    
+    let len = self.len()
+    for i in range(0, len)
+        let idx = (self.head + i) % self.capacity
+        arr.push(self.data[idx])
+    
+    return arr
+
+struct RingBufferIter[T]
+    buffer: *RingBuffer[T]
+    index: usize
+
+func! RingBufferIter[T]::next(*mut self) -> ?*T
+    if self.index >= self.buffer.len()
+        return null
+    
+    let value = self.buffer.peek_at(self.index)
+    self.index = self.index + 1
+    
+    return value
+
+func RingBufferIter[T]::has_next(*self) -> bool
+    return self.index < self.buffer.len()
+
+// Multi-producer single-consumer ring buffer
+
+export struct MpscRingBuffer[T]
+    data: *mut T
+    capacity: usize
+    head: usize
+    tail: usize
+    lock: SpinLock
+
+func! MpscRingBuffer[T]::new(capacity: usize) -> MpscRingBuffer[T]
+    return MpscRingBuffer[T](
+        data: allocate_array[T](capacity),
+        capacity: capacity,
+        head: 0,
+        tail: 0,
+        lock: SpinLock::new()
+    )
+
+func! MpscRingBuffer[T]::push(*mut self, value: T) -> bool
+    self.lock.acquire()
+    
+    let next_tail = (self.tail + 1) % self.capacity
+    
+    if next_tail == self.head
+        self.lock.release()
+        return false
+    
+    self.data[self.tail] = value
+    self.tail = next_tail
+    
+    self.lock.release()
+    return true
+
+func! MpscRingBuffer[T]::pop(*mut self) -> ?T
+    if self.is_empty()
+        return null
+    
+    let value = self.data[self.head]
+    self.head = (self.head + 1) % self.capacity
+    
+    return value
+
+func MpscRingBuffer[T]::is_empty(*self) -> bool
+    return self.head == self.tail
+
+func MpscRingBuffer[T]::len(*self) -> usize
+    if self.tail >= self.head
+        return self.tail - self.head
+    
+    return self.capacity - self.head + self.tail
+
+// Double-ended ring buffer (deque)
+
+export struct RingDeque[T]
+    data: *mut T
+    capacity: usize
+    head: usize
+    tail: usize
+    size: usize
+
+func! RingDeque[T]::new(capacity: usize) -> RingDeque[T]
+    return RingDeque[T](
+        data: allocate_array[T](capacity),
+        capacity: capacity,
+        head: 0,
+        tail: 0,
+        size: 0
+    )
+
+func! RingDeque[T]::push_front(*mut self, value: T) -> bool
+    if self.size >= self.capacity
+        return false
+    
+    if self.head == 0
+        self.head = self.capacity - 1
+    else
+        self.head = self.head - 1
+    
+    self.data[self.head] = value
+    self.size = self.size + 1
+    
+    return true
+
+func! RingDeque[T]::push_back(*mut self, value: T) -> bool
+    if self.size >= self.capacity
+        return false
+    
+    self.data[self.tail] = value
+    self.tail = (self.tail + 1) % self.capacity
+    self.size = self.size + 1
+    
+    return true
+
+func! RingDeque[T]::pop_front(*mut self) -> ?T
+    if self.size == 0
+        return null
+    
+    let value = self.data[self.head]
+    self.head = (self.head + 1) % self.capacity
+    self.size = self.size - 1
+    
+    return value
+
+func! RingDeque[T]::pop_back(*mut self) -> ?T
+    if self.size == 0
+        return null
+    
+    if self.tail == 0
+        self.tail = self.capacity - 1
+    else
+        self.tail = self.tail - 1
+    
+    let value = self.data[self.tail]
+    self.size = self.size - 1
+    
+    return value
+
+func RingDeque[T]::peek_front(*self) -> ?*T
+    if self.size == 0
+        return null
+    
+    return &self.data[self.head]
+
+func RingDeque[T]::peek_back(*self) -> ?*T
+    if self.size == 0
+        return null
+    
+    let back_index = if self.tail == 0 then self.capacity - 1 else self.tail - 1
+    return &self.data[back_index]
+
+func RingDeque[T]::is_empty(*self) -> bool
+    return self.size == 0
+
+func RingDeque[T]::is_full(*self) -> bool
+    return self.size >= self.capacity
+
+func RingDeque[T]::len(*self) -> usize
+    return self.size
+
+func! RingDeque[T]::clear(*mut self) -> ok
+    self.head = 0
+    self.tail = 0
+    self.size = 0
+    pass
+
+// Synchronization primitives
+
+struct SpinLock
+    locked: bool
+
+func! SpinLock::new() -> SpinLock
+    return SpinLock(locked: false)
+
+func! SpinLock::acquire(*mut self) -> ok
+    for i in range(0, 1000000)
+        if !self.locked
+            self.locked = true
+            break
+    pass
+
+func! SpinLock::release(*mut self) -> ok
+    self.locked = false
+    pass
+
+// Helper functions
+
+func! allocate_array[T](size: usize) -> *mut T
+    pass

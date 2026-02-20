@@ -1,0 +1,4 @@
+// Invalid: Effect marker on struct definition
+struct! InvalidEffect
+    x: i32
+    y: i32

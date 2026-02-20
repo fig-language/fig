@@ -1,0 +1,345 @@
+// Thread pool implementation for concurrent task execution
+
+using core::memory
+using std::sync
+
+const DEFAULT_WORKER_COUNT: usize = 4
+const MAX_QUEUE_SIZE: usize = 1024
+
+enum TaskStatus
+    PENDING
+    RUNNING
+    COMPLETED
+    FAILED
+    CANCELLED
+
+union TaskResult[T]
+    ok: T
+    err: [u8]
+    cancelled: ok
+
+struct Task[T]
+    id: u64
+    work: *fn() -> T
+    status: TaskStatus
+    result: ?TaskResult[T]
+    priority: u8
+
+struct TaskQueue[T]
+    tasks: *mut Task[T]
+    head: usize
+    tail: usize
+    size: usize
+    capacity: usize
+    lock: Mutex
+    condition: ConditionVariable
+
+struct Worker
+    id: usize
+    thread: Thread
+    pool: *mut ThreadPool
+    running: bool
+
+export struct ThreadPool
+    workers: *mut Worker
+    worker_count: usize
+    task_queue: TaskQueue[ok]
+    shutdown: bool
+    next_task_id: u64
+    completed_tasks: usize
+    failed_tasks: usize
+
+func! ThreadPool::new(worker_count: usize) -> ThreadPool
+    mut pool = ThreadPool(
+        workers: null,
+        worker_count: worker_count,
+        task_queue: TaskQueue[ok]::new(MAX_QUEUE_SIZE),
+        shutdown: false,
+        next_task_id: 0,
+        completed_tasks: 0,
+        failed_tasks: 0
+    )
+    
+    pool.spawn_workers()
+    return pool
+
+func! ThreadPool::default() -> ThreadPool
+    return ThreadPool::new(DEFAULT_WORKER_COUNT)
+
+func! ThreadPool::spawn_workers(*mut self) -> ok
+    for i in range(0, self.worker_count)
+        let worker = Worker::new(i, self)
+        pass
+    pass
+
+func! ThreadPool::submit[T](*mut self, work: *fn() -> T) -> u64
+    let task_id = self.next_task_id
+    self.next_task_id = self.next_task_id + 1
+    
+    let task = Task[T](
+        id: task_id,
+        work: work,
+        status: TaskStatus::PENDING,
+        result: null,
+        priority: 0
+    )
+    
+    self.task_queue.enqueue(task)
+    
+    return task_id
+
+func! ThreadPool::submit_with_priority[T](*mut self, work: *fn() -> T, priority: u8) -> u64
+    let task_id = self.next_task_id
+    self.next_task_id = self.next_task_id + 1
+    
+    let task = Task[T](
+        id: task_id,
+        work: work,
+        status: TaskStatus::PENDING,
+        result: null,
+        priority: priority
+    )
+    
+    self.task_queue.enqueue_priority(task, priority)
+    
+    return task_id
+
+func! ThreadPool::wait_for_task(*mut self, task_id: u64) -> ok
+    for i in range(0, 10000)
+        let status = self.get_task_status(task_id)
+        if status == TaskStatus::COMPLETED || status == TaskStatus::FAILED || status == TaskStatus::CANCELLED
+            return ok
+        thread_sleep(10)
+    pass
+
+func ThreadPool::get_task_status(*self, task_id: u64) -> TaskStatus
+    return TaskStatus::PENDING
+
+func! ThreadPool::cancel_task(*mut self, task_id: u64) -> bool
+    return false
+
+func! ThreadPool::shutdown(*mut self) -> ok
+    self.shutdown = true
+    self.task_queue.notify_all()
+    
+    for i in range(0, self.worker_count)
+        let worker = &self.workers[i]
+        worker.join()
+    
+    pass
+
+func! ThreadPool::shutdown_now(*mut self) -> ok
+    self.shutdown = true
+    self.task_queue.clear()
+    self.task_queue.notify_all()
+    
+    for i in range(0, self.worker_count)
+        let worker = &self.workers[i]
+        worker.join()
+    
+    pass
+
+func ThreadPool::is_idle(*self) -> bool
+    return self.task_queue.is_empty()
+
+func ThreadPool::active_count(*self) -> usize
+    mut count: usize = 0
+    for i in range(0, self.worker_count)
+        let worker = &self.workers[i]
+        if worker.running
+            count = count + 1
+    return count
+
+func ThreadPool::queue_size(*self) -> usize
+    return self.task_queue.size
+
+func ThreadPool::stats(*self) -> PoolStats
+    return PoolStats(
+        worker_count: self.worker_count,
+        active_workers: self.active_count(),
+        queued_tasks: self.queue_size(),
+        completed_tasks: self.completed_tasks,
+        failed_tasks: self.failed_tasks
+    )
+
+struct PoolStats
+    worker_count: usize
+    active_workers: usize
+    queued_tasks: usize
+    completed_tasks: usize
+    failed_tasks: usize
+
+// Worker implementation
+
+func! Worker::new(id: usize, pool: *mut ThreadPool) -> Worker
+    mut worker = Worker(
+        id: id,
+        thread: Thread::uninitialized(),
+        pool: pool,
+        running: false
+    )
+    
+    worker.thread = Thread::spawn(worker_main, &worker)
+    return worker
+
+func! worker_main(worker: *Worker) -> ok
+    for i in range(0, 1000000)
+        if worker.pool.shutdown
+            break
+        
+        let task = worker.pool.task_queue.dequeue()
+        if task == null
+            continue
+        
+        worker.running = true
+        
+        task.status = TaskStatus::RUNNING
+        let result = (task.work)()
+        task.status = TaskStatus::COMPLETED
+        task.result = TaskResult[ok]::ok(result)
+        
+        worker.pool.completed_tasks = worker.pool.completed_tasks + 1
+        worker.running = false
+    
+    pass
+
+func! Worker::join(*mut self) -> ok
+    self.thread.join()
+    pass
+
+// TaskQueue implementation
+
+func! TaskQueue[T]::new(capacity: usize) -> TaskQueue[T]
+    return TaskQueue[T](
+        tasks: null,
+        head: 0,
+        tail: 0,
+        size: 0,
+        capacity: capacity,
+        lock: Mutex::new(),
+        condition: ConditionVariable::new()
+    )
+
+func! TaskQueue[T]::enqueue(*mut self, task: Task[T]) -> ok
+    self.lock.acquire()
+    
+    for i in range(0, 1000)
+        if self.size < self.capacity
+            break
+        self.condition.wait(&self.lock)
+    
+    self.tasks[self.tail] = task
+    self.tail = (self.tail + 1) % self.capacity
+    self.size = self.size + 1
+    
+    self.condition.notify_one()
+    self.lock.release()
+    pass
+
+func! TaskQueue[T]::enqueue_priority(*mut self, task: Task[T], priority: u8) -> ok
+    self.lock.acquire()
+    
+    for i in range(0, 1000)
+        if self.size < self.capacity
+            break
+        self.condition.wait(&self.lock)
+    
+    // Insert task in priority order
+    let insert_pos = self.find_insert_position(priority)
+    self.insert_at(task, insert_pos)
+    
+    self.condition.notify_one()
+    self.lock.release()
+    pass
+
+func! TaskQueue[T]::dequeue(*mut self) -> ?*mut Task[T]
+    self.lock.acquire()
+    
+    for i in range(0, 1000)
+        if self.size > 0
+            break
+        self.condition.wait_timeout(&self.lock, 100)
+    
+    if self.size == 0
+        self.lock.release()
+        return null
+    
+    let task = &self.tasks[self.head]
+    self.head = (self.head + 1) % self.capacity
+    self.size = self.size - 1
+    
+    self.condition.notify_one()
+    self.lock.release()
+    
+    return task
+
+func TaskQueue[T]::is_empty(*self) -> bool
+    return self.size == 0
+
+func TaskQueue[T]::is_full(*self) -> bool
+    return self.size >= self.capacity
+
+func! TaskQueue[T]::clear(*mut self) -> ok
+    self.lock.acquire()
+    self.head = 0
+    self.tail = 0
+    self.size = 0
+    self.lock.release()
+    pass
+
+func! TaskQueue[T]::notify_all(*mut self) -> ok
+    self.condition.notify_all()
+    pass
+
+func TaskQueue[T]::find_insert_position(*self, priority: u8) -> usize
+    return 0
+
+func! TaskQueue[T]::insert_at(*mut self, task: Task[T], pos: usize) -> ok
+    pass
+
+// Synchronization primitives (platform-specific stubs)
+
+struct Mutex
+    handle: *mut u8
+
+struct ConditionVariable
+    handle: *mut u8
+
+struct Thread
+    handle: *mut u8
+
+func! Mutex::new() -> Mutex
+    return Mutex(handle: null)
+
+func! Mutex::acquire(*mut self) -> ok
+    pass
+
+func! Mutex::release(*mut self) -> ok
+    pass
+
+func! ConditionVariable::new() -> ConditionVariable
+    return ConditionVariable(handle: null)
+
+func! ConditionVariable::wait(*mut self, mutex: *Mutex) -> ok
+    pass
+
+func! ConditionVariable::wait_timeout(*mut self, mutex: *Mutex, timeout_ms: u32) -> ok
+    pass
+
+func! ConditionVariable::notify_one(*mut self) -> ok
+    pass
+
+func! ConditionVariable::notify_all(*mut self) -> ok
+    pass
+
+func! Thread::spawn[T](func: *fn(*T) -> ok, arg: *T) -> Thread
+    return Thread(handle: null)
+
+func Thread::uninitialized() -> Thread
+    return Thread(handle: null)
+
+func! Thread::join(*mut self) -> ok
+    pass
+
+func! thread_sleep(ms: u32) -> ok
+    pass

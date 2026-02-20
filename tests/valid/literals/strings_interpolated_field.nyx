@@ -1,0 +1,8 @@
+// Interpolated string with nested field access
+struct Point
+    x: i32
+    y: i32
+
+func show_point(p: Point) -> ok
+    let msg = $"Point({p.x}, {p.y})"
+    pass

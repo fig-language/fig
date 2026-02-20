@@ -1,0 +1,9 @@
+// Operator precedence across different levels
+func precedence() -> ok
+    let a = 1 + 2 * 3         // 7
+    let b = (1 + 2) * 3       // 9
+    let c = 8 / 2 + 1         // 5
+    let d = 1 + 2 * 3 - 4 / 2 // 1+6-2 = 5
+    let e = true || false && false // true (AND binds tighter)
+    let f = !true || true      // false || true = true
+    pass

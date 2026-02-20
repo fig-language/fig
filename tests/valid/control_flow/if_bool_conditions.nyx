@@ -1,0 +1,12 @@
+// Boolean condition expressions in if
+func bool_conditions(a: bool, b: bool, x: i32) -> ok
+    if a && b
+        pass
+    if a || b
+        pass
+    if !a
+        pass
+    if x > 0 && x < 100
+        pass
+    if a && !b || x == 0
+        pass

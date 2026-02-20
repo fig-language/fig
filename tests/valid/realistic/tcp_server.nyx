@@ -1,0 +1,378 @@
+// Networking layer with socket abstraction and TCP server
+
+using core::memory
+using std::io
+
+const SOCKET_ERROR: i32 = -1
+const MAX_CONNECTIONS: usize = 128
+const BUFFER_SIZE: usize = 4096
+
+enum SocketType
+    STREAM
+    DATAGRAM
+    RAW
+
+enum Protocol
+    TCP
+    UDP
+    ICMP
+
+enum AddressFamily
+    IPV4
+    IPV6
+    UNIX
+
+union SocketError
+    connection_refused: ok
+    timeout: ok
+    reset: ok
+    would_block: ok
+    invalid_address: [u8]
+    system_error: i32
+
+union SocketResult[T]
+    ok: T
+    err: SocketError
+
+struct IpAddress
+    octets: [u8]
+    family: AddressFamily
+
+struct SocketAddress
+    ip: IpAddress
+    port: u16
+
+export struct Socket
+    fd: i32
+    address_family: AddressFamily
+    socket_type: SocketType
+    protocol: Protocol
+    blocking: bool
+
+export struct TcpListener
+    socket: Socket
+    address: SocketAddress
+    backlog: usize
+
+export struct TcpStream
+    socket: Socket
+    peer_address: SocketAddress
+    local_address: SocketAddress
+
+export struct TcpServer
+    listener: TcpListener
+    connections: [TcpConnection]
+    max_connections: usize
+    running: bool
+
+struct TcpConnection
+    stream: TcpStream
+    buffer: [u8]
+    bytes_read: usize
+    last_activity: u64
+
+// Socket implementation
+
+func! Socket::new(family: AddressFamily, socket_type: SocketType, protocol: Protocol) -> SocketResult[Socket]
+    let fd = socket_create(family, socket_type, protocol)
+    
+    if fd == SOCKET_ERROR
+        return SocketResult[Socket]::err(SocketError::system_error(fd))
+    
+    let socket = Socket(
+        fd: fd,
+        address_family: family,
+        socket_type: socket_type,
+        protocol: protocol,
+        blocking: true
+    )
+    
+    return SocketResult[Socket]::ok(socket)
+
+func! Socket::bind(*mut self, address: SocketAddress) -> SocketResult[ok]
+    let result = socket_bind(self.fd, address)
+    
+    if result == SOCKET_ERROR
+        return SocketResult[ok]::err(SocketError::system_error(result))
+    
+    return SocketResult[ok]::ok(ok)
+
+func! Socket::listen(*mut self, backlog: usize) -> SocketResult[ok]
+    let result = socket_listen(self.fd, backlog as i32)
+    
+    if result == SOCKET_ERROR
+        return SocketResult[ok]::err(SocketError::system_error(result))
+    
+    return SocketResult[ok]::ok(ok)
+
+func! Socket::accept(*mut self) -> SocketResult[Socket]
+    let fd = socket_accept(self.fd)
+    
+    if fd == SOCKET_ERROR
+        return SocketResult[Socket]::err(SocketError::system_error(fd))
+    
+    let socket = Socket(
+        fd: fd,
+        address_family: self.address_family,
+        socket_type: self.socket_type,
+        protocol: self.protocol,
+        blocking: self.blocking
+    )
+    
+    return SocketResult[Socket]::ok(socket)
+
+func! Socket::connect(*mut self, address: SocketAddress) -> SocketResult[ok]
+    let result = socket_connect(self.fd, address)
+    
+    if result == SOCKET_ERROR
+        return SocketResult[ok]::err(SocketError::connection_refused(ok))
+    
+    return SocketResult[ok]::ok(ok)
+
+func! Socket::send(*mut self, data: [u8]) -> SocketResult[usize]
+    let bytes_sent = socket_send(self.fd, &data[0], data.len)
+    
+    if bytes_sent == SOCKET_ERROR
+        return SocketResult[usize]::err(SocketError::system_error(bytes_sent))
+    
+    return SocketResult[usize]::ok(bytes_sent as usize)
+
+func! Socket::recv(*mut self, buffer: *mut u8, size: usize) -> SocketResult[usize]
+    let bytes_read = socket_recv(self.fd, buffer, size)
+    
+    if bytes_read == SOCKET_ERROR
+        return SocketResult[usize]::err(SocketError::system_error(bytes_read))
+    
+    return SocketResult[usize]::ok(bytes_read as usize)
+
+func! Socket::set_blocking(*mut self, blocking: bool) -> SocketResult[ok]
+    let result = socket_set_blocking(self.fd, blocking)
+    
+    if result == 0
+        self.blocking = blocking
+        return SocketResult[ok]::ok(ok)
+    
+    return SocketResult[ok]::err(SocketError::system_error(result))
+
+func! Socket::close(*mut self) -> ok
+    if self.fd != SOCKET_ERROR
+        socket_close(self.fd)
+        self.fd = SOCKET_ERROR
+    pass
+
+// TcpListener implementation
+
+func! TcpListener::bind(address: SocketAddress) -> SocketResult[TcpListener]
+    let socket_result = Socket::new(AddressFamily::IPV4, SocketType::STREAM, Protocol::TCP)
+    let socket = socket_result.ok
+    
+    socket.bind(address)
+    socket.listen(128)
+    
+    let listener = TcpListener(
+        socket: socket,
+        address: address,
+        backlog: 128
+    )
+    
+    return SocketResult[TcpListener]::ok(listener)
+
+func! TcpListener::accept(*mut self) -> SocketResult[TcpStream]
+    let socket_result = self.socket.accept()
+    let socket = socket_result.ok
+    
+    let peer_addr = socket_get_peer_address(socket.fd)
+    let local_addr = self.address
+    
+    let stream = TcpStream(
+        socket: socket,
+        peer_address: peer_addr,
+        local_address: local_addr
+    )
+    
+    return SocketResult[TcpStream]::ok(stream)
+
+func TcpListener::local_address(*self) -> SocketAddress
+    return self.address
+
+func! TcpListener::set_nonblocking(*mut self) -> SocketResult[ok]
+    return self.socket.set_blocking(false)
+
+// TcpStream implementation
+
+func! TcpStream::connect(address: SocketAddress) -> SocketResult[TcpStream]
+    let socket_result = Socket::new(AddressFamily::IPV4, SocketType::STREAM, Protocol::TCP)
+    let socket = socket_result.ok
+    
+    socket.connect(address)
+    
+    let local_addr = socket_get_local_address(socket.fd)
+    
+    let stream = TcpStream(
+        socket: socket,
+        peer_address: address,
+        local_address: local_addr
+    )
+    
+    return SocketResult[TcpStream]::ok(stream)
+
+func! TcpStream::read(*mut self, buffer: *mut u8, size: usize) -> SocketResult[usize]
+    return self.socket.recv(buffer, size)
+
+func! TcpStream::write(*mut self, data: [u8]) -> SocketResult[usize]
+    return self.socket.send(data)
+
+func TcpStream::peer_address(*self) -> SocketAddress
+    return self.peer_address
+
+func TcpStream::local_address(*self) -> SocketAddress
+    return self.local_address
+
+func! TcpStream::shutdown(*mut self) -> ok
+    self.socket.close()
+    pass
+
+// TcpServer implementation
+
+func! TcpServer::new(address: SocketAddress) -> SocketResult[TcpServer]
+    let listener_result = TcpListener::bind(address)
+    let listener = listener_result.ok
+    
+    let server = TcpServer(
+        listener: listener,
+        connections: [],
+        max_connections: MAX_CONNECTIONS,
+        running: false
+    )
+    
+    return SocketResult[TcpServer]::ok(server)
+
+func! TcpServer::run(*mut self) -> ok
+    self.running = true
+    self.listener.set_nonblocking()
+    
+    for i in range(0, 1000000)
+        if !self.running
+            break
+        
+        self.accept_connections()
+        self.handle_connections()
+        sleep_ms(10)
+    
+    pass
+
+func! TcpServer::accept_connections(*mut self) -> ok
+    for i in range(0, 10)
+        if self.connections.len >= self.max_connections
+            break
+        
+        let stream_result = self.listener.accept()
+        
+        let conn = TcpConnection(
+            stream: stream_result.ok,
+            buffer: allocate_buffer(BUFFER_SIZE),
+            bytes_read: 0,
+            last_activity: get_time_ms()
+        )
+        
+        self.connections.push(conn)
+    
+    pass
+
+func! TcpServer::handle_connections(*mut self) -> ok
+    mut i: usize = 0
+    
+    for idx in range(0, self.connections.len)
+        let conn = &mut self.connections[i]
+        
+        let bytes_result = conn.stream.read(&mut conn.buffer[conn.bytes_read], BUFFER_SIZE - conn.bytes_read)
+        
+        if bytes_result.ok > 0
+            conn.bytes_read = conn.bytes_read + bytes_result.ok
+            conn.last_activity = get_time_ms()
+            
+            if conn.bytes_read >= BUFFER_SIZE
+                self.process_request(conn)
+                conn.bytes_read = 0
+        
+        let now = get_time_ms()
+        if now - conn.last_activity > 30000
+            conn.stream.shutdown()
+            self.connections.remove(i)
+        else
+            i = i + 1
+    
+    pass
+
+func! TcpServer::process_request(*mut self, conn: *mut TcpConnection) -> ok
+    let response = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\n\r\nHello, World!"
+    conn.stream.write(response.as_bytes())
+    pass
+
+func! TcpServer::shutdown(*mut self) -> ok
+    self.running = false
+    
+    for i in range(0, self.connections.len)
+        let conn = &mut self.connections[i]
+        conn.stream.shutdown()
+    
+    self.listener.socket.close()
+    pass
+
+// IpAddress helpers
+
+func! IpAddress::v4(a: u8, b: u8, c: u8, d: u8) -> IpAddress
+    return IpAddress(
+        octets: [a, b, c, d],
+        family: AddressFamily::IPV4
+    )
+
+func! IpAddress::localhost() -> IpAddress
+    return IpAddress::v4(127, 0, 0, 1)
+
+func! SocketAddress::new(ip: IpAddress, port: u16) -> SocketAddress
+    return SocketAddress(ip: ip, port: port)
+
+// System call wrappers (platform-specific)
+
+func! socket_create(family: AddressFamily, socket_type: SocketType, protocol: Protocol) -> i32
+    pass
+
+func! socket_bind(fd: i32, address: SocketAddress) -> i32
+    pass
+
+func! socket_listen(fd: i32, backlog: i32) -> i32
+    pass
+
+func! socket_accept(fd: i32) -> i32
+    pass
+
+func! socket_connect(fd: i32, address: SocketAddress) -> i32
+    pass
+
+func! socket_send(fd: i32, data: *u8, size: usize) -> i32
+    pass
+
+func! socket_recv(fd: i32, buffer: *mut u8, size: usize) -> i32
+    pass
+
+func! socket_set_blocking(fd: i32, blocking: bool) -> i32
+    pass
+
+func! socket_close(fd: i32) -> ok
+    pass
+
+func socket_get_peer_address(fd: i32) -> SocketAddress
+    pass
+
+func socket_get_local_address(fd: i32) -> SocketAddress
+    pass
+
+func! allocate_buffer(size: usize) -> [u8]
+    pass
+
+func get_time_ms() -> u64
+    pass
+
+func! sleep_ms(ms: u32) -> ok
+    pass

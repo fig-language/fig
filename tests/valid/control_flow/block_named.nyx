@@ -1,0 +1,6 @@
+// Named block statement
+func with_block() -> ok
+    block my_scope
+        let x = 10
+        let y = 20
+        pass

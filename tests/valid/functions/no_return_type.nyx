@@ -1,0 +1,6 @@
+// Functions with no return type (implicitly ok / unit)
+func say_hello()
+    pass
+
+func do_nothing()
+    pass

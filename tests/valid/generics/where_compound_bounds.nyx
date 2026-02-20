@@ -1,0 +1,10 @@
+// Where clause with multiple constraints (compound bounds)
+func process[T](val: T) -> ok
+    where
+        T: Display + Debug + Clone
+    pass
+
+func sorted_insert[T](slice: *mut [T], val: T) -> ok
+    where
+        T: Ord + Copy
+    pass

@@ -1,0 +1,4 @@
+// while loop — basic
+func count_down(n: i32) -> ok
+    while n > 0
+        pass

@@ -1,0 +1,6 @@
+// Effect call suffix  (! on method calls)
+func effect_calls(v: *mut Vec[i32]) -> ok
+    v.push!(42)
+    v.pop!()
+    v.clear!()
+    pass

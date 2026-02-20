@@ -1,0 +1,3 @@
+// Invalid: Multiple visibility modifiers on same item
+export public func duplicate_visibility() -> ok
+    pass

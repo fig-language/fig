@@ -1,0 +1,9 @@
+// Functions with pointer parameters
+func fill(dst: *mut u8, val: u8, len: usize) -> ok
+    pass
+
+func copy(src: *u8, dst: *mut u8, len: usize) -> ok
+    pass
+
+func read_byte(ptr: *u8) -> u8
+    pass

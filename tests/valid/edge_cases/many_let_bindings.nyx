@@ -1,0 +1,19 @@
+// Edge case: lots of parallel let bindings in one function
+func many_bindings() -> ok
+    let a = 1
+    let b = 2
+    let c = 3
+    let d = 4
+    let e = 5
+    let f = 6
+    let g = 7
+    let h = 8
+    let i = 9
+    let j = 10
+    let k = a + b
+    let l = c + d
+    let m = e + f
+    let n = g + h
+    let o = i + j
+    let p = k + l + m + n + o
+    pass

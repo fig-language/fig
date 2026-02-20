@@ -1,0 +1,15 @@
+// Functions with self parameters (methods)
+struct Counter
+    value: i32
+
+func Counter::get(self) -> i32
+    pass
+
+func Counter::increment(*mut self) -> ok
+    pass
+
+func Counter::reset(*mut self) -> ok
+    pass
+
+func Counter::get_ref(*self) -> *i32
+    pass

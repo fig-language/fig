@@ -1,0 +1,4 @@
+// INVALID: Missing -> in function signature return type
+// Expected parse error: -> required before return type annotation
+func bad() ok
+    pass

@@ -1,0 +1,6 @@
+// Namespace with dot-path name
+namespace std::collections
+    export struct Seq[T]
+        data: *mut T
+        len: usize
+        cap: usize

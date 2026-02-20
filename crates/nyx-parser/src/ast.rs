@@ -3,13 +3,14 @@
 use derive_new::new;
 use getset::Getters;
 use nyx_lexer::{FloatLiteral, IntegerLiteral};
+use serde::Serialize;
 
 // ============================================================================
 // Expressions
 // ============================================================================
 
 /// Main expression type for Nyx
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum Expression {
     /// Integer literal expression
     IntegerLiteral(IntegerLiteral),
@@ -49,7 +50,7 @@ pub enum Expression {
 // Array Literal
 // ============================================================================
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct ArrayLiteralExpr {
     /// Elements in the array
@@ -60,7 +61,7 @@ pub struct ArrayLiteralExpr {
 // Binary Operations
 // ============================================================================
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct BinaryOpExpr {
     /// Left-hand side expression
@@ -71,7 +72,7 @@ pub struct BinaryOpExpr {
     rhs: Box<Expression>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 pub enum BinaryOperator {
     // Arithmetic operators
     Add,      // +
@@ -104,7 +105,7 @@ pub enum BinaryOperator {
 // Unary Operations
 // ============================================================================
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct UnaryOpExpr {
     /// Unary operator
@@ -113,7 +114,7 @@ pub struct UnaryOpExpr {
     operand: Box<Expression>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 pub enum UnaryOperator {
     /// Logical negation (!)
     LogicalNot,
@@ -133,7 +134,7 @@ pub enum UnaryOperator {
 // Types (for future use with type annotations)
 // ============================================================================
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum Type {
     /// Primitive types
     U8,
@@ -154,13 +155,11 @@ pub enum Type {
     /// Self type (used in methods and interfaces)
     SelfType,
 
-    /// Raw pointer
-    RawPointer,
-
-    /// Typed pointer
-    TypedPointer(Box<Type>),
-
-    Reference(Box<Type>),
+    Pointer {
+        nullable: bool,
+        mutable: bool,
+        element_type: Box<Type>,
+    },
 
     /// Named type (struct, union, or custom type)
     Named{ name: String, generic_args: Vec<Type> },
@@ -182,7 +181,7 @@ pub enum Type {
 // Generic Parameters
 // ============================================================================
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum GenericParameter {
     Type { name: String, bounds: Vec<Type> },
     Const { name: String, ty: Type },
@@ -192,7 +191,7 @@ pub enum GenericParameter {
 // Type Alias
 // ============================================================================
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct TypeAlias {
     /// Name of the type alias
@@ -209,7 +208,7 @@ pub struct TypeAlias {
 // Enum
 // ============================================================================
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct Enum {
     /// Name of the enum
@@ -226,7 +225,7 @@ pub struct Enum {
     variants: Vec<EnumVariant>,
 }
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct EnumVariant {
     /// Name of the variant
@@ -239,7 +238,7 @@ pub struct EnumVariant {
 // Union
 // ============================================================================
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct Union {
     /// Name of the union
@@ -254,7 +253,7 @@ pub struct Union {
     variants: Vec<UnionVariant>,
 }
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct UnionVariant {
     /// Name of the variant
@@ -267,7 +266,7 @@ pub struct UnionVariant {
 // Struct
 // ============================================================================
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct Struct {
     /// Name of the struct
@@ -282,7 +281,7 @@ pub struct Struct {
     fields: Vec<StructField>,
 }
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct StructField {
     /// Name of the field
@@ -295,7 +294,7 @@ pub struct StructField {
 // Function
 // ============================================================================
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct Function {
     /// Function signature
@@ -304,7 +303,7 @@ pub struct Function {
     body: Block,
 }
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct FunctionSignature {
     /// Name of the function
@@ -319,7 +318,7 @@ pub struct FunctionSignature {
     where_clause: Vec<GenericParameter>,
 }
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct FunctionParameter {
     /// Parameter name
@@ -328,7 +327,7 @@ pub struct FunctionParameter {
     ty: Type,
 }
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct Block {
     /// Statements in the block
@@ -339,7 +338,7 @@ pub struct Block {
 // Interfaces
 // ============================================================================
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct Interface {
     /// Name of the interface
@@ -358,7 +357,7 @@ pub struct Interface {
 // Namespaces
 // ============================================================================
 
-#[derive(Debug, Clone, PartialEq, new, Getters)]
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
 #[getset(get = "pub")]
 pub struct Namespace {
     /// Name of the namespace
@@ -367,7 +366,7 @@ pub struct Namespace {
     items: Vec<NamespaceItem>,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum NamespaceItem {
     Namespace(Namespace),
     Function(Function),
@@ -379,10 +378,21 @@ pub enum NamespaceItem {
 }
 
 // ============================================================================
+// Source File
+// ============================================================================
+
+#[derive(Debug, Clone, PartialEq, new, Getters, Serialize)]
+#[getset(get = "pub")]
+pub struct SourceFile {
+    /// Top-level items in the source file
+    items: Vec<NamespaceItem>,
+}
+
+// ============================================================================
 // Statements
 // ============================================================================
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum Statement {
     /// Placeholder for future statement types
     Pass,

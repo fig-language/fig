@@ -1,0 +1,7 @@
+// Edge case: annotation with complex expression argument
+#link_section(".rodata")
+const MAGIC: u32 = 0xDEADBEEF
+
+#align(4096)
+struct Page
+    data: [u8; 4096]

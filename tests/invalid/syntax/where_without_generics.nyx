@@ -1,0 +1,4 @@
+// Invalid: Where clause without generic parameters
+func no_generics_with_where(x: i32) -> i32
+    where i32: Clone
+    return x

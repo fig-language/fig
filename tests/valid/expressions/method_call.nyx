@@ -1,0 +1,14 @@
+// Method call expressions (call with self)
+struct Counter
+    count: i32
+
+func Counter::increment(*mut self) -> ok
+    pass
+
+func Counter::get(*self) -> i32
+    pass
+
+func use_counter(c: *mut Counter) -> ok
+    c.increment()
+    let v = c.get()
+    pass

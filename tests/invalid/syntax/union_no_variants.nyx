@@ -1,0 +1,3 @@
+// INVALID: union with no variants
+// Expected parse error: at least one variant required in union body
+union Empty

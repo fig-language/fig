@@ -1,0 +1,3 @@
+// Empty namespace with pass
+namespace App
+    pass

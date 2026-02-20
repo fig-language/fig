@@ -1,0 +1,9 @@
+// Field access expressions
+struct Point
+    x: f64
+    y: f64
+
+func field_access(p: Point) -> f64
+    let x = p.x
+    let y = p.y
+    return p.x + p.y

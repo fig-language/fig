@@ -1,0 +1,14 @@
+// return statement at various positions
+func early_return(x: i32) -> i32
+    if x < 0
+        return 0
+    let result = x * 2
+    return result
+
+func multiple_returns(x: i32) -> i32
+    if x == 0
+        return 0
+    elif x == 1
+        return 1
+    else
+        return x * x

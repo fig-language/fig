@@ -1,0 +1,10 @@
+// Functions that call other functions in their body
+func double(x: i32) -> i32
+    return x * 2
+
+func quadruple(x: i32) -> i32
+    return double(double(x))
+
+func apply_twice(x: i32) -> i32
+    let a = double(x)
+    return double(a)

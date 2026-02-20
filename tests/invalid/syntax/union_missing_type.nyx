@@ -1,0 +1,5 @@
+// Invalid: Union variant with missing type
+union BadUnion
+    ok: i32
+    error
+    pending: bool

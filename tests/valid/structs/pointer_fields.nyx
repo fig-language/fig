@@ -1,0 +1,9 @@
+// Struct with pointer fields
+struct Node
+    data: i32
+    next: *mut Node
+
+struct Tree
+    value: i32
+    left: ?*Tree
+    right: ?*Tree

@@ -1,0 +1,5 @@
+// INVALID: as-cast missing target type
+// Expected parse error: type annotation required after 'as'
+func bad(x: i32) -> ok
+    let y = x as
+    pass

@@ -1,0 +1,8 @@
+// Union with visibility
+public union PublicResult[T, E]
+    ok: T
+    err: E
+
+export union ExportedMaybe[T]
+    some: T
+    none: ok

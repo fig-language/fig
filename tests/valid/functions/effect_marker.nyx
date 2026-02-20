@@ -1,0 +1,9 @@
+// Functions with the ! effect marker
+func! read_file(path: [u8]) -> [u8]
+    pass
+
+func! write_file(path: [u8], data: [u8]) -> ok
+    pass
+
+func! allocate[T](count: usize) -> *mut T
+    pass

@@ -1,0 +1,11 @@
+// Enum with namespaced name
+enum[u8] Dog::Breed
+    BULLDOG = 0
+    POODLE = 1
+    BEAGLE = 2
+    HUSKY = 3
+
+enum core::os::Signal
+    SIGINT = 2
+    SIGTERM = 15
+    SIGKILL = 9

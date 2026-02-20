@@ -1,0 +1,6 @@
+// Interface with extends clause (inheritance)
+interface Ordered
+    extends
+        Eq
+        PartialOrd
+    func compare(*self, other: *Self) -> i32

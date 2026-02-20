@@ -1,0 +1,5 @@
+// mut (mutable variable) without type annotation
+mut x = 0
+mut counter = 100
+mut flag = true
+mut name = "initial"

@@ -1,0 +1,6 @@
+// ok and null type aliases
+type Unit = ok
+type Nothing = null
+type OptInt = ?i32
+type OptBool = ?bool
+type OptFloat = ?f64

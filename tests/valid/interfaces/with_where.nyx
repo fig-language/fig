@@ -1,0 +1,7 @@
+// Interface with where clause
+interface Container[T]
+    where
+        T: Sized
+    func len(*self) -> usize
+    func is_empty(*self) -> bool
+    func get(*self, index: usize) -> ?T

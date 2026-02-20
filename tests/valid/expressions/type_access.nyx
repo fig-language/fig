@@ -1,0 +1,6 @@
+// Type access (::) expressions
+func type_access_exprs() -> ok
+    let x = Foo::BAR
+    let y = std::io::STDIN
+    let z = Color::RED
+    pass

@@ -1,0 +1,307 @@
+// Fixed-point arithmetic library for embedded systems
+
+using core::memory
+
+const FRACTION_BITS: u32 = 16
+const FRACTION_MASK: i64 = 0xFFFF
+const ONE: i64 = 65536
+
+export struct Fixed
+    raw: i64
+
+func! Fixed::from_int(value: i32) -> Fixed
+    return Fixed(raw: (value as i64) << FRACTION_BITS)
+
+func! Fixed::from_float(value: f64) -> Fixed
+    return Fixed(raw: (value * (ONE as f64)) as i64)
+
+func! Fixed::from_raw(raw: i64) -> Fixed
+    return Fixed(raw: raw)
+
+func Fixed::to_int(*self) -> i32
+    return (self.raw >> FRACTION_BITS) as i32
+
+func Fixed::to_float(*self) -> f64
+    return (self.raw as f64) / (ONE as f64)
+
+func Fixed::add(*self, other: Fixed) -> Fixed
+    return Fixed(raw: self.raw + other.raw)
+
+func Fixed::sub(*self, other: Fixed) -> Fixed
+    return Fixed(raw: self.raw - other.raw)
+
+func Fixed::mul(*self, other: Fixed) -> Fixed
+    let result = (self.raw * other.raw) >> FRACTION_BITS
+    return Fixed(raw: result)
+
+func Fixed::div(*self, other: Fixed) -> Fixed
+    let result = (self.raw << FRACTION_BITS) / other.raw
+    return Fixed(raw: result)
+
+func Fixed::neg(*self) -> Fixed
+    return Fixed(raw: -self.raw)
+
+func Fixed::abs(*self) -> Fixed
+    if self.raw < 0
+        return Fixed(raw: -self.raw)
+    return Fixed(raw: self.raw)
+
+func Fixed::floor(*self) -> Fixed
+    let mask = !(FRACTION_MASK)
+    return Fixed(raw: self.raw & mask)
+
+func Fixed::ceil(*self) -> Fixed
+    let floored = self.floor()
+    if self.raw > floored.raw
+        return floored.add(Fixed::from_int(1))
+    return floored
+
+func Fixed::round(*self) -> Fixed
+    let half = Fixed::from_raw(ONE >> 1)
+    return self.add(half).floor()
+
+func Fixed::sqrt(*self) -> Fixed
+    if self.raw <= 0
+        return Fixed::from_int(0)
+    
+    mut x = self.raw
+    mut result = x
+    
+    for i in range(0, 20)
+        let last = result
+        result = (result + (self.raw << FRACTION_BITS) / result) >> 1
+        
+        if result == last
+            break
+    
+    return Fixed(raw: result)
+
+func Fixed::sin(*self) -> Fixed
+    let pi = Fixed::pi()
+    let two_pi = pi.mul(Fixed::from_int(2))
+    
+    mut angle = self
+    
+    for i in range(0, 100)
+        if angle.raw < 0
+            angle = angle.add(two_pi)
+        elif angle.raw >= two_pi.raw
+            angle = angle.sub(two_pi)
+        else
+            break
+    
+    let result = angle.taylor_series_sin()
+    return result
+
+func Fixed::cos(*self) -> Fixed
+    let half_pi = Fixed::pi().div(Fixed::from_int(2))
+    return self.add(half_pi).sin()
+
+func Fixed::taylor_series_sin(*self) -> Fixed
+    mut result = Fixed::from_int(0)
+    mut term = self
+    mut x_squared = self.mul(self)
+    
+    for n in range(0, 10)
+        if n % 2 == 0
+            result = result.add(term)
+        else
+            result = result.sub(term)
+        
+        let n2 = (2 * n + 2) as i32
+        let n3 = (2 * n + 3) as i32
+        
+        term = term.mul(x_squared).div(Fixed::from_int(n2 * n3))
+    
+    return result
+
+func Fixed::pi() -> Fixed
+    return Fixed::from_raw(205887)
+
+func Fixed::e() -> Fixed
+    return Fixed::from_raw(178145)
+
+func Fixed::eq(*self, other: Fixed) -> bool
+    return self.raw == other.raw
+
+func Fixed::ne(*self, other: Fixed) -> bool
+    return self.raw != other.raw
+
+func Fixed::lt(*self, other: Fixed) -> bool
+    return self.raw < other.raw
+
+func Fixed::le(*self, other: Fixed) -> bool
+    return self.raw <= other.raw
+
+func Fixed::gt(*self, other: Fixed) -> bool
+    return self.raw > other.raw
+
+func Fixed::ge(*self, other: Fixed) -> bool
+    return self.raw >= other.raw
+
+// Vector math with fixed-point
+
+export struct Vec2
+    x: Fixed
+    y: Fixed
+
+func! Vec2::new(x: Fixed, y: Fixed) -> Vec2
+    return Vec2(x: x, y: y)
+
+func! Vec2::zero() -> Vec2
+    return Vec2(x: Fixed::from_int(0), y: Fixed::from_int(0))
+
+func Vec2::add(*self, other: Vec2) -> Vec2
+    return Vec2(
+        x: self.x.add(other.x),
+        y: self.y.add(other.y)
+    )
+
+func Vec2::sub(*self, other: Vec2) -> Vec2
+    return Vec2(
+        x: self.x.sub(other.x),
+        y: self.y.sub(other.y)
+    )
+
+func Vec2::mul_scalar(*self, scalar: Fixed) -> Vec2
+    return Vec2(
+        x: self.x.mul(scalar),
+        y: self.y.mul(scalar)
+    )
+
+func Vec2::dot(*self, other: Vec2) -> Fixed
+    let x_prod = self.x.mul(other.x)
+    let y_prod = self.y.mul(other.y)
+    return x_prod.add(y_prod)
+
+func Vec2::length_squared(*self) -> Fixed
+    return self.dot(self)
+
+func Vec2::length(*self) -> Fixed
+    return self.length_squared().sqrt()
+
+func Vec2::normalize(*self) -> Vec2
+    let len = self.length()
+    
+    if len.raw == 0
+        return Vec2::zero()
+    
+    return self.mul_scalar(Fixed::from_int(1).div(len))
+
+func Vec2::distance(*self, other: Vec2) -> Fixed
+    return self.sub(other).length()
+
+export struct Vec3
+    x: Fixed
+    y: Fixed
+    z: Fixed
+
+func! Vec3::new(x: Fixed, y: Fixed, z: Fixed) -> Vec3
+    return Vec3(x: x, y: y, z: z)
+
+func! Vec3::zero() -> Vec3
+    return Vec3(
+        x: Fixed::from_int(0),
+        y: Fixed::from_int(0),
+        z: Fixed::from_int(0)
+    )
+
+func Vec3::add(*self, other: Vec3) -> Vec3
+    return Vec3(
+        x: self.x.add(other.x),
+        y: self.y.add(other.y),
+        z: self.z.add(other.z)
+    )
+
+func Vec3::sub(*self, other: Vec3) -> Vec3
+    return Vec3(
+        x: self.x.sub(other.x),
+        y: self.y.sub(other.y),
+        z: self.z.sub(other.z)
+    )
+
+func Vec3::mul_scalar(*self, scalar: Fixed) -> Vec3
+    return Vec3(
+        x: self.x.mul(scalar),
+        y: self.y.mul(scalar),
+        z: self.z.mul(scalar)
+    )
+
+func Vec3::dot(*self, other: Vec3) -> Fixed
+    let x_prod = self.x.mul(other.x)
+    let y_prod = self.y.mul(other.y)
+    let z_prod = self.z.mul(other.z)
+    return x_prod.add(y_prod).add(z_prod)
+
+func Vec3::cross(*self, other: Vec3) -> Vec3
+    return Vec3(
+        x: self.y.mul(other.z).sub(self.z.mul(other.y)),
+        y: self.z.mul(other.x).sub(self.x.mul(other.z)),
+        z: self.x.mul(other.y).sub(self.y.mul(other.x))
+    )
+
+func Vec3::length_squared(*self) -> Fixed
+    return self.dot(self)
+
+func Vec3::length(*self) -> Fixed
+    return self.length_squared().sqrt()
+
+func Vec3::normalize(*self) -> Vec3
+    let len = self.length()
+    
+    if len.raw == 0
+        return Vec3::zero()
+    
+    return self.mul_scalar(Fixed::from_int(1).div(len))
+
+// Matrix math with fixed-point
+
+export struct Matrix3x3
+    m00: Fixed
+    m01: Fixed
+    m02: Fixed
+    m10: Fixed
+    m11: Fixed
+    m12: Fixed
+    m20: Fixed
+    m21: Fixed
+    m22: Fixed
+
+func! Matrix3x3::identity() -> Matrix3x3
+    return Matrix3x3(
+        m00: Fixed::from_int(1), m01: Fixed::from_int(0), m02: Fixed::from_int(0),
+        m10: Fixed::from_int(0), m11: Fixed::from_int(1), m12: Fixed::from_int(0),
+        m20: Fixed::from_int(0), m21: Fixed::from_int(0), m22: Fixed::from_int(1)
+    )
+
+func! Matrix3x3::rotation_z(angle: Fixed) -> Matrix3x3
+    let cos_a = angle.cos()
+    let sin_a = angle.sin()
+    
+    return Matrix3x3(
+        m00: cos_a, m01: sin_a.neg(), m02: Fixed::from_int(0),
+        m10: sin_a, m11: cos_a, m12: Fixed::from_int(0),
+        m20: Fixed::from_int(0), m21: Fixed::from_int(0), m22: Fixed::from_int(1)
+    )
+
+func Matrix3x3::mul(*self, other: Matrix3x3) -> Matrix3x3
+    return Matrix3x3(
+        m00: self.m00.mul(other.m00).add(self.m01.mul(other.m10)).add(self.m02.mul(other.m20)),
+        m01: self.m00.mul(other.m01).add(self.m01.mul(other.m11)).add(self.m02.mul(other.m21)),
+        m02: self.m00.mul(other.m02).add(self.m01.mul(other.m12)).add(self.m02.mul(other.m22)),
+        
+        m10: self.m10.mul(other.m00).add(self.m11.mul(other.m10)).add(self.m12.mul(other.m20)),
+        m11: self.m10.mul(other.m01).add(self.m11.mul(other.m11)).add(self.m12.mul(other.m21)),
+        m12: self.m10.mul(other.m02).add(self.m11.mul(other.m12)).add(self.m12.mul(other.m22)),
+        
+        m20: self.m20.mul(other.m00).add(self.m21.mul(other.m10)).add(self.m22.mul(other.m20)),
+        m21: self.m20.mul(other.m01).add(self.m21.mul(other.m11)).add(self.m22.mul(other.m21)),
+        m22: self.m20.mul(other.m02).add(self.m21.mul(other.m12)).add(self.m22.mul(other.m22))
+    )
+
+func Matrix3x3::mul_vec(*self, v: Vec3) -> Vec3
+    return Vec3(
+        x: self.m00.mul(v.x).add(self.m01.mul(v.y)).add(self.m02.mul(v.z)),
+        y: self.m10.mul(v.x).add(self.m11.mul(v.y)).add(self.m12.mul(v.z)),
+        z: self.m20.mul(v.x).add(self.m21.mul(v.y)).add(self.m22.mul(v.z))
+    )

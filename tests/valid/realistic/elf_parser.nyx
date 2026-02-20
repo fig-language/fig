@@ -1,0 +1,347 @@
+// ELF file parser for reading executable and linking format files
+
+using core::memory
+
+const ELF_MAGIC: u32 = 0x7F454C46
+const ELFCLASS32: u8 = 1
+const ELFCLASS64: u8 = 2
+const ELFDATA2LSB: u8 = 1
+const ELFDATA2MSB: u8 = 2
+
+enum ElfClass
+    CLASS32
+    CLASS64
+
+enum ElfEndian
+    LITTLE_ENDIAN
+    BIG_ENDIAN
+
+enum ElfType
+    ET_NONE
+    ET_REL
+    ET_EXEC
+    ET_DYN
+    ET_CORE
+
+enum ElfMachine
+    EM_NONE
+    EM_X86
+    EM_X86_64
+    EM_ARM
+    EM_AARCH64
+    EM_RISCV
+
+union ElfParseError
+    invalid_magic: u32
+    unsupported_class: u8
+    unsupported_endian: u8
+    truncated_file: ok
+    invalid_section_offset: usize
+
+union ElfResult[T]
+    ok: T
+    err: ElfParseError
+
+export struct ElfFile
+    header: ElfHeader
+    program_headers: [ElfProgramHeader]
+    section_headers: [ElfSectionHeader]
+    sections: [ElfSection]
+    symbols: [ElfSymbol]
+
+struct ElfHeader
+    class: ElfClass
+    endian: ElfEndian
+    version: u8
+    osabi: u8
+    abi_version: u8
+    elf_type: ElfType
+    machine: ElfMachine
+    entry_point: u64
+    program_header_offset: u64
+    section_header_offset: u64
+    flags: u32
+    header_size: u16
+    program_header_entry_size: u16
+    program_header_count: u16
+    section_header_entry_size: u16
+    section_header_count: u16
+    section_string_table_index: u16
+
+struct ElfProgramHeader
+    segment_type: u32
+    flags: u32
+    offset: u64
+    virtual_address: u64
+    physical_address: u64
+    file_size: u64
+    memory_size: u64
+    alignment: u64
+
+struct ElfSectionHeader
+    name_offset: u32
+    section_type: u32
+    flags: u64
+    address: u64
+    offset: u64
+    size: u64
+    link: u32
+    info: u32
+    alignment: u64
+    entry_size: u64
+
+struct ElfSection
+    name: [u8]
+    header: ElfSectionHeader
+    data: [u8]
+
+struct ElfSymbol
+    name: [u8]
+    value: u64
+    size: u64
+    info: u8
+    other: u8
+    section_index: u16
+
+func! ElfFile::parse(data: [u8]) -> ElfResult[ElfFile]
+    mut parser = ElfParser::new(data)
+    return parser.parse()
+
+func ElfFile::get_section(*self, name: [u8]) -> ?*ElfSection
+    for i in range(0, self.sections.len)
+        if bytes_equal(self.sections[i].name, name)
+            return &self.sections[i]
+    
+    return null
+
+func ElfFile::find_symbol(*self, name: [u8]) -> ?*ElfSymbol
+    for i in range(0, self.symbols.len)
+        if bytes_equal(self.symbols[i].name, name)
+            return &self.symbols[i]
+    
+    return null
+
+func ElfFile::get_entry_point(*self) -> u64
+    return self.header.entry_point
+
+// ELF parser
+
+struct ElfParser
+    data: [u8]
+    position: usize
+    is_64bit: bool
+    is_little_endian: bool
+
+func! ElfParser::new(data: [u8]) -> ElfParser
+    return ElfParser(
+        data: data,
+        position: 0,
+        is_64bit: false,
+        is_little_endian: true
+    )
+
+func! ElfParser::parse(*mut self) -> ElfResult[ElfFile]
+    let header_result = self.parse_header()
+    let header = header_result.ok
+    
+    let program_headers = self.parse_program_headers(&header)
+    let section_headers = self.parse_section_headers(&header)
+    
+    let sections = self.parse_sections(&section_headers, &header)
+    let symbols = self.parse_symbols(&sections)
+    
+    let elf = ElfFile(
+        header: header,
+        program_headers: program_headers,
+        section_headers: section_headers,
+        sections: sections,
+        symbols: symbols
+    )
+    
+    return ElfResult[ElfFile]::ok(elf)
+
+func! ElfParser::parse_header(*mut self) -> ElfResult[ElfHeader]
+    let magic = self.read_u32()
+    
+    if magic != ELF_MAGIC
+        return ElfResult[ElfHeader]::err(ElfParseError::invalid_magic(magic))
+    
+    let class = self.read_u8()
+    let endian = self.read_u8()
+    let version = self.read_u8()
+    let osabi = self.read_u8()
+    let abi_version = self.read_u8()
+    
+    self.position = self.position + 7
+    
+    self.is_64bit = class == ELFCLASS64
+    self.is_little_endian = endian == ELFDATA2LSB
+    
+    let elf_type_raw = self.read_u16()
+    let machine_raw = self.read_u16()
+    let file_version = self.read_u32()
+    
+    let entry_point = if self.is_64bit then self.read_u64() else self.read_u32() as u64
+    let program_header_offset = if self.is_64bit then self.read_u64() else self.read_u32() as u64
+    let section_header_offset = if self.is_64bit then self.read_u64() else self.read_u32() as u64
+    
+    let flags = self.read_u32()
+    let header_size = self.read_u16()
+    let program_header_entry_size = self.read_u16()
+    let program_header_count = self.read_u16()
+    let section_header_entry_size = self.read_u16()
+    let section_header_count = self.read_u16()
+    let section_string_table_index = self.read_u16()
+    
+    let header = ElfHeader(
+        class: if class == ELFCLASS64 then ElfClass::CLASS64 else ElfClass::CLASS32,
+        endian: if endian == ELFDATA2LSB then ElfEndian::LITTLE_ENDIAN else ElfEndian::BIG_ENDIAN,
+        version: version,
+        osabi: osabi,
+        abi_version: abi_version,
+        elf_type: ElfType::ET_EXEC,
+        machine: ElfMachine::EM_X86_64,
+        entry_point: entry_point,
+        program_header_offset: program_header_offset,
+        section_header_offset: section_header_offset,
+        flags: flags,
+        header_size: header_size,
+        program_header_entry_size: program_header_entry_size,
+        program_header_count: program_header_count,
+        section_header_entry_size: section_header_entry_size,
+        section_header_count: section_header_count,
+        section_string_table_index: section_string_table_index
+    )
+    
+    return ElfResult[ElfHeader]::ok(header)
+
+func! ElfParser::parse_program_headers(*mut self, header: *ElfHeader) -> [ElfProgramHeader]
+    mut headers: [ElfProgramHeader] = []
+    
+    self.position = header.program_header_offset as usize
+    
+    for i in range(0, header.program_header_count as usize)
+        let segment_type = self.read_u32()
+        
+        let flags = if self.is_64bit then self.read_u32() else 0
+        
+        let offset = if self.is_64bit then self.read_u64() else self.read_u32() as u64
+        let virtual_address = if self.is_64bit then self.read_u64() else self.read_u32() as u64
+        let physical_address = if self.is_64bit then self.read_u64() else self.read_u32() as u64
+        let file_size = if self.is_64bit then self.read_u64() else self.read_u32() as u64
+        let memory_size = if self.is_64bit then self.read_u64() else self.read_u32() as u64
+        
+        let flags32 = if !self.is_64bit then self.read_u32() else flags
+        
+        let alignment = if self.is_64bit then self.read_u64() else self.read_u32() as u64
+        
+        let ph = ElfProgramHeader(
+            segment_type: segment_type,
+            flags: flags32,
+            offset: offset,
+            virtual_address: virtual_address,
+            physical_address: physical_address,
+            file_size: file_size,
+            memory_size: memory_size,
+            alignment: alignment
+        )
+        
+        headers.push(ph)
+    
+    return headers
+
+func! ElfParser::parse_section_headers(*mut self, header: *ElfHeader) -> [ElfSectionHeader]
+    mut headers: [ElfSectionHeader] = []
+    
+    self.position = header.section_header_offset as usize
+    
+    for i in range(0, header.section_header_count as usize)
+        let name_offset = self.read_u32()
+        let section_type = self.read_u32()
+        let flags = if self.is_64bit then self.read_u64() else self.read_u32() as u64
+        let address = if self.is_64bit then self.read_u64() else self.read_u32() as u64
+        let offset = if self.is_64bit then self.read_u64() else self.read_u32() as u64
+        let size = if self.is_64bit then self.read_u64() else self.read_u32() as u64
+        let link = self.read_u32()
+        let info = self.read_u32()
+        let alignment = if self.is_64bit then self.read_u64() else self.read_u32() as u64
+        let entry_size = if self.is_64bit then self.read_u64() else self.read_u32() as u64
+        
+        let sh = ElfSectionHeader(
+            name_offset: name_offset,
+            section_type: section_type,
+            flags: flags,
+            address: address,
+            offset: offset,
+            size: size,
+            link: link,
+            info: info,
+            alignment: alignment,
+            entry_size: entry_size
+        )
+        
+        headers.push(sh)
+    
+    return headers
+
+func! ElfParser::parse_sections(*mut self, headers: *[ElfSectionHeader], elf_header: *ElfHeader) -> [ElfSection]
+    mut sections: [ElfSection] = []
+    
+    for i in range(0, headers.len)
+        let header = &headers[i]
+        
+        let section = ElfSection(
+            name: "",
+            header: header,
+            data: []
+        )
+        
+        sections.push(section)
+    
+    return sections
+
+func! ElfParser::parse_symbols(*mut self, sections: *[ElfSection]) -> [ElfSymbol]
+    mut symbols: [ElfSymbol] = []
+    return symbols
+
+func! ElfParser::read_u8(*mut self) -> u8
+    let value = self.data[self.position]
+    self.position = self.position + 1
+    return value
+
+func! ElfParser::read_u16(*mut self) -> u16
+    let b0 = self.read_u8() as u16
+    let b1 = self.read_u8() as u16
+    
+    if self.is_little_endian
+        return b0 | (b1 << 8)
+    
+    return (b0 << 8) | b1
+
+func! ElfParser::read_u32(*mut self) -> u32
+    let w0 = self.read_u16() as u32
+    let w1 = self.read_u16() as u32
+    
+    if self.is_little_endian
+        return w0 | (w1 << 16)
+    
+    return (w0 << 16) | w1
+
+func! ElfParser::read_u64(*mut self) -> u64
+    let d0 = self.read_u32() as u64
+    let d1 = self.read_u32() as u64
+    
+    if self.is_little_endian
+        return d0 | (d1 << 32)
+    
+    return (d0 << 32) | d1
+
+func bytes_equal(a: [u8], b: [u8]) -> bool
+    if a.len != b.len
+        return false
+    
+    for i in range(0, a.len)
+        if a[i] != b[i]
+            return false
+    
+    return true

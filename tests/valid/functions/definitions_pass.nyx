@@ -1,0 +1,9 @@
+// Simple function definitions using pass
+func nop() -> ok
+    pass
+
+func always_true() -> bool
+    pass
+
+func unit_work() -> ok
+    pass

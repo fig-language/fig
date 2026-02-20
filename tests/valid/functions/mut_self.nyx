@@ -1,0 +1,9 @@
+// Functions with mut self parameter (borrowing mutably by value)
+struct Node
+    data: i32
+
+func Node::consume(mut self) -> i32
+    pass
+
+func Node::transform(mut self) -> Node
+    pass

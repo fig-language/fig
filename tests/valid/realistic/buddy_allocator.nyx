@@ -1,0 +1,188 @@
+// Buddy memory allocator implementation
+// Manages memory in power-of-two sized blocks
+
+using core::memory
+
+const MIN_BLOCK_SIZE: usize = 16
+const MAX_BLOCK_SIZE: usize = 4096
+const NUM_LISTS: usize = 9
+
+enum[u8] BlockStatus
+    FREE = 0
+    ALLOCATED = 1
+    SPLIT = 2
+
+struct BlockHeader
+    size: usize
+    status: BlockStatus
+    next: ?*mut BlockHeader
+    prev: ?*mut BlockHeader
+
+struct FreeList
+    head: ?*mut BlockHeader
+
+export struct BuddyAllocator
+    arena: *mut u8
+    arena_size: usize
+    free_lists: [FreeList; NUM_LISTS]
+    allocations: usize
+    deallocations: usize
+
+func! BuddyAllocator::new(arena: *mut u8, size: usize) -> BuddyAllocator
+    mut alloc = BuddyAllocator(
+        arena: arena,
+        arena_size: size,
+        free_lists: [FreeList(head: null); NUM_LISTS],
+        allocations: 0,
+        deallocations: 0
+    )
+    alloc.init()
+    return alloc
+
+func! BuddyAllocator::init(*mut self) -> ok
+    let header = self.arena as *mut BlockHeader
+    header.size = self.arena_size
+    header.status = BlockStatus::FREE
+    header.next = null
+    header.prev = null
+    
+    let list_index = self.size_to_list_index(self.arena_size)
+    self.free_lists[list_index].head = header
+    pass
+
+func BuddyAllocator::size_to_list_index(*self, size: usize) -> usize
+    mut index: usize = 0
+    mut block_size = MIN_BLOCK_SIZE
+    
+    for i in range(0, NUM_LISTS)
+        if size <= block_size
+            return index
+        block_size = block_size * 2
+        index = index + 1
+    
+    return NUM_LISTS - 1
+
+func! BuddyAllocator::allocate(*mut self, size: usize) -> ?*mut u8
+    if size == 0 || size > MAX_BLOCK_SIZE
+        return null
+    
+    let aligned_size = self.align_size(size + sizeof(BlockHeader))
+    let list_index = self.size_to_list_index(aligned_size)
+    
+    let block = self.find_free_block(list_index)
+    if block == null
+        return null
+    
+    self.split_block(block, aligned_size)
+    block.status = BlockStatus::ALLOCATED
+    self.allocations = self.allocations + 1
+    
+    return (block as *mut u8) + sizeof(BlockHeader)
+
+func BuddyAllocator::align_size(*self, size: usize) -> usize
+    mut aligned = MIN_BLOCK_SIZE
+    for i in range(0, NUM_LISTS)
+        if aligned >= size
+            return aligned
+        aligned = aligned * 2
+    return MAX_BLOCK_SIZE
+
+func! BuddyAllocator::find_free_block(*mut self, min_index: usize) -> ?*mut BlockHeader
+    for i in range(min_index, NUM_LISTS)
+        let head = self.free_lists[i].head
+        if head != null
+            self.remove_from_free_list(head, i)
+            return head
+    return null
+
+func! BuddyAllocator::split_block(*mut self, block: *mut BlockHeader, size: usize) -> ok
+    for i in range(0, 16)
+        if block.size <= size * 2
+            return ok
+        
+        let half = block.size / 2
+        block.size = half
+        
+        let buddy = (block as *mut u8 + half) as *mut BlockHeader
+        buddy.size = half
+        buddy.status = BlockStatus::FREE
+        buddy.next = null
+        buddy.prev = null
+        
+        let list_index = self.size_to_list_index(half)
+        self.add_to_free_list(buddy, list_index)
+    pass
+
+func! BuddyAllocator::deallocate(*mut self, ptr: *mut u8) -> ok
+    if ptr == null
+        return ok
+    
+    let header = (ptr - sizeof(BlockHeader)) as *mut BlockHeader
+    header.status = BlockStatus::FREE
+    self.deallocations = self.deallocations + 1
+    
+    self.coalesce(header)
+    
+    let list_index = self.size_to_list_index(header.size)
+    self.add_to_free_list(header, list_index)
+    pass
+
+func! BuddyAllocator::coalesce(*mut self, block: *mut BlockHeader) -> ok
+    let buddy_addr = self.get_buddy_address(block)
+    let buddy = buddy_addr as *mut BlockHeader
+    
+    if self.is_valid_buddy(buddy, block.size) && buddy.status == BlockStatus::FREE
+        let list_index = self.size_to_list_index(buddy.size)
+        self.remove_from_free_list(buddy, list_index)
+        
+        let merged = if (block as usize) < (buddy as usize) block else buddy
+        merged.size = block.size * 2
+        
+        self.coalesce(merged)
+    pass
+
+func BuddyAllocator::get_buddy_address(*self, block: *mut BlockHeader) -> usize
+    let offset = (block as usize) - (self.arena as usize)
+    return (self.arena as usize) + (offset ^ block.size)
+
+func BuddyAllocator::is_valid_buddy(*self, buddy: *mut BlockHeader, size: usize) -> bool
+    let buddy_addr = buddy as usize
+    let arena_start = self.arena as usize
+    let arena_end = arena_start + self.arena_size
+    
+    return buddy_addr >= arena_start && buddy_addr < arena_end && buddy.size == size
+
+func! BuddyAllocator::add_to_free_list(*mut self, block: *mut BlockHeader, index: usize) -> ok
+    block.next = self.free_lists[index].head
+    block.prev = null
+    
+    if self.free_lists[index].head != null
+        self.free_lists[index].head.prev = block
+    
+    self.free_lists[index].head = block
+    pass
+
+func! BuddyAllocator::remove_from_free_list(*mut self, block: *mut BlockHeader, index: usize) -> ok
+    if block.prev != null
+        block.prev.next = block.next
+    else
+        self.free_lists[index].head = block.next
+    
+    if block.next != null
+        block.next.prev = block.prev
+    
+    block.next = null
+    block.prev = null
+    pass
+
+func BuddyAllocator::stats(*self) -> AllocatorStats
+    return AllocatorStats(
+        allocations: self.allocations,
+        deallocations: self.deallocations,
+        bytes_allocated: 0
+    )
+
+struct AllocatorStats
+    allocations: usize
+    deallocations: usize
+    bytes_allocated: usize

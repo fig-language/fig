@@ -1,0 +1,8 @@
+// Union with many variants (C-like tagged union)
+union Value
+    null_val: ok
+    bool_val: bool
+    int_val: i64
+    float_val: f64
+    string_val: [u8]
+    array_val: *Value

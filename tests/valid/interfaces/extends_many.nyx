@@ -1,0 +1,13 @@
+// Interface extends multiple other interfaces
+interface FullNumeric
+    extends
+        Add
+        Sub
+        Mul
+        Div
+        Neg
+        Eq
+        Ord
+        Display
+    func abs(*self) -> Self
+    func signum(*self) -> i32

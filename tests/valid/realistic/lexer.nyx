@@ -1,0 +1,448 @@
+// Lexer for tokenizing source code with position tracking
+
+using core::memory
+
+enum TokenType
+    EOF
+    IDENTIFIER
+    INTEGER
+    FLOAT
+    STRING
+    CHAR
+    TRUE
+    FALSE
+    IF
+    ELIF
+    ELSE
+    FOR
+    WHILE
+    BREAK
+    CONTINUE
+    RETURN
+    FUNC
+    STRUCT
+    ENUM
+    UNION
+    INTERFACE
+    LET
+    MUT
+    CONST
+    USING
+    EXPORT
+    PUBLIC
+    PRIVATE
+    LPAREN
+    RPAREN
+    LBRACE
+    RBRACE
+    LBRACKET
+    RBRACKET
+    COMMA
+    SEMICOLON
+    COLON
+    DOT
+    ARROW
+    PLUS
+    MINUS
+    STAR
+    SLASH
+    PERCENT
+    AMPERSAND
+    PIPE
+    CARET
+    TILDE
+    BANG
+    EQ
+    NE
+    LT
+    LE
+    GT
+    GE
+    AND
+    OR
+    ASSIGN
+    PLUS_ASSIGN
+    MINUS_ASSIGN
+    STAR_ASSIGN
+    SLASH_ASSIGN
+
+export struct Token
+    type: TokenType
+    lexeme: [u8]
+    line: usize
+    column: usize
+    offset: usize
+
+export struct Lexer
+    source: [u8]
+    position: usize
+    line: usize
+    column: usize
+    token_start: usize
+
+func! Lexer::new(source: [u8]) -> Lexer
+    return Lexer(
+        source: source,
+        position: 0,
+        line: 1,
+        column: 1,
+        token_start: 0
+    )
+
+func! Lexer::next_token(*mut self) -> Token
+    self.skip_whitespace()
+    
+    if self.is_eof()
+        return self.make_token(TokenType::EOF)
+    
+    self.token_start = self.position
+    
+    let ch = self.advance()
+    
+    if is_alpha(ch)
+        return self.identifier()
+    
+    if is_digit(ch)
+        return self.number()
+    
+    if ch == 34  // '"'
+        return self.string_literal()
+    
+    if ch == 39  // '\''
+        return self.char_literal()
+    
+    if ch == 40  // '('
+        return self.make_token(TokenType::LPAREN)
+    
+    if ch == 41  // ')'
+        return self.make_token(TokenType::RPAREN)
+    
+    if ch == 123  // '{'
+        return self.make_token(TokenType::LBRACE)
+    
+    if ch == 125  // '}'
+        return self.make_token(TokenType::RBRACE)
+    
+    if ch == 91  // '['
+        return self.make_token(TokenType::LBRACKET)
+    
+    if ch == 93  // ']'
+        return self.make_token(TokenType::RBRACKET)
+    
+    if ch == 44  // ','
+        return self.make_token(TokenType::COMMA)
+    
+    if ch == 59  // ';'
+        return self.make_token(TokenType::SEMICOLON)
+    
+    if ch == 58  // ':'
+        return self.make_token(TokenType::COLON)
+    
+    if ch == 46  // '.'
+        return self.make_token(TokenType::DOT)
+    
+    if ch == 43  // '+'
+        if self.match_char(61)  // '='
+            return self.make_token(TokenType::PLUS_ASSIGN)
+        return self.make_token(TokenType::PLUS)
+    
+    if ch == 45  // '-'
+        if self.match_char(62)  // '>'
+            return self.make_token(TokenType::ARROW)
+        if self.match_char(61)  // '='
+            return self.make_token(TokenType::MINUS_ASSIGN)
+        return self.make_token(TokenType::MINUS)
+    
+    if ch == 42  // '*'
+        if self.match_char(61)  // '='
+            return self.make_token(TokenType::STAR_ASSIGN)
+        return self.make_token(TokenType::STAR)
+    
+    if ch == 47  // '/'
+        if self.match_char(47)  // '//'
+            self.skip_line_comment()
+            return self.next_token()
+        
+        if self.match_char(61)  // '='
+            return self.make_token(TokenType::SLASH_ASSIGN)
+        
+        return self.make_token(TokenType::SLASH)
+    
+    if ch == 37  // '%'
+        return self.make_token(TokenType::PERCENT)
+    
+    if ch == 38  // '&'
+        if self.match_char(38)  // '&&'
+            return self.make_token(TokenType::AND)
+        return self.make_token(TokenType::AMPERSAND)
+    
+    if ch == 124  // '|'
+        if self.match_char(124)  // '||'
+            return self.make_token(TokenType::OR)
+        return self.make_token(TokenType::PIPE)
+    
+    if ch == 94  // '^'
+        return self.make_token(TokenType::CARET)
+    
+    if ch == 126  // '~'
+        return self.make_token(TokenType::TILDE)
+    
+    if ch == 33  // '!'
+        if self.match_char(61)  // '='
+            return self.make_token(TokenType::NE)
+        return self.make_token(TokenType::BANG)
+    
+    if ch == 61  // '='
+        if self.match_char(61)  // '=='
+            return self.make_token(TokenType::EQ)
+        return self.make_token(TokenType::ASSIGN)
+    
+    if ch == 60  // '<'
+        if self.match_char(61)  // '<='
+            return self.make_token(TokenType::LE)
+        return self.make_token(TokenType::LT)
+    
+    if ch == 62  // '>'
+        if self.match_char(61)  // '>='
+            return self.make_token(TokenType::GE)
+        return self.make_token(TokenType::GT)
+    
+    return self.make_token(TokenType::EOF)
+
+func! Lexer::identifier(*mut self) -> Token
+    for i in range(0, 1000)
+        if self.is_eof()
+            break
+        
+        let ch = self.peek()
+        if !is_alpha_numeric(ch)
+            break
+        
+        self.advance()
+    
+    let lexeme = self.token_lexeme()
+    let token_type = self.identifier_type(lexeme)
+    
+    return self.make_token(token_type)
+
+func Lexer::identifier_type(*self, lexeme: [u8]) -> TokenType
+    if bytes_equal(lexeme, "if")
+        return TokenType::IF
+    
+    if bytes_equal(lexeme, "elif")
+        return TokenType::ELIF
+    
+    if bytes_equal(lexeme, "else")
+        return TokenType::ELSE
+    
+    if bytes_equal(lexeme, "for")
+        return TokenType::FOR
+    
+    if bytes_equal(lexeme, "while")
+        return TokenType::WHILE
+    
+    if bytes_equal(lexeme, "break")
+        return TokenType::BREAK
+    
+    if bytes_equal(lexeme, "continue")
+        return TokenType::CONTINUE
+    
+    if bytes_equal(lexeme, "return")
+        return TokenType::RETURN
+    
+    if bytes_equal(lexeme, "func")
+        return TokenType::FUNC
+    
+    if bytes_equal(lexeme, "struct")
+        return TokenType::STRUCT
+    
+    if bytes_equal(lexeme, "enum")
+        return TokenType::ENUM
+    
+    if bytes_equal(lexeme, "union")
+        return TokenType::UNION
+    
+    if bytes_equal(lexeme, "interface")
+        return TokenType::INTERFACE
+    
+    if bytes_equal(lexeme, "let")
+        return TokenType::LET
+    
+    if bytes_equal(lexeme, "mut")
+        return TokenType::MUT
+    
+    if bytes_equal(lexeme, "const")
+        return TokenType::CONST
+    
+    if bytes_equal(lexeme, "using")
+        return TokenType::USING
+    
+    if bytes_equal(lexeme, "export")
+        return TokenType::EXPORT
+    
+    if bytes_equal(lexeme, "public")
+        return TokenType::PUBLIC
+    
+    if bytes_equal(lexeme, "private")
+        return TokenType::PRIVATE
+    
+    if bytes_equal(lexeme, "true")
+        return TokenType::TRUE
+    
+    if bytes_equal(lexeme, "false")
+        return TokenType::FALSE
+    
+    return TokenType::IDENTIFIER
+
+func! Lexer::number(*mut self) -> Token
+    for i in range(0, 1000)
+        if self.is_eof()
+            break
+        
+        let ch = self.peek()
+        if !is_digit(ch)
+            break
+        
+        self.advance()
+    
+    if self.peek() == 46 && is_digit(self.peek_next())  // '.'
+        self.advance()
+        
+        for i in range(0, 1000)
+            if self.is_eof()
+                break
+            
+            let ch = self.peek()
+            if !is_digit(ch)
+                break
+            
+            self.advance()
+        
+        return self.make_token(TokenType::FLOAT)
+    
+    return self.make_token(TokenType::INTEGER)
+
+func! Lexer::string_literal(*mut self) -> Token
+    for i in range(0, 10000)
+        if self.is_eof()
+            break
+        
+        let ch = self.peek()
+        
+        if ch == 34  // '"'
+            self.advance()
+            break
+        
+        if ch == 92  // '\\'
+            self.advance()
+            if !self.is_eof()
+                self.advance()
+        else
+            self.advance()
+    
+    return self.make_token(TokenType::STRING)
+
+func! Lexer::char_literal(*mut self) -> Token
+    if !self.is_eof()
+        if self.peek() == 92  // '\\'
+            self.advance()
+        self.advance()
+    
+    if !self.is_eof() && self.peek() == 39  // '\''
+        self.advance()
+    
+    return self.make_token(TokenType::CHAR)
+
+func! Lexer::skip_whitespace(*mut self) -> ok
+    for i in range(0, 10000)
+        if self.is_eof()
+            break
+        
+        let ch = self.peek()
+        
+        if ch == 32 || ch == 9 || ch == 13  // space, tab, CR
+            self.advance()
+        elif ch == 10  // LF
+            self.line = self.line + 1
+            self.column = 1
+            self.advance()
+        else
+            break
+    
+    pass
+
+func! Lexer::skip_line_comment(*mut self) -> ok
+    for i in range(0, 10000)
+        if self.is_eof()
+            break
+        
+        let ch = self.peek()
+        if ch == 10  // '\n'
+            break
+        
+        self.advance()
+    
+    pass
+
+func! Lexer::advance(*mut self) -> u8
+    let ch = self.source[self.position]
+    self.position = self.position + 1
+    self.column = self.column + 1
+    return ch
+
+func Lexer::peek(*self) -> u8
+    if self.is_eof()
+        return 0
+    return self.source[self.position]
+
+func Lexer::peek_next(*self) -> u8
+    if self.position + 1 >= self.source.len
+        return 0
+    return self.source[self.position + 1]
+
+func! Lexer::match_char(*mut self, expected: u8) -> bool
+    if self.is_eof()
+        return false
+    
+    if self.peek() != expected
+        return false
+    
+    self.advance()
+    return true
+
+func Lexer::is_eof(*self) -> bool
+    return self.position >= self.source.len
+
+func Lexer::token_lexeme(*self) -> [u8]
+    return slice_range(self.source, self.token_start, self.position)
+
+func Lexer::make_token(*self, token_type: TokenType) -> Token
+    return Token(
+        type: token_type,
+        lexeme: self.token_lexeme(),
+        line: self.line,
+        column: self.column - (self.position - self.token_start),
+        offset: self.token_start
+    )
+
+func is_alpha(ch: u8) -> bool
+    return (ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122) || ch == 95  // A-Z, a-z, _
+
+func is_digit(ch: u8) -> bool
+    return ch >= 48 && ch <= 57  // 0-9
+
+func is_alpha_numeric(ch: u8) -> bool
+    return is_alpha(ch) || is_digit(ch)
+
+func bytes_equal(a: [u8], b: [u8]) -> bool
+    if a.len != b.len
+        return false
+    
+    for i in range(0, a.len)
+        if a[i] != b[i]
+            return false
+    
+    return true
+
+func slice_range(bytes: [u8], start: usize, end: usize) -> [u8]
+    pass

@@ -1,0 +1,5 @@
+// Complex nested type aliases
+type DoubleRaw = *mut *mut u8
+type OptPtrToSlice = ?*[u8]
+type SliceOfOptInts = [?i32]
+type PtrToArray = *[u8; 32]

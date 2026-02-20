@@ -1,0 +1,12 @@
+// Interface with extends, where, and requires all together
+interface Drawable[T]
+    extends
+        Display
+        Debug
+    where
+        T: Sized
+    requires
+        Allocator
+    func draw(*self) -> ok
+    func resize(*mut self, width: T, height: T) -> ok
+    func bounding_box(*self) -> Rect

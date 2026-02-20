@@ -1,0 +1,3 @@
+// INVALID: const with no value
+// Expected parse error: = and expression required in const statement
+const MAX_SIZE: u32

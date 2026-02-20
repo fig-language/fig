@@ -1,0 +1,7 @@
+// Where clause with multiple type parameters constrained
+func zip[A, B, C](a: A, b: B) -> C
+    where
+        A: Into[C]
+        B: Into[C]
+        C: From[A] + From[B]
+    pass

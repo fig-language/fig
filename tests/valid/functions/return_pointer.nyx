@@ -1,0 +1,9 @@
+// Functions returning pointer types
+func alloc_byte() -> *mut u8
+    pass
+
+func get_ptr(data: *u8) -> *u8
+    pass
+
+func opt_ptr() -> ?*u8
+    pass

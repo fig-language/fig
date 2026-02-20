@@ -1,0 +1,3 @@
+// Invalid: Missing parameter type in function
+func broken_function(x, y: i32) -> i32
+    return x + y

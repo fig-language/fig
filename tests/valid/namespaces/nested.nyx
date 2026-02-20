@@ -1,0 +1,5 @@
+// Nested namespaces
+namespace std
+    namespace io
+        func! read(fd: i32, buf: *mut u8, len: usize) -> usize
+        func! write(fd: i32, buf: *u8, len: usize) -> usize

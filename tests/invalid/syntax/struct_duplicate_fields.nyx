@@ -1,0 +1,5 @@
+// Invalid: Struct with duplicate field names
+struct DuplicateFields
+    x: i32
+    y: i32
+    x: f64

@@ -1,0 +1,5 @@
+// Logical binary expressions
+func logical_ops(a: bool, b: bool) -> ok
+    let and = a && b
+    let or = a || b
+    pass

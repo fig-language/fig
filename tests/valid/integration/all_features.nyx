@@ -1,0 +1,47 @@
+// Integration: Showcase of all major language features together
+using std::io
+using core::mem
+
+// Visibility + annotation
+#repr(C)
+export struct Config
+    debug: bool
+    max_connections: u32
+    port: u16
+    host: [u8]
+
+// Generic struct with constraints
+struct Pool[T]
+    where
+        T: Sized
+    items: *mut T
+    count: usize
+    capacity: usize
+
+// Enum with repr and values
+enum[u8] Status
+    IDLE = 0
+    RUNNING = 1
+    STOPPED = 2
+    ERROR = 255
+
+// Generic union
+union MaybeError[T]
+    value: T
+    error: [u8]
+
+// Interface hierarchy
+interface Lifecycle
+    func! start(*mut self) -> ok
+    func! stop(*mut self) -> ok
+    func is_running(*self) -> bool
+
+// Public function with generics and where clause
+public func! run[T](pool: *mut Pool[T], config: *Config) -> MaybeError[ok]
+    where
+        T: Lifecycle
+    if config.debug
+        pass
+    for i in range(0, config.max_connections as usize)
+        pass
+    pass

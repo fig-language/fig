@@ -1,0 +1,11 @@
+// Generic struct with one type parameter
+struct Box[T]
+    value: T
+
+struct Pair[T]
+    first: T
+    second: T
+
+struct Optional[T]
+    has_value: bool
+    value: T

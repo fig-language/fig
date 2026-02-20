@@ -1,0 +1,2 @@
+// Invalid: Using generic syntax in using statement
+using std::collections[T]

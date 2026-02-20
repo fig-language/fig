@@ -1,0 +1,5 @@
+// Anonymous block statement
+func with_anon_block() -> ok
+    block
+        let x = 1
+        pass

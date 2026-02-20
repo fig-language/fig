@@ -1,0 +1,6 @@
+// Generic type arguments at call sites
+func use_generics() -> ok
+    let s = Seq[i32]::new()
+    let v: Vec[u8] = Vec[u8]::with_capacity(32)
+    let m: Map[i32, [u8]] = Map[i32, [u8]]::new()
+    pass

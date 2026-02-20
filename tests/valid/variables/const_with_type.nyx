@@ -1,0 +1,6 @@
+// const with explicit type annotation
+const MAX_SIZE: u32 = 1024
+const DEFAULT_PORT: u16 = 8080
+const PI: f64 = 3.14159265358979
+const ENABLED: bool = true
+const ZERO: usize = 0

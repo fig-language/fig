@@ -1,0 +1,5 @@
+// INVALID: for loop missing in keyword
+// Expected parse error: 'in' required in for statement
+func bad(data: [i32]) -> ok
+    for item data
+        pass

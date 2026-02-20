@@ -1,9 +1,10 @@
 use derive_builder::Builder;
 use std::fmt::Display;
+use serde::Serialize;
 
-use crate::Token;
+use crate::{Token, LexicalError};
 
-#[derive(Default, Debug, Clone, PartialEq)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize)]
 pub enum Base {
     Binary,
     Octal,
@@ -12,7 +13,7 @@ pub enum Base {
     Hex,
 }
 
-#[derive(Default, Debug, Clone, PartialEq)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize)]
 pub enum IntegerSuffix {
     U8,
     U16,
@@ -63,7 +64,7 @@ impl Display for IntegerSuffix {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Builder)]
+#[derive(Debug, Clone, PartialEq, Builder, Serialize)]
 pub struct IntegerLiteral {
     #[builder(default)]
     base: Base,
@@ -128,8 +129,9 @@ impl Display for IntegerLiteral {
     }
 }
 
-pub fn parse_integer(lex: &mut logos::Lexer<Token>) -> Option<IntegerLiteral> {
+pub fn parse_integer(lex: &mut logos::Lexer<Token>) -> Result<IntegerLiteral, LexicalError> {
     let raw = lex.slice();
+    let span = lex.span();
 
     // List of valid suffixes
     const SUFFIXES: &[&str] = &[
@@ -159,8 +161,16 @@ pub fn parse_integer(lex: &mut logos::Lexer<Token>) -> Option<IntegerLiteral> {
 
     // 3️⃣ Remove underscores
     let cleaned_digits = digits.replace('_', "");
+    
+    // Validate that digits are not empty
+    if cleaned_digits.is_empty() {
+        return Err(LexicalError::InvalidInteger {
+            span,
+            reason: "integer literal cannot be empty".to_string(),
+        });
+    }
 
-    Some(IntegerLiteral {
+    Ok(IntegerLiteral {
         base,
         digits: cleaned_digits,
         suffix: suffix.map(IntegerSuffix::from),

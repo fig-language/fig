@@ -1,0 +1,10 @@
+// Chained field access (deep)
+struct Inner
+    value: i32
+
+struct Outer
+    inner: Inner
+    label: [u8]
+
+func deep_field(o: Outer) -> i32
+    return o.inner.value

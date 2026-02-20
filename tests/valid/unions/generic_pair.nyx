@@ -1,0 +1,8 @@
+// Generic union with two type parameters (Either / Result)
+union Either[L, R]
+    left: L
+    right: R
+
+union Result[T, E]
+    ok: T
+    err: E

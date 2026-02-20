@@ -1,0 +1,22 @@
+// Many variants (larger enum)
+enum[u8] Opcode
+    NOP = 0
+    ADD = 1
+    SUB = 2
+    MUL = 3
+    DIV = 4
+    MOD = 5
+    AND = 6
+    OR = 7
+    XOR = 8
+    NOT = 9
+    SHL = 10
+    SHR = 11
+    JMP = 12
+    JZ = 13
+    JNZ = 14
+    CALL = 15
+    RET = 16
+    PUSH = 17
+    POP = 18
+    HALT = 255

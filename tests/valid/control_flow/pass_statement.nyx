@@ -1,0 +1,13 @@
+// pass statement — minimal function and block bodies
+func nop() -> ok
+    pass
+
+func empty_if(cond: bool) -> ok
+    if cond
+        pass
+    else
+        pass
+
+func empty_for(data: [i32]) -> ok
+    for item in data
+        pass

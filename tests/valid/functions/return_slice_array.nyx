@@ -1,0 +1,9 @@
+// Functions returning slice / array types
+func empty_slice() -> [u8]
+    pass
+
+func null_terminated(s: *u8, len: usize) -> [u8]
+    pass
+
+func fixed_buffer() -> [u8; 64]
+    pass

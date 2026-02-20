@@ -1,0 +1,4 @@
+// INVALID: Annotation missing identifier
+// Expected parse error: annotation name required after #
+# struct Bad
+    x: i32

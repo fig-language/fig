@@ -1,0 +1,7 @@
+// Edge case: consecutive pass statements in the same function
+func multiple_pass() -> ok
+    pass
+
+// Each function must have exactly one first statement; pass is valid
+func also_pass() -> ok
+    pass

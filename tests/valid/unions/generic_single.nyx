@@ -1,0 +1,4 @@
+// Generic union with one type parameter
+union Option[T]
+    some: T
+    none: ok

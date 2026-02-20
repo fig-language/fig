@@ -1,0 +1,5 @@
+// INVALID: if condition missing (no expression)
+// Expected parse error: condition expression required
+func bad(x: i32) -> ok
+    if
+        pass

@@ -1,0 +1,7 @@
+// for loop iterating over pointer (address from slice call)
+func sum_ptr(ptr: *i32, len: usize) -> i32
+    mut total = 0
+    for i in range(0, len)
+        let val = *(ptr + i)
+        total = total + val
+    return total

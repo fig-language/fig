@@ -1,0 +1,4 @@
+// Invalid: Annotation without arguments using call syntax
+@deprecated()
+func old_function() -> ok
+    pass

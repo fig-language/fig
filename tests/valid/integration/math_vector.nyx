@@ -1,0 +1,39 @@
+// Integration: A math vector library
+struct Vec2
+    x: f64
+    y: f64
+
+struct Vec3
+    x: f64
+    y: f64
+    z: f64
+
+func Vec2::new(x: f64, y: f64) -> Vec2
+    pass
+
+func Vec2::zero() -> Vec2
+    pass
+
+func Vec2::add(*self, other: *Vec2) -> Vec2
+    pass
+
+func Vec2::sub(*self, other: *Vec2) -> Vec2
+    pass
+
+func Vec2::scale(*self, s: f64) -> Vec2
+    pass
+
+func Vec2::dot(*self, other: *Vec2) -> f64
+    pass
+
+func Vec2::len(*self) -> f64
+    pass
+
+func Vec2::normalize(*self) -> Vec2
+    pass
+
+func Vec3::cross(*self, other: *Vec3) -> Vec3
+    pass
+
+func Vec3::dot(*self, other: *Vec3) -> f64
+    pass

@@ -1,0 +1,329 @@
+// UTF-8 string handling with validation and manipulation
+
+using core::memory
+
+enum Utf8Error
+    INVALID_BYTE_SEQUENCE
+    UNEXPECTED_CONTINUATION
+    OVERLONG_ENCODING
+    INVALID_CODE_POINT
+
+union Utf8Result[T]
+    ok: T
+    err: Utf8Error
+
+export struct Utf8String
+    bytes: [u8]
+    length: usize
+    byte_length: usize
+
+func! Utf8String::new() -> Utf8String
+    return Utf8String(bytes: [], length: 0, byte_length: 0)
+
+func! Utf8String::from_bytes(bytes: [u8]) -> Utf8Result[Utf8String]
+    let validation = validate_utf8(bytes)
+    
+    let char_count = count_utf8_chars(bytes)
+    
+    let s = Utf8String(
+        bytes: bytes,
+        length: char_count,
+        byte_length: bytes.len
+    )
+    
+    return Utf8Result[Utf8String]::ok(s)
+
+func! Utf8String::from_str(s: [u8]) -> Utf8String
+    let result = Utf8String::from_bytes(s)
+    return result.ok
+
+func Utf8String::as_bytes(*self) -> [u8]
+    return self.bytes
+
+func Utf8String::len(*self) -> usize
+    return self.length
+
+func Utf8String::byte_len(*self) -> usize
+    return self.byte_length
+
+func Utf8String::is_empty(*self) -> bool
+    return self.byte_length == 0
+
+func! Utf8String::char_at(*self, index: usize) -> ?u32
+    if index >= self.length
+        return null
+    
+    mut byte_pos: usize = 0
+    mut char_index: usize = 0
+    
+    for i in range(0, self.byte_length)
+        if char_index == index
+            let result = decode_utf8_char(&self.bytes[byte_pos])
+            return result.ok
+        
+        let char_bytes = utf8_char_bytes(self.bytes[byte_pos])
+        byte_pos = byte_pos + char_bytes
+        char_index = char_index + 1
+    
+    return null
+
+func! Utf8String::push(*mut self, code_point: u32) -> ok
+    mut buf: [u8] = [0, 0, 0, 0]
+    let bytes_written = encode_utf8_char(code_point, &mut buf[0])
+    
+    for i in range(0, bytes_written)
+        self.bytes.push(buf[i])
+    
+    self.byte_length = self.byte_length + bytes_written
+    self.length = self.length + 1
+    
+    pass
+
+func! Utf8String::append(*mut self, other: *Utf8String) -> ok
+    for i in range(0, other.byte_length)
+        self.bytes.push(other.bytes[i])
+    
+    self.byte_length = self.byte_length + other.byte_length
+    self.length = self.length + other.length
+    
+    pass
+
+func! Utf8String::substring(*self, start: usize, end: usize) -> Utf8String
+    if start >= self.length
+        return Utf8String::new()
+    
+    let actual_end = if end > self.length then self.length else end
+    
+    let start_byte = self.byte_index_for_char(start)
+    let end_byte = self.byte_index_for_char(actual_end)
+    
+    let slice = slice_range(self.bytes, start_byte, end_byte)
+    
+    return Utf8String::from_str(slice)
+
+func Utf8String::byte_index_for_char(*self, char_index: usize) -> usize
+    mut byte_pos: usize = 0
+    mut current_char: usize = 0
+    
+    for i in range(0, self.byte_length)
+        if current_char >= char_index
+            break
+        
+        let char_bytes = utf8_char_bytes(self.bytes[byte_pos])
+        byte_pos = byte_pos + char_bytes
+        current_char = current_char + 1
+    
+    return byte_pos
+
+func! Utf8String::iter(*self) -> Utf8Iter
+    return Utf8Iter(
+        bytes: self.bytes,
+        position: 0,
+        length: self.byte_length
+    )
+
+func! Utf8String::to_lowercase(*self) -> Utf8String
+    mut result = Utf8String::new()
+    
+    mut iter = self.iter()
+    for i in range(0, self.length)
+        let ch = iter.next()
+        if ch != null
+            let lower = to_lowercase_codepoint(ch)
+            result.push(lower)
+    
+    return result
+
+func! Utf8String::to_uppercase(*self) -> Utf8String
+    mut result = Utf8String::new()
+    
+    mut iter = self.iter()
+    for i in range(0, self.length)
+        let ch = iter.next()
+        if ch != null
+            let upper = to_uppercase_codepoint(ch)
+            result.push(upper)
+    
+    return result
+
+func Utf8String::starts_with(*self, prefix: *Utf8String) -> bool
+    if prefix.byte_length > self.byte_length
+        return false
+    
+    for i in range(0, prefix.byte_length)
+        if self.bytes[i] != prefix.bytes[i]
+            return false
+    
+    return true
+
+func Utf8String::ends_with(*self, suffix: *Utf8String) -> bool
+    if suffix.byte_length > self.byte_length
+        return false
+    
+    let offset = self.byte_length - suffix.byte_length
+    
+    for i in range(0, suffix.byte_length)
+        if self.bytes[offset + i] != suffix.bytes[i]
+            return false
+    
+    return true
+
+func Utf8String::contains(*self, needle: *Utf8String) -> bool
+    if needle.byte_length > self.byte_length
+        return false
+    
+    let max_pos = self.byte_length - needle.byte_length
+    
+    for pos in range(0, max_pos + 1)
+        mut match = true
+        for i in range(0, needle.byte_length)
+            if self.bytes[pos + i] != needle.bytes[i]
+                match = false
+                break
+        
+        if match
+            return true
+    
+    return false
+
+struct Utf8Iter
+    bytes: [u8]
+    position: usize
+    length: usize
+
+func! Utf8Iter::next(*mut self) -> ?u32
+    if self.position >= self.length
+        return null
+    
+    let result = decode_utf8_char(&self.bytes[self.position])
+    let code_point = result.ok
+    
+    let char_bytes = utf8_char_bytes(self.bytes[self.position])
+    self.position = self.position + char_bytes
+    
+    return code_point
+
+func Utf8Iter::has_next(*self) -> bool
+    return self.position < self.length
+
+// UTF-8 encoding/decoding functions
+
+func! validate_utf8(bytes: [u8]) -> Utf8Result[ok]
+    mut pos: usize = 0
+    
+    for i in range(0, bytes.len)
+        if pos >= bytes.len
+            break
+        
+        let byte = bytes[pos]
+        let char_bytes = utf8_char_bytes(byte)
+        
+        if pos + char_bytes > bytes.len
+            return Utf8Result[ok]::err(Utf8Error::INVALID_BYTE_SEQUENCE)
+        
+        if char_bytes == 2
+            if !is_continuation(bytes[pos + 1])
+                return Utf8Result[ok]::err(Utf8Error::UNEXPECTED_CONTINUATION)
+        elif char_bytes == 3
+            if !is_continuation(bytes[pos + 1]) || !is_continuation(bytes[pos + 2])
+                return Utf8Result[ok]::err(Utf8Error::UNEXPECTED_CONTINUATION)
+        elif char_bytes == 4
+            if !is_continuation(bytes[pos + 1]) || !is_continuation(bytes[pos + 2]) || !is_continuation(bytes[pos + 3])
+                return Utf8Result[ok]::err(Utf8Error::UNEXPECTED_CONTINUATION)
+        
+        pos = pos + char_bytes
+    
+    return Utf8Result[ok]::ok(ok)
+
+func! decode_utf8_char(bytes: *u8) -> Utf8Result[u32]
+    let first = bytes[0]
+    
+    if first < 128
+        return Utf8Result[u32]::ok(first as u32)
+    
+    if (first & 224) == 192
+        let ch = ((first & 31) as u32) << 6
+        let ch2 = ch | ((bytes[1] & 63) as u32)
+        return Utf8Result[u32]::ok(ch2)
+    
+    if (first & 240) == 224
+        let ch = ((first & 15) as u32) << 12
+        let ch2 = ch | (((bytes[1] & 63) as u32) << 6)
+        let ch3 = ch2 | ((bytes[2] & 63) as u32)
+        return Utf8Result[u32]::ok(ch3)
+    
+    if (first & 248) == 240
+        let ch = ((first & 7) as u32) << 18
+        let ch2 = ch | (((bytes[1] & 63) as u32) << 12)
+        let ch3 = ch2 | (((bytes[2] & 63) as u32) << 6)
+        let ch4 = ch3 | ((bytes[3] & 63) as u32)
+        return Utf8Result[u32]::ok(ch4)
+    
+    return Utf8Result[u32]::err(Utf8Error::INVALID_BYTE_SEQUENCE)
+
+func! encode_utf8_char(code_point: u32, buffer: *mut u8) -> usize
+    if code_point < 128
+        buffer[0] = code_point as u8
+        return 1
+    
+    if code_point < 2048
+        buffer[0] = (192 | (code_point >> 6)) as u8
+        buffer[1] = (128 | (code_point & 63)) as u8
+        return 2
+    
+    if code_point < 65536
+        buffer[0] = (224 | (code_point >> 12)) as u8
+        buffer[1] = (128 | ((code_point >> 6) & 63)) as u8
+        buffer[2] = (128 | (code_point & 63)) as u8
+        return 3
+    
+    buffer[0] = (240 | (code_point >> 18)) as u8
+    buffer[1] = (128 | ((code_point >> 12) & 63)) as u8
+    buffer[2] = (128 | ((code_point >> 6) & 63)) as u8
+    buffer[3] = (128 | (code_point & 63)) as u8
+    return 4
+
+func utf8_char_bytes(first_byte: u8) -> usize
+    if first_byte < 128
+        return 1
+    
+    if (first_byte & 224) == 192
+        return 2
+    
+    if (first_byte & 240) == 224
+        return 3
+    
+    if (first_byte & 248) == 240
+        return 4
+    
+    return 1
+
+func is_continuation(byte: u8) -> bool
+    return (byte & 192) == 128
+
+func count_utf8_chars(bytes: [u8]) -> usize
+    mut count: usize = 0
+    mut pos: usize = 0
+    
+    for i in range(0, bytes.len)
+        if pos >= bytes.len
+            break
+        
+        let char_bytes = utf8_char_bytes(bytes[pos])
+        pos = pos + char_bytes
+        count = count + 1
+    
+    return count
+
+func to_lowercase_codepoint(ch: u32) -> u32
+    if ch >= 65 && ch <= 90
+        return ch + 32
+    return ch
+
+func to_uppercase_codepoint(ch: u32) -> u32
+    if ch >= 97 && ch <= 122
+        return ch - 32
+    return ch
+
+func slice_range(bytes: [u8], start: usize, end: usize) -> [u8]
+    pass

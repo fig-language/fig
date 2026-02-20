@@ -1,0 +1,29 @@
+// Integration: String utilities namespace
+namespace str
+
+func len(s: [u8]) -> usize
+    pass
+
+func is_empty(s: [u8]) -> bool
+    return len(s) == 0
+
+func starts_with(s: [u8], prefix: [u8]) -> bool
+    pass
+
+func ends_with(s: [u8], suffix: [u8]) -> bool
+    pass
+
+func contains(s: [u8], sub: [u8]) -> bool
+    pass
+
+func trim(s: [u8]) -> [u8]
+    pass
+
+func split(s: [u8], delimiter: u8) -> [[u8]]
+    pass
+
+func to_upper(s: [u8]) -> [u8]
+    pass
+
+func to_lower(s: [u8]) -> [u8]
+    pass

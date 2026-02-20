@@ -1,0 +1,15 @@
+// Struct with requires clause
+struct Queue[T]
+    requires
+        Container[T]
+    head: ?*Node[T]
+    tail: ?*Node[T]
+    len: usize
+
+struct Display[T]
+    requires
+        Drawable
+        Resizable
+    width: u32
+    height: u32
+    content: T

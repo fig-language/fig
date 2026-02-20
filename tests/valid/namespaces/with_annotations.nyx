@@ -1,0 +1,8 @@
+// Namespace with annotations
+#deprecated
+namespace legacy
+    func old_api() -> ok
+
+#experimental
+namespace nightly
+    func new_feature() -> ok

@@ -1,0 +1,3 @@
+// Invalid: Self type outside of impl or interface context
+func not_a_method(self: Self) -> ok
+    pass

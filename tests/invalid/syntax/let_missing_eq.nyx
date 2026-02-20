@@ -1,0 +1,3 @@
+// INVALID: Missing = in let statement
+// Expected parse error: assignment operator required
+let x 10

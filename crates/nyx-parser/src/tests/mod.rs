@@ -329,11 +329,11 @@ fn test_parse_primitive_type_ok() {
 // Pointer type tests
 #[test]
 fn test_parse_raw_pointer() {
-    let input = "*raw";
+    let input = "*u8";
     let lexer = Lexer::new(input);
     let result = parser::TypeParser::new().parse(lexer);
     assert!(result.is_ok());
-    assert_eq!(result.unwrap(), Type::RawPointer);
+    assert_eq!(result.unwrap(), Type::Pointer { nullable: false, mutable: false, element_type: Box::new(Type::U8) });
 }
 
 #[test]
@@ -342,8 +342,10 @@ fn test_parse_typed_pointer_u32() {
     let lexer = Lexer::new(input);
     let result = parser::TypeParser::new().parse(lexer);
     assert!(result.is_ok());
-    if let Type::TypedPointer(inner) = result.unwrap() {
-        assert_eq!(*inner, Type::U32);
+    if let Type::Pointer { element_type, nullable, mutable } = result.unwrap() {
+        assert_eq!(nullable, false);
+        assert_eq!(mutable, false);
+        assert_eq!(*element_type, Type::U32);
     } else {
         panic!("Expected typed pointer to U32");
     }
@@ -355,8 +357,10 @@ fn test_parse_typed_pointer_bool() {
     let lexer = Lexer::new(input);
     let result = parser::TypeParser::new().parse(lexer);
     assert!(result.is_ok());
-    if let Type::TypedPointer(inner) = result.unwrap() {
-        assert_eq!(*inner, Type::Bool);
+    if let Type::Pointer { element_type, nullable, mutable } = result.unwrap() {
+        assert_eq!(nullable, false);
+        assert_eq!(mutable, false);
+        assert_eq!(*element_type, Type::Bool);
     } else {
         panic!("Expected typed pointer to Bool");
     }
@@ -368,8 +372,12 @@ fn test_parse_nested_pointer_i64() {
     let lexer = Lexer::new(input);
     let result = parser::TypeParser::new().parse(lexer);
     assert!(result.is_ok());
-    if let Type::TypedPointer(outer) = result.unwrap() {
-        if let Type::TypedPointer(inner) = *outer {
+    if let Type::Pointer { element_type: outer, nullable: outer_nullable, mutable: outer_mutable } = result.unwrap() {
+        assert_eq!(outer_nullable, false);
+        assert_eq!(outer_mutable, false);
+        if let Type::Pointer { element_type: inner, nullable: inner_nullable, mutable: inner_mutable } = *outer {
+            assert_eq!(inner_nullable, false);
+            assert_eq!(inner_mutable, false);
             assert_eq!(*inner, Type::I64);
         } else {
             panic!("Expected nested typed pointer to I64");
@@ -385,9 +393,15 @@ fn test_parse_triple_nested_pointer_u8() {
     let lexer = Lexer::new(input);
     let result = parser::TypeParser::new().parse(lexer);
     assert!(result.is_ok());
-    if let Type::TypedPointer(outer) = result.unwrap() {
-        if let Type::TypedPointer(middle) = *outer {
-            if let Type::TypedPointer(inner) = *middle {
+    if let Type::Pointer { element_type: outer, nullable: outer_nullable, mutable: outer_mutable } = result.unwrap() {
+        assert_eq!(outer_nullable, false);
+        assert_eq!(outer_mutable, false);
+        if let Type::Pointer { element_type: middle, nullable: middle_nullable, mutable: middle_mutable } = *outer {
+            assert_eq!(middle_nullable, false);
+            assert_eq!(middle_mutable, false);
+            if let Type::Pointer { element_type: inner, nullable: inner_nullable, mutable: inner_mutable } = *middle {
+                assert_eq!(inner_nullable, false);
+                assert_eq!(inner_mutable, false);
                 assert_eq!(*inner, Type::U8);
             } else {
                 panic!("Expected innermost typed pointer to U8");

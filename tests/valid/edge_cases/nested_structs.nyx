@@ -1,0 +1,9 @@
+// Edge case: struct with only one field that is itself a struct
+struct Inner
+    x: i32
+
+struct Outer
+    inner: Inner
+
+struct DeepNest
+    outer: Outer

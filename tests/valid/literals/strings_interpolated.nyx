@@ -1,0 +1,6 @@
+// Interpolated string literals
+let name = "World"
+let greeting = $"Hello, {name}"
+let x = 42
+let msg = $"The answer is {x}"
+let expr = $"Sum: {1 + 2}"

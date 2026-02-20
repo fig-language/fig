@@ -1,0 +1,2 @@
+// Annotated const with generic type parameter
+const[T] DEFAULT: u32 = 0

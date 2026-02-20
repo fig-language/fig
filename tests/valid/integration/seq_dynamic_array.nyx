@@ -1,0 +1,48 @@
+// Integration: Full Seq[T] dynamic array implementation mirroring std example
+using core::memory
+
+struct SeqBuffer[T]
+    ptr: *mut T
+    cap: usize
+    len: usize
+
+export struct Seq[T]
+    buffer: SeqBuffer[T]
+
+const[T] Seq[T]::DEFAULT_CAPACITY: usize = 4
+const[T] Seq[T]::GROW_FACTOR: usize = 2
+
+export func! Seq[T]::new() -> Seq[T]
+    pass
+
+export func Seq[T]::len(*self) -> usize
+    return self.buffer.len
+
+export func Seq[T]::is_empty(*self) -> bool
+    return self.buffer.len == 0
+
+export func Seq[T]::cap(*self) -> usize
+    return self.buffer.cap
+
+export func Seq[T]::get(*self, index: usize) -> ?*T
+    if index >= self.buffer.len
+        return null
+    pass
+
+export func! Seq[T]::push(*mut self, item: T) -> ok
+    if self.buffer.len == self.buffer.cap
+        self.grow()
+    pass
+
+export func! Seq[T]::pop(*mut self) -> ?T
+    if self.buffer.len == 0
+        return null
+    self.buffer.len = self.buffer.len - 1
+    pass
+
+export func! Seq[T]::grow(*mut self) -> ok
+    let new_cap = self.buffer.cap * Seq[T]::GROW_FACTOR
+    pass
+
+export func! Seq[T]::free(*mut self) -> ok
+    pass

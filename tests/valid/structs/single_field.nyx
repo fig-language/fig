@@ -1,0 +1,3 @@
+// Struct with a single field
+struct Wrapper
+    value: i32

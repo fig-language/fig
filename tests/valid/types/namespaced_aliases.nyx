@@ -1,0 +1,4 @@
+// Type alias with path (namespaced)
+type String = [u8]
+type Vector2::Alpine = i32
+type math::Matrix = i32

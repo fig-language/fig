@@ -1,0 +1,9 @@
+// Functions with return statements
+func get_zero() -> i32
+    return 0
+
+func get_true() -> bool
+    return true
+
+func get_pi() -> f64
+    return 3.14159

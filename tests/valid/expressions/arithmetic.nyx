@@ -1,0 +1,8 @@
+// Arithmetic binary expressions
+func arithmetic_ops(a: i32, b: i32) -> ok
+    let add = a + b
+    let sub = a - b
+    let mul = a * b
+    let div = a / b
+    let mod_ = a % b
+    pass

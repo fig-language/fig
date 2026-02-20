@@ -1,0 +1,25 @@
+// Integration: A small interpreter – AST nodes and evaluator
+union Expr
+    int_lit: i64
+    float_lit: f64
+    bool_lit: bool
+    add: *BinOp
+    mul: *BinOp
+    neg: *Expr
+
+struct BinOp
+    left: *Expr
+    right: *Expr
+
+union Value
+    int_val: i64
+    float_val: f64
+    bool_val: bool
+
+func eval(expr: *Expr) -> Value
+    pass
+
+func eval_binop(op: *BinOp) -> Value
+    let left = eval(op.left)
+    let right = eval(op.right)
+    pass

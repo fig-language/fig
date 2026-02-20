@@ -1,0 +1,12 @@
+// Annotations — no arguments
+#inline
+func fast_add(a: i32, b: i32) -> i32
+    return a + b
+
+#cold
+func error_handler() -> ok
+    pass
+
+#no_mangle
+func exported_c_fn() -> ok
+    pass

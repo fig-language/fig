@@ -1,0 +1,4 @@
+// Edge case: deeply nested type annotations
+type A = ?*mut ?*[?i32; 4]
+type B = *mut *mut *mut u8
+type C = ?*?*?*u8

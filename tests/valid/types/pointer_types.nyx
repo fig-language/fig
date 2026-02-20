@@ -1,0 +1,7 @@
+// Pointer type aliases
+type RawPtr = *u8
+type MutPtr = *mut u8
+type OptPtr = ?*u8
+type OptMutPtr = ?*mut u8
+type PtrPtr = **u8
+type MutPtrPtr = *mut *mut u8

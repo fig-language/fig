@@ -1,0 +1,4 @@
+// Simple if statement with pass body
+func check_positive(x: i32) -> ok
+    if x > 0
+        pass

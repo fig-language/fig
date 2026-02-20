@@ -1,0 +1,3 @@
+// const on a namespaced type (associated constant)
+const Seq[T]::DEFAULT_CAPACITY: usize = 4
+const Seq[T]::GROW_FACTOR: usize = 2

@@ -1,0 +1,4 @@
+// Namespace without a body (declaration-only)
+namespace core
+namespace std
+namespace math

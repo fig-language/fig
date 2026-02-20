@@ -8,6 +8,44 @@ grammar;
 // Main Entry Point
 // ============================================================================
 
+/// Main entry point for parsing an entire source file
+pub SourceFile: SourceFile = {
+    <items: SourceFileItem*> => SourceFile::new(items)
+};
+
+/// Top-level items in a source file (same as NamespaceItem but at file level)
+SourceFileItem: NamespaceItem = {
+    <namespace_decl: Namespace> => NamespaceItem::Namespace(namespace_decl),
+    <enum_decl: Enum> => NamespaceItem::Enum(enum_decl),
+    <union_decl: Union> => NamespaceItem::Union(union_decl),
+    <struct_decl: Struct> => NamespaceItem::Struct(struct_decl),
+    <interface_decl: Interface> => NamespaceItem::Interface(interface_decl),
+    <function_decl: Function> => NamespaceItem::Function(function_decl),
+    // Simple type alias (single line) - needs NEWLINE after it
+    "type" <name: "ident"> <generic_params: GenericParameterList?> "=" <aliased_type: Type> "NEWLINE" => {
+        NamespaceItem::TypeAlias(TypeAlias::new(
+            name,
+            generic_params.unwrap_or_default(),
+            aliased_type,
+            Vec::new()
+        ))
+    },
+    // Type alias with where clause (multi-line) - already ends with DEDENT
+    "type" <name: "ident"> <generic_params: GenericParameterList?>
+    "NEWLINE" "INDENT"
+    <where_clause: WhereClause>
+    "NEWLINE"
+    "=" <aliased_type: Type>
+    "DEDENT" => {
+        NamespaceItem::TypeAlias(TypeAlias::new(
+            name,
+            generic_params.unwrap_or_default(),
+            aliased_type,
+            where_clause
+        ))
+    },
+};
+
 /// Main entry point for expression parsing with precedence levels
 /// Level 0 = highest precedence (primary expressions)
 /// Level 8 = lowest precedence (logical OR)
@@ -246,15 +284,31 @@ pub Type: Type = {
 
 /// Pointer types: *raw or *T (recursively handles nested pointers like **T)
 PointerType: Type = {
-    "*" "raw" => Type::RawPointer,
-    "*" <element_type:PointerType> => Type::TypedPointer(Box::new(element_type)),
-    ReferenceType,
-};
-
-ReferenceType: Type = {
-    "&" <element_type:ReferenceType> => Type::Reference(Box::new(element_type)),
+    <nullability: "?"?>
+    "*"
+    <mutability: "mut"?>
+    <element_type: PointerElementType>
+    => {
+        match element_type {
+            Some(boxed_type) => Type::Pointer {
+                element_type: boxed_type,
+                nullable: nullability.is_some(),
+                mutable: mutability.is_some(),
+            },
+            None => Type::Pointer {
+                element_type: Box::new(Type::U8), // *raw - placeholder, should be handled differently
+                nullable: nullability.is_some(),
+                mutable: mutability.is_some(),
+            }
+        }
+    },
     ArrayType,
 };
+
+PointerElementType: Option<Box<Type>> = {
+    <element_type:PointerType> => Some(Box::new(element_type)),
+    "raw" => None
+}
 
 ArrayType: Type = {
     "[" <size:ArraySize> "]" <element_type:ArrayType> => Type::Array{ 
@@ -674,6 +728,7 @@ extern {
         "bool" => Token::Bool,
 
         // Operators
+        "?" => Token::Question,
         "+" => Token::Plus,
         "-" => Token::Minus,
         "*" => Token::Star,
@@ -731,6 +786,6 @@ extern {
         "char" => Token::CharLiteral(<String>),
 
         // Metadata
-        "@" => Token::At,
+        "#" => Token::Hash,
     }
 }

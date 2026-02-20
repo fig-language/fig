@@ -1,0 +1,2 @@
+// Minimal struct with no body
+struct Empty

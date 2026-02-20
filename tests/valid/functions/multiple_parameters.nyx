@@ -1,0 +1,12 @@
+// Functions with multiple parameters
+func add(a: i32, b: i32) -> i32
+    return a + b
+
+func max3(a: i32, b: i32, c: i32) -> i32
+    pass
+
+func lerp(a: f64, b: f64, t: f64) -> f64
+    pass
+
+func clamp(val: f64, lo: f64, hi: f64) -> f64
+    pass

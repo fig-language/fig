@@ -1,0 +1,4 @@
+// INVALID: struct field with = instead of :
+// Expected parse error: colon required between field name and type
+struct Bad
+    x = i32

@@ -1,0 +1,5 @@
+// Edge case: chained as-casts
+func casts(x: i32) -> ok
+    let a = x as u8 as u16 as u32 as u64
+    let b = x as f32 as f64
+    pass

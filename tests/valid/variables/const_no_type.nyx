@@ -1,0 +1,5 @@
+// const without type annotation
+const MAX_SIZE = 1024
+const DEFAULT_PORT = 8080
+const PI = 3.14159
+const ENABLED = true

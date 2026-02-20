@@ -1,0 +1,4 @@
+// Visibility modifiers on type statements
+public type PublicInt = i32
+export type ExportedByte = u8
+private type PrivateFloat = f64

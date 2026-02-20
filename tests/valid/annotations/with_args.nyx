@@ -1,0 +1,12 @@
+// Annotations — with arguments
+#repr(C)
+struct CCompatible
+    a: i32
+    b: i32
+
+#align(16)
+struct AlignedData
+    data: [u8; 16]
+
+#link_name("malloc")
+extern func c_malloc(size: usize) -> *mut u8

@@ -1,0 +1,343 @@
+// Logging framework with multiple log levels and output targets
+
+using std::io
+using core::memory
+
+enum[u8] LogLevel
+    TRACE = 0
+    DEBUG = 1
+    INFO = 2
+    WARN = 3
+    ERROR = 4
+    FATAL = 5
+
+enum OutputType
+    STDOUT
+    STDERR
+    FILE
+    BUFFER
+
+struct LogTarget
+    output_type: OutputType
+    file_path: ?[u8]
+    buffer: ?*mut LogBuffer
+    min_level: LogLevel
+
+struct LogBuffer
+    data: *mut u8
+    size: usize
+    capacity: usize
+
+struct LogEntry
+    timestamp: u64
+    level: LogLevel
+    file: [u8]
+    line: u32
+    function: [u8]
+    message: [u8]
+    thread_id: u64
+
+export struct Logger
+    targets: *mut LogTarget
+    target_count: usize
+    global_level: LogLevel
+    enabled: bool
+    include_timestamps: bool
+    include_location: bool
+    color_enabled: bool
+
+// Global logger instance
+mut GLOBAL_LOGGER: ?*mut Logger = null
+
+export func! init_logger() -> ok
+    let logger = Logger::new()
+    GLOBAL_LOGGER = &logger
+    pass
+
+export func! get_logger() -> *mut Logger
+    if GLOBAL_LOGGER == null
+        init_logger()
+    return GLOBAL_LOGGER
+
+func! Logger::new() -> Logger
+    return Logger(
+        targets: null,
+        target_count: 0,
+        global_level: LogLevel::INFO,
+        enabled: true,
+        include_timestamps: true,
+        include_location: true,
+        color_enabled: true
+    )
+
+func! Logger::add_target(*mut self, target: LogTarget) -> ok
+    pass
+
+func! Logger::add_stdout(*mut self, min_level: LogLevel) -> ok
+    let target = LogTarget(
+        output_type: OutputType::STDOUT,
+        file_path: null,
+        buffer: null,
+        min_level: min_level
+    )
+    self.add_target(target)
+    pass
+
+func! Logger::add_stderr(*mut self, min_level: LogLevel) -> ok
+    let target = LogTarget(
+        output_type: OutputType::STDERR,
+        file_path: null,
+        buffer: null,
+        min_level: min_level
+    )
+    self.add_target(target)
+    pass
+
+func! Logger::add_file(*mut self, path: [u8], min_level: LogLevel) -> ok
+    let target = LogTarget(
+        output_type: OutputType::FILE,
+        file_path: path,
+        buffer: null,
+        min_level: min_level
+    )
+    self.add_target(target)
+    pass
+
+func! Logger::add_buffer(*mut self, buffer: *mut LogBuffer, min_level: LogLevel) -> ok
+    let target = LogTarget(
+        output_type: OutputType::BUFFER,
+        file_path: null,
+        buffer: buffer,
+        min_level: min_level
+    )
+    self.add_target(target)
+    pass
+
+func! Logger::set_level(*mut self, level: LogLevel) -> ok
+    self.global_level = level
+    pass
+
+func! Logger::enable(*mut self) -> ok
+    self.enabled = true
+    pass
+
+func! Logger::disable(*mut self) -> ok
+    self.enabled = false
+    pass
+
+func! Logger::log(*mut self, entry: *LogEntry) -> ok
+    if !self.enabled
+        return ok
+    
+    if entry.level < self.global_level
+        return ok
+    
+    let formatted = self.format_entry(entry)
+    
+    for i in range(0, self.target_count)
+        let target = &self.targets[i]
+        if entry.level >= target.min_level
+            self.write_to_target(target, formatted)
+    
+    pass
+
+func! Logger::write_to_target(*mut self, target: *LogTarget, message: [u8]) -> ok
+    if target.output_type == OutputType::STDOUT
+        stdout_write(message)
+    elif target.output_type == OutputType::STDERR
+        stderr_write(message)
+    elif target.output_type == OutputType::FILE
+        file_append(target.file_path, message)
+    elif target.output_type == OutputType::BUFFER
+        buffer_append(target.buffer, message)
+    pass
+
+func Logger::format_entry(*self, entry: *LogEntry) -> [u8]
+    mut buffer: [u8] = []
+    
+    if self.include_timestamps
+        self.append_timestamp(&buffer, entry.timestamp)
+        self.append_str(&buffer, " ")
+    
+    if self.color_enabled
+        self.append_str(&buffer, self.level_color(entry.level))
+    
+    self.append_str(&buffer, self.level_string(entry.level))
+    
+    if self.color_enabled
+        self.append_str(&buffer, "\x1b[0m")
+    
+    self.append_str(&buffer, " ")
+    
+    if self.include_location
+        self.append_str(&buffer, "[")
+        self.append_str(&buffer, entry.file)
+        self.append_str(&buffer, ":")
+        self.append_uint(&buffer, entry.line as u64)
+        self.append_str(&buffer, "] ")
+    
+    self.append_str(&buffer, entry.message)
+    self.append_str(&buffer, "\n")
+    
+    return buffer
+
+func Logger::level_string(*self, level: LogLevel) -> [u8]
+    if level == LogLevel::TRACE
+        return "TRACE"
+    elif level == LogLevel::DEBUG
+        return "DEBUG"
+    elif level == LogLevel::INFO
+        return "INFO"
+    elif level == LogLevel::WARN
+        return "WARN"
+    elif level == LogLevel::ERROR
+        return "ERROR"
+    elif level == LogLevel::FATAL
+        return "FATAL"
+    return "UNKNOWN"
+
+func Logger::level_color(*self, level: LogLevel) -> [u8]
+    if level == LogLevel::TRACE
+        return "\x1b[37m"  // white
+    elif level == LogLevel::DEBUG
+        return "\x1b[36m"  // cyan
+    elif level == LogLevel::INFO
+        return "\x1b[32m"  // green
+    elif level == LogLevel::WARN
+        return "\x1b[33m"  // yellow
+    elif level == LogLevel::ERROR
+        return "\x1b[31m"  // red
+    elif level == LogLevel::FATAL
+        return "\x1b[35m"  // magenta
+    return "\x1b[0m"
+
+func Logger::append_str(*self, buffer: *mut [u8], s: [u8]) -> ok
+    pass
+
+func Logger::append_uint(*self, buffer: *mut [u8], n: u64) -> ok
+    pass
+
+func Logger::append_timestamp(*self, buffer: *mut [u8], ts: u64) -> ok
+    pass
+
+// Convenience logging macros/functions
+
+export func! log_trace(file: [u8], line: u32, func: [u8], msg: [u8]) -> ok
+    let logger = get_logger()
+    let entry = LogEntry(
+        timestamp: get_timestamp(),
+        level: LogLevel::TRACE,
+        file: file,
+        line: line,
+        function: func,
+        message: msg,
+        thread_id: get_thread_id()
+    )
+    logger.log(&entry)
+    pass
+
+export func! log_debug(file: [u8], line: u32, func: [u8], msg: [u8]) -> ok
+    let logger = get_logger()
+    let entry = LogEntry(
+        timestamp: get_timestamp(),
+        level: LogLevel::DEBUG,
+        file: file,
+        line: line,
+        function: func,
+        message: msg,
+        thread_id: get_thread_id()
+    )
+    logger.log(&entry)
+    pass
+
+export func! log_info(file: [u8], line: u32, func: [u8], msg: [u8]) -> ok
+    let logger = get_logger()
+    let entry = LogEntry(
+        timestamp: get_timestamp(),
+        level: LogLevel::INFO,
+        file: file,
+        line: line,
+        function: func,
+        message: msg,
+        thread_id: get_thread_id()
+    )
+    logger.log(&entry)
+    pass
+
+export func! log_warn(file: [u8], line: u32, func: [u8], msg: [u8]) -> ok
+    let logger = get_logger()
+    let entry = LogEntry(
+        timestamp: get_timestamp(),
+        level: LogLevel::WARN,
+        file: file,
+        line: line,
+        function: func,
+        message: msg,
+        thread_id: get_thread_id()
+    )
+    logger.log(&entry)
+    pass
+
+export func! log_error(file: [u8], line: u32, func: [u8], msg: [u8]) -> ok
+    let logger = get_logger()
+    let entry = LogEntry(
+        timestamp: get_timestamp(),
+        level: LogLevel::ERROR,
+        file: file,
+        line: line,
+        function: func,
+        message: msg,
+        thread_id: get_thread_id()
+    )
+    logger.log(&entry)
+    pass
+
+export func! log_fatal(file: [u8], line: u32, func: [u8], msg: [u8]) -> ok
+    let logger = get_logger()
+    let entry = LogEntry(
+        timestamp: get_timestamp(),
+        level: LogLevel::FATAL,
+        file: file,
+        line: line,
+        function: func,
+        message: msg,
+        thread_id: get_thread_id()
+    )
+    logger.log(&entry)
+    pass
+
+// LogBuffer implementation
+
+func! LogBuffer::new(capacity: usize) -> LogBuffer
+    return LogBuffer(
+        data: null,
+        size: 0,
+        capacity: capacity
+    )
+
+func! LogBuffer::clear(*mut self) -> ok
+    self.size = 0
+    pass
+
+func LogBuffer::to_string(*self) -> [u8]
+    pass
+
+func! buffer_append(buffer: *mut LogBuffer, data: [u8]) -> ok
+    pass
+
+// Platform-specific functions
+
+func! get_timestamp() -> u64
+    return 0
+
+func! get_thread_id() -> u64
+    return 0
+
+func! stdout_write(data: [u8]) -> ok
+    pass
+
+func! stderr_write(data: [u8]) -> ok
+    pass
+
+func! file_append(path: ?[u8], data: [u8]) -> ok
+    pass

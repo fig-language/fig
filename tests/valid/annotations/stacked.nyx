@@ -1,0 +1,11 @@
+// Multiple annotations stacked on a single definition
+#inline
+#cold
+#no_mangle
+func multi_annotated() -> ok
+    pass
+
+#deprecated
+#repr(C)
+struct OldStruct
+    x: i32

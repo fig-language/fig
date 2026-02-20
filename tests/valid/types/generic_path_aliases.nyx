@@ -1,0 +1,3 @@
+// Type aliases using generic paths
+type HashMap[K, V] = core::Map[K, V]
+type Set[T] = std::collections::HashSet[T]

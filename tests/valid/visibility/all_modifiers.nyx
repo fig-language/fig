@@ -1,0 +1,26 @@
+// All three visibility modifiers
+public func public_fn() -> ok
+    pass
+
+export func export_fn() -> ok
+    pass
+
+private func private_fn() -> ok
+    pass
+
+public struct PublicS
+    x: i32
+
+export struct ExportS
+    x: i32
+
+private struct PrivateS
+    x: i32
+
+public enum PubEnum
+    A
+    B
+
+export enum ExportEnum
+    A
+    B

@@ -1,0 +1,8 @@
+// for loop — basic iteration
+func sum_range() -> ok
+    for i in range(0, 10)
+        pass
+
+func iterate_slice(data: [i32]) -> ok
+    for item in data
+        pass

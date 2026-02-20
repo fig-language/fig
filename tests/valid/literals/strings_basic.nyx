@@ -1,0 +1,7 @@
+// Basic string literals
+let empty = ""
+let hello = "hello"
+let world = "world"
+let sentence = "The quick brown fox"
+let with_spaces = "hello world"
+let escapedquote = "She said ""hello"""

@@ -1,0 +1,6 @@
+// Simple enum — variants with no values (auto-assigned)
+enum Direction
+    UP
+    DOWN
+    LEFT
+    RIGHT

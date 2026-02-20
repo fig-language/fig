@@ -171,7 +171,7 @@ fn test_function_with_where_clause() {
 
 #[test]
 fn test_function_with_complex_types() {
-    let input = "fn process(ptr: *i32, arr: []u8, ref_val: &bool) -> *u32
+    let input = "fn process(ptr: *i32, arr: []u8, ref_val: *mut T) -> *u32
     pass";
     let lexer = Lexer::new(input);
     let result = parser::FunctionParser::new().parse(lexer);
@@ -182,8 +182,15 @@ fn test_function_with_complex_types() {
 
     // Check pointer parameter
     assert_eq!(signature.params()[0].name(), "ptr");
-    if let Type::TypedPointer(inner) = signature.params()[0].ty() {
-        assert_eq!(inner.as_ref(), &Type::I32);
+    if let Type::Pointer {
+        element_type,
+        nullable,
+        mutable,
+    } = signature.params()[0].ty()
+    {
+        assert_eq!(nullable, &false);
+        assert_eq!(mutable, &false);
+        assert_eq!(**element_type, Type::I32);
     } else {
         panic!("Expected pointer type");
     }
@@ -199,15 +206,29 @@ fn test_function_with_complex_types() {
 
     // Check reference parameter
     assert_eq!(signature.params()[2].name(), "ref_val");
-    if let Type::Reference(inner) = signature.params()[2].ty() {
-        assert_eq!(inner.as_ref(), &Type::Bool);
+    if let Type::Pointer {
+        element_type,
+        nullable,
+        mutable,
+    } = signature.params()[2].ty()
+    {
+        assert_eq!(nullable, &false);
+        assert_eq!(mutable, &true);
+        assert_eq!(**element_type, Type::Named { name: "T".to_string(), generic_args: vec![] });
     } else {
         panic!("Expected reference type");
     }
 
     // Check return type
-    if let Some(Type::TypedPointer(inner)) = signature.return_type() {
-        assert_eq!(inner.as_ref(), &Type::U32);
+    if let Some(Type::Pointer {
+        element_type,
+        nullable,
+        mutable,
+    }) = signature.return_type()
+    {
+        assert_eq!(nullable, &false);
+        assert_eq!(mutable, &false);
+        assert_eq!(**element_type, Type::U32);
     } else {
         panic!("Expected pointer return type");
     }

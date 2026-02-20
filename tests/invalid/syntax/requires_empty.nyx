@@ -1,0 +1,5 @@
+// INVALID: requires clause missing requirement body
+// Expected parse error: requirement body needed inside requires
+struct Bad[T]
+    requires
+    value: T

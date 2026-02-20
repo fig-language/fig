@@ -1,0 +1,6 @@
+// Type-prefixed paths (starting with ::)
+type BoxedInt = ::Box[i32]::Inner
+
+func type_prefix_path() -> ok
+    let x: ::Vec[u8]::Iter = stuff
+    pass

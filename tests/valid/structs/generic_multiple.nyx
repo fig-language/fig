@@ -1,0 +1,14 @@
+// Generic struct with multiple type parameters
+struct Pair[A, B]
+    first: A
+    second: B
+
+struct Triple[A, B, C]
+    a: A
+    b: B
+    c: C
+
+struct Map[K, V]
+    key: K
+    value: V
+    next: ?*Map[K, V]

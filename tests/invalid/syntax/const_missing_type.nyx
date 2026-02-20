@@ -1,0 +1,2 @@
+// Invalid: Missing type in const declaration
+const MISSING_TYPE = 42

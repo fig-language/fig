@@ -1,0 +1,5 @@
+// Simple function declarations (no body – forward declarations / interfaces)
+func nop() -> ok
+func identity(x: i32) -> i32
+func add(a: i32, b: i32) -> i32
+func greet(name: [u8]) -> ok

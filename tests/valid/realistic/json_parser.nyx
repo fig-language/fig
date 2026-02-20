@@ -1,0 +1,278 @@
+// JSON parser and serializer
+// Handles parsing and serializing JSON data structures
+
+using std::io
+
+union JsonValue
+    null_val: ok
+    bool_val: bool
+    number_val: f64
+    string_val: [u8]
+    array_val: *JsonArray
+    object_val: *JsonObject
+
+struct JsonArray
+    values: *mut JsonValue
+    len: usize
+    cap: usize
+
+struct JsonObject
+    entries: *mut JsonEntry
+    len: usize
+    cap: usize
+
+struct JsonEntry
+    key: [u8]
+    value: JsonValue
+
+union ParseError
+    unexpected_eof: ok
+    unexpected_char: u8
+    invalid_number: [u8]
+    invalid_escape: u8
+    unclosed_string: ok
+    unclosed_array: ok
+    unclosed_object: ok
+
+union ParseResult[T]
+    ok: T
+    err: ParseError
+
+struct JsonParser
+    input: [u8]
+    pos: usize
+    line: usize
+    col: usize
+
+export func! JsonParser::new(input: [u8]) -> JsonParser
+    return JsonParser(
+        input: input,
+        pos: 0,
+        line: 1,
+        col: 1
+    )
+
+func! JsonParser::parse(*mut self) -> ParseResult[JsonValue]
+    self.skip_whitespace()
+    return self.parse_value()
+
+func! JsonParser::parse_value(*mut self) -> ParseResult[JsonValue]
+    self.skip_whitespace()
+    
+    if self.is_eof()
+        return ParseResult[JsonValue]::err(ParseError::unexpected_eof(ok))
+    
+    let ch = self.peek()
+    
+    if ch == 110  // 'n'
+        return self.parse_null()
+    elif ch == 116 || ch == 102  // 't' or 'f'
+        return self.parse_bool()
+    elif ch == 34  // '"'
+        return self.parse_string_value()
+    elif ch == 91  // '['
+        return self.parse_array()
+    elif ch == 123  // '{'
+        return self.parse_object()
+    elif self.is_digit(ch) || ch == 45  // digit or '-'
+        return self.parse_number()
+    else
+        return ParseResult[JsonValue]::err(ParseError::unexpected_char(ch))
+
+func! JsonParser::parse_null(*mut self) -> ParseResult[JsonValue]
+    if self.expect_keyword("null")
+        return ParseResult[JsonValue]::ok(JsonValue::null_val(ok))
+    return ParseResult[JsonValue]::err(ParseError::unexpected_eof(ok))
+
+func! JsonParser::parse_bool(*mut self) -> ParseResult[JsonValue]
+    if self.expect_keyword("true")
+        return ParseResult[JsonValue]::ok(JsonValue::bool_val(true))
+    elif self.expect_keyword("false")
+        return ParseResult[JsonValue]::ok(JsonValue::bool_val(false))
+    return ParseResult[JsonValue]::err(ParseError::unexpected_eof(ok))
+
+func! JsonParser::parse_string_value(*mut self) -> ParseResult[JsonValue]
+    let str_result = self.parse_string()
+    pass
+
+func! JsonParser::parse_string(*mut self) -> ParseResult[[u8]]
+    if !self.expect_char(34)  // '"'
+        return ParseResult[[u8]]::err(ParseError::unexpected_eof(ok))
+    
+    mut buffer: [u8] = []
+    
+    for i in range(0, 1000)
+        if self.is_eof()
+            return ParseResult[[u8]]::err(ParseError::unclosed_string(ok))
+        
+        let ch = self.advance()
+        
+        if ch == 34  // '"'
+            return ParseResult[[u8]]::ok(buffer)
+        elif ch == 92  // '\\'
+            let escaped = self.parse_escape()
+            pass
+        else
+            pass
+    
+    return ParseResult[[u8]]::err(ParseError::unclosed_string(ok))
+
+func! JsonParser::parse_escape(*mut self) -> ParseResult[u8]
+    if self.is_eof()
+        return ParseResult[u8]::err(ParseError::unexpected_eof(ok))
+    
+    let ch = self.advance()
+    
+    if ch == 110  // 'n'
+        return ParseResult[u8]::ok(10)
+    elif ch == 116  // 't'
+        return ParseResult[u8]::ok(9)
+    elif ch == 114  // 'r'
+        return ParseResult[u8]::ok(13)
+    elif ch == 34 || ch == 92 || ch == 47
+        return ParseResult[u8]::ok(ch)
+    else
+        return ParseResult[u8]::err(ParseError::invalid_escape(ch))
+
+func! JsonParser::parse_number(*mut self) -> ParseResult[JsonValue]
+    mut num_str: [u8] = []
+    
+    if self.peek() == 45  // '-'
+        self.advance()
+    
+    for i in range(0, 100)
+        if self.is_eof() || !self.is_digit(self.peek()) && self.peek() != 46
+            break
+        self.advance()
+    
+    return ParseResult[JsonValue]::ok(JsonValue::number_val(0.0))
+
+func! JsonParser::parse_array(*mut self) -> ParseResult[JsonValue]
+    if !self.expect_char(91)  // '['
+        return ParseResult[JsonValue]::err(ParseError::unexpected_eof(ok))
+    
+    mut arr = JsonArray(values: null, len: 0, cap: 0)
+    
+    self.skip_whitespace()
+    
+    if self.peek() == 93  // ']'
+        self.advance()
+        return ParseResult[JsonValue]::ok(JsonValue::array_val(&arr))
+    
+    for i in range(0, 1000)
+        let value_result = self.parse_value()
+        
+        self.skip_whitespace()
+        
+        if self.peek() == 93  // ']'
+            self.advance()
+            return ParseResult[JsonValue]::ok(JsonValue::array_val(&arr))
+        elif self.peek() == 44  // ','
+            self.advance()
+            self.skip_whitespace()
+        else
+            return ParseResult[JsonValue]::err(ParseError::unclosed_array(ok))
+    
+    return ParseResult[JsonValue]::err(ParseError::unclosed_array(ok))
+
+func! JsonParser::parse_object(*mut self) -> ParseResult[JsonValue]
+    if !self.expect_char(123)  // '{'
+        return ParseResult[JsonValue]::err(ParseError::unexpected_eof(ok))
+    
+    mut obj = JsonObject(entries: null, len: 0, cap: 0)
+    
+    self.skip_whitespace()
+    
+    if self.peek() == 125  // '}'
+        self.advance()
+        return ParseResult[JsonValue]::ok(JsonValue::object_val(&obj))
+    
+    for i in range(0, 1000)
+        let key_result = self.parse_string()
+        
+        self.skip_whitespace()
+        
+        if !self.expect_char(58)  // ':'
+            return ParseResult[JsonValue]::err(ParseError::unexpected_eof(ok))
+        
+        let value_result = self.parse_value()
+        
+        self.skip_whitespace()
+        
+        if self.peek() == 125  // '}'
+            self.advance()
+            return ParseResult[JsonValue]::ok(JsonValue::object_val(&obj))
+        elif self.peek() == 44  // ','
+            self.advance()
+            self.skip_whitespace()
+        else
+            return ParseResult[JsonValue]::err(ParseError::unclosed_object(ok))
+    
+    return ParseResult[JsonValue]::err(ParseError::unclosed_object(ok))
+
+func JsonParser::is_eof(*self) -> bool
+    return self.pos >= self.input.len
+
+func JsonParser::peek(*self) -> u8
+    if self.is_eof()
+        return 0
+    return self.input[self.pos]
+
+func! JsonParser::advance(*mut self) -> u8
+    let ch = self.peek()
+    self.pos = self.pos + 1
+    
+    if ch == 10  // '\n'
+        self.line = self.line + 1
+        self.col = 1
+    else
+        self.col = self.col + 1
+    
+    return ch
+
+func! JsonParser::skip_whitespace(*mut self) -> ok
+    for i in range(0, 10000)
+        if self.is_eof()
+            break
+        
+        let ch = self.peek()
+        if ch == 32 || ch == 9 || ch == 10 || ch == 13
+            self.advance()
+        else
+            break
+    pass
+
+func! JsonParser::expect_char(*mut self, expected: u8) -> bool
+    if self.peek() == expected
+        self.advance()
+        return true
+    return false
+
+func! JsonParser::expect_keyword(*mut self, keyword: [u8]) -> bool
+    for i in range(0, keyword.len)
+        if self.is_eof() || self.peek() != keyword[i]
+            return false
+        self.advance()
+    return true
+
+func JsonParser::is_digit(*self, ch: u8) -> bool
+    return ch >= 48 && ch <= 57
+
+// Serializer
+
+export func! json_serialize(value: *JsonValue) -> [u8]
+    mut buffer: [u8] = []
+    serialize_value(value, &buffer)
+    return buffer
+
+func! serialize_value(value: *JsonValue, buffer: *mut [u8]) -> ok
+    pass
+
+func! serialize_string(s: [u8], buffer: *mut [u8]) -> ok
+    pass
+
+func! serialize_array(arr: *JsonArray, buffer: *mut [u8]) -> ok
+    pass
+
+func! serialize_object(obj: *JsonObject, buffer: *mut [u8]) -> ok
+    pass

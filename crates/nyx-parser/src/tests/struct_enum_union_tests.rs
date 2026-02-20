@@ -189,9 +189,9 @@ mod struct_tests {
     #[test]
     fn test_struct_with_complex_types() {
         let input = "struct ComplexStruct
-    pointer: *i32
+    pointer: ?*i32
     array: []u8
-    reference: &bool
+    reference: *mut bool
 ";
         let lexer = Lexer::new(input);
         let result = parser::StructParser::new().parse(lexer);
@@ -201,8 +201,10 @@ mod struct_tests {
 
         // Check pointer field
         assert_eq!(s.fields()[0].name(), "pointer");
-        if let Type::TypedPointer(inner) = s.fields()[0].ty() {
-            assert_eq!(inner.as_ref(), &Type::I32);
+        if let Type::Pointer { element_type, nullable, mutable } = s.fields()[0].ty() {
+            assert_eq!(nullable, &true);
+            assert_eq!(mutable, &false);
+            assert_eq!(**element_type, Type::I32);
         } else {
             panic!("Expected pointer type");
         }
@@ -211,15 +213,17 @@ mod struct_tests {
         assert_eq!(s.fields()[1].name(), "array");
         if let Type::Array { element_type, size } = s.fields()[1].ty() {
             assert_eq!(size, &None);
-            assert_eq!(element_type.as_ref(), &Type::U8);
+            assert_eq!(**element_type, Type::U8);
         } else {
             panic!("Expected array type");
         }
 
         // Check reference field
         assert_eq!(s.fields()[2].name(), "reference");
-        if let Type::Reference(inner) = s.fields()[2].ty() {
-            assert_eq!(inner.as_ref(), &Type::Bool);
+        if let Type::Pointer { element_type, nullable, mutable } = s.fields()[2].ty() {
+            assert_eq!(nullable, &false);
+            assert_eq!(mutable, &true);
+            assert_eq!(**element_type, Type::Bool);
         } else {
             panic!("Expected reference type");
         }
@@ -665,7 +669,7 @@ mod union_tests {
         let input = "union ComplexUnion
     pointer: *i32
     array: []u8
-    reference: &bool
+    reference: ?*mut bool
 ";
         let lexer = Lexer::new(input);
         let result = parser::UnionParser::new().parse(lexer);
@@ -675,8 +679,10 @@ mod union_tests {
 
         // Check pointer variant
         assert_eq!(u.variants()[0].name(), "pointer");
-        if let Type::TypedPointer(inner) = u.variants()[0].ty() {
-            assert_eq!(inner.as_ref(), &Type::I32);
+        if let Type::Pointer { element_type: inner, nullable, mutable } = u.variants()[0].ty() {
+            assert_eq!(**inner, Type::I32);
+            assert_eq!(nullable, &false);
+            assert_eq!(mutable, &false);
         } else {
             panic!("Expected pointer type");
         }
@@ -692,8 +698,10 @@ mod union_tests {
 
         // Check reference variant
         assert_eq!(u.variants()[2].name(), "reference");
-        if let Type::Reference(inner) = u.variants()[2].ty() {
-            assert_eq!(inner.as_ref(), &Type::Bool);
+        if let Type::Pointer { element_type, nullable, mutable } = u.variants()[2].ty() {
+            assert_eq!(**element_type, Type::Bool);
+            assert_eq!(nullable, &true);
+            assert_eq!(mutable, &true);
         } else {
             panic!("Expected reference type");
         }

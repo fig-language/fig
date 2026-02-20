@@ -1,0 +1,3 @@
+// INVALID: let with no value
+// Expected parse error: expression required after =
+let x =

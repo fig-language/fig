@@ -1,0 +1,8 @@
+// INVALID: Calling with a trailing comma but no argument
+// Expected parse error: expression required after trailing comma
+func foo(a: i32, b: i32) -> ok
+    pass
+
+func bad() -> ok
+    foo(1, 2,)
+    pass

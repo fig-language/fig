@@ -1,0 +1,315 @@
+// B-tree implementation for ordered key-value storage
+
+using core::memory
+
+const ORDER: usize = 5
+const MIN_KEYS: usize = ORDER - 1
+const MAX_KEYS: usize = (2 * ORDER) - 1
+const MAX_CHILDREN: usize = 2 * ORDER
+
+enum NodeType
+    LEAF
+    INTERNAL
+
+struct BTreeNode[K, V]
+    keys: [K]
+    values: [V]
+    children: [*mut BTreeNode[K, V]]
+    parent: ?*mut BTreeNode[K, V]
+    node_type: NodeType
+    num_keys: usize
+
+export struct BTree[K, V]
+    root: ?*mut BTreeNode[K, V]
+    size: usize
+    height: usize
+
+func! BTree[K, V]::new() -> BTree[K, V]
+    return BTree[K, V](
+        root: null,
+        size: 0,
+        height: 0
+    )
+
+func! BTree[K, V]::insert(*mut self, key: K, value: V) -> ok
+    where K: Ord + Clone, V: Clone
+    if self.root == null
+        let node = BTreeNode[K, V]::new_leaf()
+        node.keys.push(key)
+        node.values.push(value)
+        node.num_keys = 1
+        self.root = node
+        self.size = 1
+        self.height = 1
+        return ok
+    
+    let root = self.root
+    
+    if root.is_full()
+        let new_root = BTreeNode[K, V]::new_internal()
+        new_root.children.push(root)
+        root.parent = new_root
+        
+        self.split_child(new_root, 0)
+        self.root = new_root
+        self.height = self.height + 1
+    
+    self.insert_non_full(self.root, key, value)
+    self.size = self.size + 1
+    
+    pass
+
+func! BTree[K, V]::insert_non_full(*mut self, node: *mut BTreeNode[K, V], key: K, value: V) -> ok
+    where K: Ord + Clone, V: Clone
+    mut i = node.num_keys
+    
+    if node.is_leaf()
+        for idx in range(0, node.num_keys)
+            let j = node.num_keys - idx - 1
+            if key.compare(&node.keys[j]) < 0
+                node.keys.insert(j + 1, node.keys[j])
+                node.values.insert(j + 1, node.values[j])
+            else
+                i = j + 1
+                break
+        
+        node.keys.insert(i, key)
+        node.values.insert(i, value)
+        node.num_keys = node.num_keys + 1
+    else
+        for idx in range(0, node.num_keys)
+            let j = node.num_keys - idx - 1
+            if key.compare(&node.keys[j]) >= 0
+                i = j + 1
+                break
+        
+        let child = node.children[i]
+        
+        if child.is_full()
+            self.split_child(node, i)
+            
+            if key.compare(&node.keys[i]) > 0
+                i = i + 1
+        
+        self.insert_non_full(node.children[i], key, value)
+    
+    pass
+
+func! BTree[K, V]::split_child(*mut self, parent: *mut BTreeNode[K, V], index: usize) -> ok
+    where K: Clone, V: Clone
+    let full_child = parent.children[index]
+    let new_child = if full_child.is_leaf() then BTreeNode[K, V]::new_leaf() else BTreeNode[K, V]::new_internal()
+    
+    let mid_index = ORDER - 1
+    
+    for i in range(0, ORDER - 1)
+        new_child.keys.push(full_child.keys[mid_index + 1 + i])
+        new_child.values.push(full_child.values[mid_index + 1 + i])
+    
+    new_child.num_keys = ORDER - 1
+    
+    if !full_child.is_leaf()
+        for i in range(0, ORDER)
+            new_child.children.push(full_child.children[mid_index + 1 + i])
+    
+    full_child.num_keys = ORDER - 1
+    
+    parent.children.insert(index + 1, new_child)
+    parent.keys.insert(index, full_child.keys[mid_index])
+    parent.values.insert(index, full_child.values[mid_index])
+    parent.num_keys = parent.num_keys + 1
+    
+    new_child.parent = parent
+    
+    pass
+
+func BTree[K, V]::search(*self, key: K) -> ?*V
+    where K: Ord
+    if self.root == null
+        return null
+    
+    return self.search_node(self.root, key)
+
+func BTree[K, V]::search_node(*self, node: *BTreeNode[K, V], key: K) -> ?*V
+    where K: Ord
+    mut i: usize = 0
+    
+    for idx in range(0, node.num_keys)
+        let cmp = key.compare(&node.keys[idx])
+        
+        if cmp == 0
+            return &node.values[idx]
+        
+        if cmp < 0
+            break
+        
+        i = idx + 1
+    
+    if node.is_leaf()
+        return null
+    
+    return self.search_node(node.children[i], key)
+
+func BTree[K, V]::contains(*self, key: K) -> bool
+    where K: Ord
+    return self.search(key) != null
+
+func! BTree[K, V]::remove(*mut self, key: K) -> ?V
+    where K: Ord + Clone, V: Clone
+    if self.root == null
+        return null
+    
+    let value = self.remove_from_node(self.root, key)
+    
+    if self.root.num_keys == 0 && !self.root.is_leaf()
+        let old_root = self.root
+        self.root = old_root.children[0]
+        self.height = self.height - 1
+    
+    if value != null
+        self.size = self.size - 1
+    
+    return value
+
+func! BTree[K, V]::remove_from_node(*mut self, node: *mut BTreeNode[K, V], key: K) -> ?V
+    where K: Ord + Clone, V: Clone
+    mut i: usize = 0
+    
+    for idx in range(0, node.num_keys)
+        if key.compare(&node.keys[idx]) <= 0
+            break
+        i = idx + 1
+    
+    if i < node.num_keys && key.compare(&node.keys[i]) == 0
+        if node.is_leaf()
+            let value = node.values[i]
+            node.keys.remove(i)
+            node.values.remove(i)
+            node.num_keys = node.num_keys - 1
+            return value
+        
+        return self.remove_from_internal(node, i)
+    
+    if node.is_leaf()
+        return null
+    
+    return self.remove_from_node(node.children[i], key)
+
+func! BTree[K, V]::remove_from_internal(*mut self, node: *mut BTreeNode[K, V], index: usize) -> ?V
+    where K: Clone, V: Clone
+    let value = node.values[index]
+    
+    let left_child = node.children[index]
+    if left_child.num_keys >= ORDER
+        let predecessor = self.get_predecessor(left_child)
+        node.keys[index] = predecessor.0
+        node.values[index] = predecessor.1
+        self.remove_from_node(left_child, predecessor.0)
+        return value
+    
+    let right_child = node.children[index + 1]
+    if right_child.num_keys >= ORDER
+        let successor = self.get_successor(right_child)
+        node.keys[index] = successor.0
+        node.values[index] = successor.1
+        self.remove_from_node(right_child, successor.0)
+        return value
+    
+    self.merge_nodes(node, index)
+    
+    return value
+
+func BTree[K, V]::get_predecessor(*self, node: *BTreeNode[K, V]) -> (K, V)
+    where K: Clone, V: Clone
+    if node.is_leaf()
+        return (node.keys[node.num_keys - 1], node.values[node.num_keys - 1])
+    
+    return self.get_predecessor(node.children[node.num_keys])
+
+func BTree[K, V]::get_successor(*self, node: *BTreeNode[K, V]) -> (K, V)
+    where K: Clone, V: Clone
+    if node.is_leaf()
+        return (node.keys[0], node.values[0])
+    
+    return self.get_successor(node.children[0])
+
+func! BTree[K, V]::merge_nodes(*mut self, parent: *mut BTreeNode[K, V], index: usize) -> ok
+    where K: Clone, V: Clone
+    let left = parent.children[index]
+    let right = parent.children[index + 1]
+    
+    left.keys.push(parent.keys[index])
+    left.values.push(parent.values[index])
+    
+    for i in range(0, right.num_keys)
+        left.keys.push(right.keys[i])
+        left.values.push(right.values[i])
+    
+    if !left.is_leaf()
+        for i in range(0, right.num_keys + 1)
+            left.children.push(right.children[i])
+    
+    left.num_keys = left.num_keys + right.num_keys + 1
+    
+    parent.keys.remove(index)
+    parent.values.remove(index)
+    parent.children.remove(index + 1)
+    parent.num_keys = parent.num_keys - 1
+    
+    pass
+
+func BTree[K, V]::len(*self) -> usize
+    return self.size
+
+func BTree[K, V]::is_empty(*self) -> bool
+    return self.size == 0
+
+func BTree[K, V]::height(*self) -> usize
+    return self.height
+
+func! BTree[K, V]::clear(*mut self) -> ok
+    self.root = null
+    self.size = 0
+    self.height = 0
+    pass
+
+// BTreeNode implementation
+
+func! BTreeNode[K, V]::new_leaf() -> *mut BTreeNode[K, V]
+    let node = allocate[BTreeNode[K, V]]()
+    node.keys = []
+    node.values = []
+    node.children = []
+    node.parent = null
+    node.node_type = NodeType::LEAF
+    node.num_keys = 0
+    return node
+
+func! BTreeNode[K, V]::new_internal() -> *mut BTreeNode[K, V]
+    let node = allocate[BTreeNode[K, V]]()
+    node.keys = []
+    node.values = []
+    node.children = []
+    node.parent = null
+    node.node_type = NodeType::INTERNAL
+    node.num_keys = 0
+    return node
+
+func BTreeNode[K, V]::is_leaf(*self) -> bool
+    return self.node_type == NodeType::LEAF
+
+func BTreeNode[K, V]::is_full(*self) -> bool
+    return self.num_keys >= MAX_KEYS
+
+// Ord trait for comparisons
+
+interface Ord
+    func compare(*self, other: *Self) -> i32
+
+interface Clone
+    func clone(*self) -> Self
+
+// Helper functions
+
+func! allocate[T]() -> *mut T
+    pass

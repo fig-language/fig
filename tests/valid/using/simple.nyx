@@ -1,0 +1,4 @@
+// Simple using statements
+using std::io
+using core::memory
+using core::iter

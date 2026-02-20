@@ -1,0 +1,13 @@
+// Struct with where clause
+struct Pair[A, B]
+    where
+        A: Eq
+        B: Ord
+    first: A
+    second: B
+
+struct Sorted[T]
+    where
+        T: Ord + Copy
+    data: [T]
+    len: usize

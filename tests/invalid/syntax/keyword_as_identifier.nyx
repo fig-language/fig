@@ -1,0 +1,4 @@
+// Invalid: Using reserved keyword as identifier
+func return() -> ok
+    let if = 5
+    pass

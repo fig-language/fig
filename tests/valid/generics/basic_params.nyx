@@ -1,0 +1,15 @@
+// Simple generic parameters on various contexts
+func identity[T](x: T) -> T
+    pass
+
+struct Box[T]
+    value: T
+
+interface Container[T]
+    func get(*self, i: usize) -> ?T
+
+type Pair[A, B] = ok
+
+union Either[L, R]
+    left: L
+    right: R

@@ -1,0 +1,295 @@
+// Database index using B+ tree for range queries
+
+using core::memory
+
+const ORDER: usize = 100
+const MIN_KEYS: usize = ORDER / 2
+
+enum NodeType
+    LEAF
+    INTERNAL
+
+struct BPlusTreeNode[K, V]
+    keys: [K]
+    values: [V]
+    children: [*mut BPlusTreeNode[K, V]]
+    next_leaf: ?*mut BPlusTreeNode[K, V]
+    node_type: NodeType
+    num_keys: usize
+    parent: ?*mut BPlusTreeNode[K, V]
+
+export struct BPlusTree[K, V]
+    root: ?*mut BPlusTreeNode[K, V]
+    first_leaf: ?*mut BPlusTreeNode[K, V]
+    size: usize
+    height: usize
+
+struct RangeQueryResult[K, V]
+    keys: [K]
+    values: [V]
+    count: usize
+
+func! BPlusTree[K, V]::new() -> BPlusTree[K, V]
+    return BPlusTree[K, V](
+        root: null,
+        first_leaf: null,
+        size: 0,
+        height: 0
+    )
+
+func! BPlusTree[K, V]::insert(*mut self, key: K, value: V) -> ok
+    where K: Ord + Clone, V: Clone
+    if self.root == null
+        let leaf = BPlusTreeNode[K, V]::new_leaf()
+        leaf.keys.push(key)
+        leaf.values.push(value)
+        leaf.num_keys = 1
+        
+        self.root = leaf
+        self.first_leaf = leaf
+        self.size = 1
+        self.height = 1
+        
+        return ok
+    
+    let insertion_leaf = self.find_leaf(self.root, key)
+    self.insert_into_leaf(insertion_leaf, key, value)
+    
+    self.size = self.size + 1
+    
+    pass
+
+func! BPlusTree[K, V]::insert_into_leaf(*mut self, leaf: *mut BPlusTreeNode[K, V], key: K, value: V) -> ok
+    where K: Ord + Clone, V: Clone
+    mut insert_pos: usize = 0
+    
+    for i in range(0, leaf.num_keys)
+        if key.compare(&leaf.keys[i]) < 0
+            break
+        insert_pos = i + 1
+    
+    leaf.keys.insert(insert_pos, key)
+    leaf.values.insert(insert_pos, value)
+    leaf.num_keys = leaf.num_keys + 1
+    
+    if leaf.num_keys > ORDER
+        self.split_leaf(leaf)
+    
+    pass
+
+func! BPlusTree[K, V]::split_leaf(*mut self, leaf: *mut BPlusTreeNode[K, V]) -> ok
+    where K: Clone, V: Clone
+    let new_leaf = BPlusTreeNode[K, V]::new_leaf()
+    
+    let mid = ORDER / 2
+    
+    for i in range(mid, leaf.num_keys)
+        new_leaf.keys.push(leaf.keys[i])
+        new_leaf.values.push(leaf.values[i])
+    
+    new_leaf.num_keys = leaf.num_keys - mid
+    leaf.num_keys = mid
+    
+    new_leaf.next_leaf = leaf.next_leaf
+    leaf.next_leaf = new_leaf
+    
+    let promoted_key = new_leaf.keys[0]
+    
+    if leaf.parent == null
+        let new_root = BPlusTreeNode[K, V]::new_internal()
+        new_root.keys.push(promoted_key)
+        new_root.children.push(leaf)
+        new_root.children.push(new_leaf)
+        new_root.num_keys = 1
+        
+        leaf.parent = new_root
+        new_leaf.parent = new_root
+        
+        self.root = new_root
+        self.height = self.height + 1
+    else
+        self.insert_into_parent(leaf.parent, promoted_key, new_leaf)
+    
+    pass
+
+func! BPlusTree[K, V]::insert_into_parent(*mut self, parent: *mut BPlusTreeNode[K, V], key: K, child: *mut BPlusTreeNode[K, V]) -> ok
+    where K: Ord + Clone
+    mut insert_pos: usize = 0
+    
+    for i in range(0, parent.num_keys)
+        if key.compare(&parent.keys[i]) < 0
+            break
+        insert_pos = i + 1
+    
+    parent.keys.insert(insert_pos, key)
+    parent.children.insert(insert_pos + 1, child)
+    parent.num_keys = parent.num_keys + 1
+    
+    child.parent = parent
+    
+    if parent.num_keys > ORDER
+        self.split_internal(parent)
+    
+    pass
+
+func! BPlusTree[K, V]::split_internal(*mut self, node: *mut BPlusTreeNode[K, V]) -> ok
+    where K: Clone
+    pass
+
+func BPlusTree[K, V]::find_leaf(*self, node: *mut BPlusTreeNode[K, V], key: K) -> *mut BPlusTreeNode[K, V]
+    where K: Ord
+    if node.is_leaf()
+        return node
+    
+    mut child_index: usize = 0
+    
+    for i in range(0, node.num_keys)
+        if key.compare(&node.keys[i]) < 0
+            break
+        child_index = i + 1
+    
+    return self.find_leaf(node.children[child_index], key)
+
+func BPlusTree[K, V]::search(*self, key: K) -> ?*V
+    where K: Ord
+    if self.root == null
+        return null
+    
+    let leaf = self.find_leaf(self.root, key)
+    
+    for i in range(0, leaf.num_keys)
+        if key.compare(&leaf.keys[i]) == 0
+            return &leaf.values[i]
+    
+    return null
+
+func! BPlusTree[K, V]::range_query(*self, start: K, end: K) -> RangeQueryResult[K, V]
+    where K: Ord + Clone, V: Clone
+    mut result = RangeQueryResult[K, V](keys: [], values: [], count: 0)
+    
+    if self.root == null
+        return result
+    
+    let leaf = self.find_leaf(self.root, start)
+    
+    mut current = leaf
+    
+    for round in range(0, 1000)
+        if current == null
+            break
+        
+        for i in range(0, current.num_keys)
+            let key = &current.keys[i]
+            
+            if key.compare(&start) >= 0 && key.compare(&end) <= 0
+                result.keys.push(current.keys[i])
+                result.values.push(current.values[i])
+                result.count = result.count + 1
+            
+            if key.compare(&end) > 0
+                break
+        
+        current = current.next_leaf
+    
+    return result
+
+func! BPlusTree[K, V]::scan_all(*self) -> RangeQueryResult[K, V]
+    where K: Clone, V: Clone
+    mut result = RangeQueryResult[K, V](keys: [], values: [], count: 0)
+    
+    mut current = self.first_leaf
+    
+    for round in range(0, 1000)
+        if current == null
+            break
+        
+        for i in range(0, current.num_keys)
+            result.keys.push(current.keys[i])
+            result.values.push(current.values[i])
+            result.count = result.count + 1
+        
+        current = current.next_leaf
+    
+    return result
+
+func BPlusTree[K, V]::len(*self) -> usize
+    return self.size
+
+func BPlusTree[K, V]::height(*self) -> usize
+    return self.height
+
+func BPlusTree[K, V]::is_empty(*self) -> bool
+    return self.size == 0
+
+// BPlusTreeNode implementation
+
+func! BPlusTreeNode[K, V]::new_leaf() -> *mut BPlusTreeNode[K, V]
+    let node = allocate[BPlusTreeNode[K, V]]()
+    node.keys = []
+    node.values = []
+    node.children = []
+    node.next_leaf = null
+    node.node_type = NodeType::LEAF
+    node.num_keys = 0
+    node.parent = null
+    return node
+
+func! BPlusTreeNode[K, V]::new_internal() -> *mut BPlusTreeNode[K, V]
+    let node = allocate[BPlusTreeNode[K, V]]()
+    node.keys = []
+    node.values = []
+    node.children = []
+    node.next_leaf = null
+    node.node_type = NodeType::INTERNAL
+    node.num_keys = 0
+    node.parent = null
+    return node
+
+func BPlusTreeNode[K, V]::is_leaf(*self) -> bool
+    return self.node_type == NodeType::LEAF
+
+// Ord interface for comparisons
+
+interface Ord
+    func compare(*self, other: *Self) -> i32
+
+interface Clone
+    func clone(*self) -> Self
+
+// Database-like usage with composite keys
+
+struct CompositeKey
+    primary: u64
+    secondary: u64
+
+func CompositeKey::compare(*self, other: *CompositeKey) -> i32
+    if self.primary < other.primary
+        return -1
+    
+    if self.primary > other.primary
+        return 1
+    
+    if self.secondary < other.secondary
+        return -1
+    
+    if self.secondary > other.secondary
+        return 1
+    
+    return 0
+
+func CompositeKey::clone(*self) -> CompositeKey
+    return CompositeKey(primary: self.primary, secondary: self.secondary)
+
+struct Record
+    id: u64
+    name: [u8]
+    age: u32
+    active: bool
+
+func Record::clone(*self) -> Record
+    return Record(id: self.id, name: self.name, age: self.age, active: self.active)
+
+// Helper functions
+
+func! allocate[T]() -> *mut T
+    pass

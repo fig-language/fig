@@ -1,0 +1,23 @@
+// packed struct (no padding/alignment)
+packed struct Bits8
+    a: u8
+    b: u8
+
+packed struct Header
+    magic: u32
+    version: u16
+    flags: u8
+    reserved: u8
+
+packed struct IPv4
+    version: u8
+    ihl: u8
+    tos: u8
+    len: u16
+    id: u16
+    frag: u16
+    ttl: u8
+    proto: u8
+    checksum: u16
+    src: u32
+    dst: u32

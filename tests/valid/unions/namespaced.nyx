@@ -1,0 +1,8 @@
+// Namespaced union
+union core::error::IoResult[T]
+    ok: T
+    err: IoError
+
+union math::Number
+    integer: i64
+    rational: f64

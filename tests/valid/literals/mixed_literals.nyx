@@ -1,0 +1,7 @@
+// All literal kinds in one file
+let i = 100
+let f = 3.14
+let b = true
+let s = "hello"
+let t = $"value={i}"
+let n = false

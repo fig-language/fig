@@ -1,0 +1,5 @@
+// nested for loops
+func nested_loops(n: usize) -> ok
+    for i in range(0, n)
+        for j in range(0, n)
+            pass

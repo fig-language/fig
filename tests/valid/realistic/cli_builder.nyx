@@ -1,0 +1,341 @@
+// Command-line interface builder with argument parsing and help generation
+
+using std::io
+
+enum ArgType
+    FLAG
+    OPTION
+    POSITIONAL
+
+struct Argument
+    name: [u8]
+    short_name: ?u8
+    long_name: [u8]
+    arg_type: ArgType
+    description: [u8]
+    required: bool
+    default_value: ?[u8]
+    takes_value: bool
+
+export struct CLI
+    program_name: [u8]
+    version: [u8]
+    about: [u8]
+    arguments: [Argument]
+    subcommands: [Subcommand]
+
+struct Subcommand
+    name: [u8]
+    about: [u8]
+    cli: CLI
+
+struct ParsedArgs
+    values: [ArgValue]
+    subcommand: ?[u8]
+    subcommand_args: ?ParsedArgs
+
+struct ArgValue
+    name: [u8]
+    value: [u8]
+    present: bool
+
+func! CLI::new(name: [u8]) -> CLI
+    return CLI(
+        program_name: name,
+        version: "0.1.0",
+        about: "",
+        arguments: [],
+        subcommands: []
+    )
+
+func! CLI::version(*mut self, version: [u8]) -> *mut CLI
+    self.version = version
+    return self
+
+func! CLI::about(*mut self, about: [u8]) -> *mut CLI
+    self.about = about
+    return self
+
+func! CLI::arg(*mut self, arg: Argument) -> *mut CLI
+    self.arguments.push(arg)
+    return self
+
+func! CLI::flag(*mut self, long: [u8], short: ?u8, description: [u8]) -> *mut CLI
+    let arg = Argument(
+        name: long,
+        short_name: short,
+        long_name: long,
+        arg_type: ArgType::FLAG,
+        description: description,
+        required: false,
+        default_value: null,
+        takes_value: false
+    )
+    
+    self.arguments.push(arg)
+    return self
+
+func! CLI::option(*mut self, long: [u8], short: ?u8, description: [u8], required: bool) -> *mut CLI
+    let arg = Argument(
+        name: long,
+        short_name: short,
+        long_name: long,
+        arg_type: ArgType::OPTION,
+        description: description,
+        required: required,
+        default_value: null,
+        takes_value: true
+    )
+    
+    self.arguments.push(arg)
+    return self
+
+func! CLI::positional(*mut self, name: [u8], description: [u8], required: bool) -> *mut CLI
+    let arg = Argument(
+        name: name,
+        short_name: null,
+        long_name: "",
+        arg_type: ArgType::POSITIONAL,
+        description: description,
+        required: required,
+        default_value: null,
+        takes_value: true
+    )
+    
+    self.arguments.push(arg)
+    return self
+
+func! CLI::subcommand(*mut self, name: [u8], about: [u8], cli: CLI) -> *mut CLI
+    let subcmd = Subcommand(name: name, about: about, cli: cli)
+    self.subcommands.push(subcmd)
+    return self
+
+func! CLI::parse(*self, args: [[u8]]) -> ParsedArgs
+    mut parsed = ParsedArgs(
+        values: [],
+        subcommand: null,
+        subcommand_args: null
+    )
+    
+    mut i: usize = 1
+    mut positional_index: usize = 0
+    
+    for idx in range(1, args.len)
+        if i >= args.len
+            break
+        
+        let arg = args[i]
+        
+        if self.is_subcommand(arg)
+            parsed.subcommand = arg
+            
+            let subcmd = self.find_subcommand(arg)
+            if subcmd != null
+                let remaining = slice_from(args, i + 1)
+                parsed.subcommand_args = subcmd.cli.parse(remaining)
+            
+            break
+        
+        if starts_with(arg, "--")
+            let name = slice_from(arg, 2)
+            let arg_def = self.find_long_arg(name)
+            
+            if arg_def != null && arg_def.takes_value
+                i = i + 1
+                if i < args.len
+                    parsed.add_value(arg_def.name, args[i])
+            else
+                parsed.add_flag(name)
+        elif starts_with(arg, "-")
+            let short = arg[1]
+            let arg_def = self.find_short_arg(short)
+            
+            if arg_def != null && arg_def.takes_value
+                i = i + 1
+                if i < args.len
+                    parsed.add_value(arg_def.name, args[i])
+            else
+                parsed.add_flag_by_short(short)
+        else
+            let positional = self.get_positional(positional_index)
+            if positional != null
+                parsed.add_value(positional.name, arg)
+                positional_index = positional_index + 1
+        
+        i = i + 1
+    
+    return parsed
+
+func CLI::find_long_arg(*self, name: [u8]) -> ?*Argument
+    for i in range(0, self.arguments.len)
+        if bytes_equal(self.arguments[i].long_name, name)
+            return &self.arguments[i]
+    
+    return null
+
+func CLI::find_short_arg(*self, short: u8) -> ?*Argument
+    for i in range(0, self.arguments.len)
+        if self.arguments[i].short_name != null && self.arguments[i].short_name == short
+            return &self.arguments[i]
+    
+    return null
+
+func CLI::get_positional(*self, index: usize) -> ?*Argument
+    mut count: usize = 0
+    
+    for i in range(0, self.arguments.len)
+        if self.arguments[i].arg_type == ArgType::POSITIONAL
+            if count == index
+                return &self.arguments[i]
+            count = count + 1
+    
+    return null
+
+func CLI::is_subcommand(*self, name: [u8]) -> bool
+    for i in range(0, self.subcommands.len)
+        if bytes_equal(self.subcommands[i].name, name)
+            return true
+    
+    return false
+
+func CLI::find_subcommand(*self, name: [u8]) -> ?*Subcommand
+    for i in range(0, self.subcommands.len)
+        if bytes_equal(self.subcommands[i].name, name)
+            return &self.subcommands[i]
+    
+    return null
+
+func! CLI::print_help(*self) -> ok
+    println(self.program_name)
+    println(self.version)
+    println(self.about)
+    println("")
+    
+    println("USAGE:")
+    print("    ")
+    print(self.program_name)
+    
+    for i in range(0, self.arguments.len)
+        let arg = &self.arguments[i]
+        
+        if arg.arg_type == ArgType::FLAG || arg.arg_type == ArgType::OPTION
+            print(" [")
+            if arg.short_name != null
+                print("-")
+                print_char(arg.short_name)
+                print("|")
+            print("--")
+            print(arg.long_name)
+            if arg.takes_value
+                print(" <value>")
+            print("]")
+        elif arg.arg_type == ArgType::POSITIONAL
+            if arg.required
+                print(" <")
+                print(arg.name)
+                print(">")
+            else
+                print(" [")
+                print(arg.name)
+                print("]")
+    
+    println("")
+    println("")
+    
+    if self.arguments.len > 0
+        println("ARGUMENTS:")
+        
+        for i in range(0, self.arguments.len)
+            let arg = &self.arguments[i]
+            
+            print("    ")
+            
+            if arg.short_name != null
+                print("-")
+                print_char(arg.short_name)
+                print(", ")
+            
+            if arg.long_name.len > 0
+                print("--")
+                print(arg.long_name)
+            else
+                print(arg.name)
+            
+            print("    ")
+            println(arg.description)
+    
+    if self.subcommands.len > 0
+        println("")
+        println("SUBCOMMANDS:")
+        
+        for i in range(0, self.subcommands.len)
+            let cmd = &self.subcommands[i]
+            print("    ")
+            print(cmd.name)
+            print("    ")
+            println(cmd.about)
+    
+    pass
+
+// ParsedArgs implementation
+
+func! ParsedArgs::add_value(*mut self, name: [u8], value: [u8]) -> ok
+    let arg_value = ArgValue(name: name, value: value, present: true)
+    self.values.push(arg_value)
+    pass
+
+func! ParsedArgs::add_flag(*mut self, name: [u8]) -> ok
+    let arg_value = ArgValue(name: name, value: "true", present: true)
+    self.values.push(arg_value)
+    pass
+
+func! ParsedArgs::add_flag_by_short(*mut self, short: u8) -> ok
+    pass
+
+func ParsedArgs::get(*self, name: [u8]) -> ?[u8]
+    for i in range(0, self.values.len)
+        if bytes_equal(self.values[i].name, name)
+            return self.values[i].value
+    
+    return null
+
+func ParsedArgs::is_present(*self, name: [u8]) -> bool
+    for i in range(0, self.values.len)
+        if bytes_equal(self.values[i].name, name) && self.values[i].present
+            return true
+    
+    return false
+
+// Helper functions
+
+func starts_with(s: [u8], prefix: [u8]) -> bool
+    if s.len < prefix.len
+        return false
+    
+    for i in range(0, prefix.len)
+        if s[i] != prefix[i]
+            return false
+    
+    return true
+
+func bytes_equal(a: [u8], b: [u8]) -> bool
+    if a.len != b.len
+        return false
+    
+    for i in range(0, a.len)
+        if a[i] != b[i]
+            return false
+    
+    return true
+
+func slice_from(s: [u8], start: usize) -> [u8]
+    pass
+
+func! println(s: [u8]) -> ok
+    pass
+
+func! print(s: [u8]) -> ok
+    pass
+
+func! print_char(ch: u8) -> ok
+    pass

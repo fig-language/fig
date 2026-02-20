@@ -1,0 +1,4 @@
+// Edge case: const expression using other consts
+const BASE: u32 = 4
+const DOUBLE: u32 = BASE * 2
+const MAX: u32 = DOUBLE + BASE

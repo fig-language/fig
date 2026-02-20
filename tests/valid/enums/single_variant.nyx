@@ -1,0 +1,6 @@
+// Single-variant enum (edge case)
+enum One
+    ONLY
+
+enum[u8] SingleByte
+    ONLY = 42

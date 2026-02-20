@@ -1,0 +1,6 @@
+// Index suffix expressions
+func index_ops(arr: [i32], idx: usize) -> ok
+    let first = arr[0]
+    let i = arr[idx]
+    let computed = arr[idx + 1]
+    pass

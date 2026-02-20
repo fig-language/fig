@@ -1,0 +1,9 @@
+// Unary expressions
+func unary_ops(a: i32, b: bool, p: *i32) -> ok
+    let neg = -a
+    let pos = +a
+    let bne = ~a
+    let not = !b
+    let deref = *p
+    let addr = &a
+    pass

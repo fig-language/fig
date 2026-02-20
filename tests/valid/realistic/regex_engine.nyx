@@ -1,0 +1,313 @@
+// Regular expression matcher with NFA-based engine
+
+using core::memory
+
+enum RegexOpcode
+    CHAR
+    ANY
+    SPLIT
+    JUMP
+    MATCH
+    SAVE
+    RANGE
+    CLASS
+
+struct RegexInstruction
+    opcode: RegexOpcode
+    operand1: i32
+    operand2: i32
+    char: u8
+
+export struct Regex
+    instructions: [RegexInstruction]
+    capture_groups: usize
+
+union CompileError
+    unexpected_char: u8
+    unmatched_paren: usize
+    invalid_range: (u8, u8)
+    empty_pattern: ok
+
+union CompileResult[T]
+    ok: T
+    err: CompileError
+
+func! Regex::compile(pattern: [u8]) -> CompileResult[Regex]
+    mut compiler = RegexCompiler::new(pattern)
+    return compiler.compile()
+
+func! Regex::is_match(*self, text: [u8]) -> bool
+    mut vm = RegexVM::new(&self.instructions[0], self.instructions.len)
+    return vm.execute(text)
+
+func! Regex::find(*self, text: [u8]) -> ?RegexMatch
+    for start in range(0, text.len)
+        let slice = slice_from(text, start)
+        
+        if self.is_match(slice)
+            mut end = start + 1
+            for len in range(1, text.len - start + 1)
+                let test_slice = slice_range(text, start, start + len)
+                if !self.is_match(test_slice)
+                    end = start + len - 1
+                    break
+            
+            return RegexMatch(
+                start: start,
+                end: end,
+                text: slice_range(text, start, end)
+            )
+    
+    return null
+
+func! Regex::find_all(*self, text: [u8]) -> [RegexMatch]
+    mut matches: [RegexMatch] = []
+    mut pos: usize = 0
+    
+    for i in range(0, text.len)
+        if pos >= text.len
+            break
+        
+        let slice = slice_from(text, pos)
+        let match = self.find(slice)
+        
+        if match != null
+            let adjusted = RegexMatch(
+                start: pos + match.start,
+                end: pos + match.end,
+                text: match.text
+            )
+            matches.push(adjusted)
+            pos = pos + match.end
+        else
+            pos = pos + 1
+    
+    return matches
+
+struct RegexMatch
+    start: usize
+    end: usize
+    text: [u8]
+
+// Regex compiler
+
+struct RegexCompiler
+    pattern: [u8]
+    position: usize
+    instructions: [RegexInstruction]
+    capture_count: usize
+
+func! RegexCompiler::new(pattern: [u8]) -> RegexCompiler
+    return RegexCompiler(
+        pattern: pattern,
+        position: 0,
+        instructions: [],
+        capture_count: 0
+    )
+
+func! RegexCompiler::compile(*mut self) -> CompileResult[Regex]
+    self.compile_expr()
+    
+    self.emit(RegexOpcode::MATCH, 0, 0, 0)
+    
+    let regex = Regex(
+        instructions: self.instructions,
+        capture_groups: self.capture_count
+    )
+    
+    return CompileResult[Regex]::ok(regex)
+
+func! RegexCompiler::compile_expr(*mut self) -> ok
+    self.compile_term()
+    
+    for i in range(0, self.pattern.len)
+        if self.is_eof() || self.peek() == 41  // ')'
+            break
+        
+        if self.peek() == 124  // '|'
+            self.advance()
+            
+            let split_pc = self.instructions.len - 1
+            self.emit(RegexOpcode::SPLIT, split_pc as i32, 0, 0)
+            
+            self.compile_term()
+    
+    pass
+
+func! RegexCompiler::compile_term(*mut self) -> ok
+    for i in range(0, self.pattern.len)
+        if self.is_eof()
+            break
+        
+        let ch = self.peek()
+        
+        if ch == 41 || ch == 124  // ')' or '|'
+            break
+        
+        self.compile_factor()
+    
+    pass
+
+func! RegexCompiler::compile_factor(*mut self) -> ok
+    let ch = self.advance()
+    
+    if ch == 40  // '('
+        self.compile_expr()
+        
+        if self.peek() == 41  // ')'
+            self.advance()
+    elif ch == 46  // '.'
+        self.emit(RegexOpcode::ANY, 0, 0, 0)
+    elif ch == 91  // '['
+        self.compile_char_class()
+    elif ch == 92  // '\\'
+        let escaped = self.advance()
+        self.emit(RegexOpcode::CHAR, 0, 0, escaped)
+    else
+        self.emit(RegexOpcode::CHAR, 0, 0, ch)
+    
+    if !self.is_eof()
+        let next = self.peek()
+        
+        if next == 42  // '*'
+            self.advance()
+            self.compile_star()
+        elif next == 43  // '+'
+            self.advance()
+            self.compile_plus()
+        elif next == 63  // '?'
+            self.advance()
+            self.compile_question()
+    
+    pass
+
+func! RegexCompiler::compile_char_class(*mut self) -> ok
+    let start = self.advance()
+    let end = self.advance()
+    
+    if self.peek() == 93  // ']'
+        self.advance()
+    
+    self.emit(RegexOpcode::RANGE, start as i32, end as i32, 0)
+    
+    pass
+
+func! RegexCompiler::compile_star(*mut self) -> ok
+    let loop_start = self.instructions.len - 1
+    
+    self.emit(RegexOpcode::SPLIT, loop_start as i32, (loop_start + 2) as i32, 0)
+    
+    pass
+
+func! RegexCompiler::compile_plus(*mut self) -> ok
+    let loop_start = self.instructions.len - 1
+    
+    self.emit(RegexOpcode::SPLIT, loop_start as i32, (loop_start + 2) as i32, 0)
+    
+    pass
+
+func! RegexCompiler::compile_question(*mut self) -> ok
+    let skip_target = self.instructions.len
+    
+    self.emit(RegexOpcode::SPLIT, (skip_target - 1) as i32, skip_target as i32, 0)
+    
+    pass
+
+func! RegexCompiler::emit(*mut self, opcode: RegexOpcode, op1: i32, op2: i32, ch: u8) -> ok
+    let instruction = RegexInstruction(
+        opcode: opcode,
+        operand1: op1,
+        operand2: op2,
+        char: ch
+    )
+    self.instructions.push(instruction)
+    pass
+
+func! RegexCompiler::advance(*mut self) -> u8
+    let ch = self.pattern[self.position]
+    self.position = self.position + 1
+    return ch
+
+func RegexCompiler::peek(*self) -> u8
+    if self.is_eof()
+        return 0
+    return self.pattern[self.position]
+
+func RegexCompiler::is_eof(*self) -> bool
+    return self.position >= self.pattern.len
+
+// Regex virtual machine (NFA)
+
+struct RegexVM
+    instructions: *RegexInstruction
+    num_instructions: usize
+    text: [u8]
+    text_pos: usize
+    threads: [VMThread]
+
+struct VMThread
+    pc: usize
+    text_pos: usize
+
+func! RegexVM::new(instructions: *RegexInstruction, num_instructions: usize) -> RegexVM
+    return RegexVM(
+        instructions: instructions,
+        num_instructions: num_instructions,
+        text: [],
+        text_pos: 0,
+        threads: []
+    )
+
+func! RegexVM::execute(*mut self, text: [u8]) -> bool
+    self.text = text
+    self.text_pos = 0
+    self.threads = []
+    
+    self.add_thread(0, 0)
+    
+    for round in range(0, text.len + 1)
+        if self.threads.len == 0
+            break
+        
+        mut next_threads: [VMThread] = []
+        
+        for i in range(0, self.threads.len)
+            let thread = &self.threads[i]
+            
+            if thread.pc >= self.num_instructions
+                continue
+            
+            let inst = &self.instructions[thread.pc]
+            
+            if inst.opcode == RegexOpcode::MATCH
+                return true
+            elif inst.opcode == RegexOpcode::CHAR
+                if thread.text_pos < text.len && text[thread.text_pos] == inst.char
+                    next_threads.push(VMThread(pc: thread.pc + 1, text_pos: thread.text_pos + 1))
+            elif inst.opcode == RegexOpcode::ANY
+                if thread.text_pos < text.len
+                    next_threads.push(VMThread(pc: thread.pc + 1, text_pos: thread.text_pos + 1))
+            elif inst.opcode == RegexOpcode::RANGE
+                if thread.text_pos < text.len
+                    let ch = text[thread.text_pos]
+                    if ch >= (inst.operand1 as u8) && ch <= (inst.operand2 as u8)
+                        next_threads.push(VMThread(pc: thread.pc + 1, text_pos: thread.text_pos + 1))
+            elif inst.opcode == RegexOpcode::SPLIT
+                next_threads.push(VMThread(pc: inst.operand1 as usize, text_pos: thread.text_pos))
+                next_threads.push(VMThread(pc: inst.operand2 as usize, text_pos: thread.text_pos))
+        
+        self.threads = next_threads
+    
+    return false
+
+func! RegexVM::add_thread(*mut self, pc: usize, text_pos: usize) -> ok
+    self.threads.push(VMThread(pc: pc, text_pos: text_pos))
+    pass
+
+// Helper functions
+
+func slice_from(bytes: [u8], start: usize) -> [u8]
+    pass
+
+func slice_range(bytes: [u8], start: usize, end: usize) -> [u8]
+    pass

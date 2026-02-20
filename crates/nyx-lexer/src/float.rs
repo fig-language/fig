@@ -1,8 +1,9 @@
 use derive_builder::Builder;
+use serde::Serialize;
 
-use crate::Token;
+use crate::{Token, LexicalError};
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum FloatSuffix {
     F32,
     F64,
@@ -28,14 +29,14 @@ impl std::fmt::Display for FloatSuffix {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum FloatExponent {
     Positive(u32),
     Negative(u32),
     Unsigned(u32),
 }
 
-#[derive(Debug, Clone, PartialEq, Builder)]
+#[derive(Debug, Clone, PartialEq, Builder, Serialize)]
 pub struct FloatLiteral {
     digits: String,
 
@@ -75,8 +76,9 @@ impl std::fmt::Display for FloatLiteral {
     }
 }
 
-pub fn parse_float(lex: &mut logos::Lexer<Token>) -> Option<FloatLiteral> {
+pub fn parse_float(lex: &mut logos::Lexer<Token>) -> Result<FloatLiteral, LexicalError> {
     let raw = lex.slice();
+    let span = lex.span();
 
     // List of valid suffixes
     const SUFFIXES: &[&str] = &["f32", "f64"];
@@ -98,28 +100,48 @@ pub fn parse_float(lex: &mut logos::Lexer<Token>) -> Option<FloatLiteral> {
         let (_, exp_enum) = if let Some(sign) = exp_sign {
             match sign {
                 '+' => {
-                    let val = exp_str[1..].replace('_', "").parse().ok()?;
+                    let val = exp_str[1..].replace('_', "").parse()
+                        .map_err(|_| LexicalError::InvalidFloat {
+                            span: span.clone(),
+                            reason: "invalid exponent value".to_string(),
+                        })?;
                     (val, FloatExponent::Positive(val))
                 }
                 '-' => {
-                    let val = exp_str[1..].replace('_', "").parse().ok()?;
+                    let val = exp_str[1..].replace('_', "").parse()
+                        .map_err(|_| LexicalError::InvalidFloat {
+                            span: span.clone(),
+                            reason: "invalid exponent value".to_string(),
+                        })?;
                     (val, FloatExponent::Negative(val))
                 }
                 c if c.is_ascii_digit() => {
-                    let val = exp_str.replace('_', "").parse().ok()?;
+                    let val = exp_str.replace('_', "").parse()
+                        .map_err(|_| LexicalError::InvalidFloat {
+                            span: span.clone(),
+                            reason: "invalid exponent value".to_string(),
+                        })?;
                     (val, FloatExponent::Unsigned(val))
                 }
-                _ => return None,
+                _ => {
+                    return Err(LexicalError::InvalidFloat {
+                        span,
+                        reason: format!("invalid exponent sign: {}", sign),
+                    });
+                }
             }
         } else {
-            return None;
+            return Err(LexicalError::InvalidFloat {
+                span,
+                reason: "missing exponent value".to_string(),
+            });
         };
         (digits, Some(exp_enum))
     } else {
         (number_part.to_string(), None)
     };
 
-    Some(FloatLiteral {
+    Ok(FloatLiteral {
         digits,
         exponent,
         suffix: suffix.map(FloatSuffix::from),

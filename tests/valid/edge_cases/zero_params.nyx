@@ -1,0 +1,6 @@
+// Edge case: function with zero parameters
+func no_params() -> ok
+    pass
+
+func no_params_no_return()
+    pass

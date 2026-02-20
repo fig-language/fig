@@ -1,0 +1,6 @@
+// Invalid: Continue outside of loop
+func invalid_continue() -> ok
+    let x = 5
+    if x > 3
+        continue
+    pass

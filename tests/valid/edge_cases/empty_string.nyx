@@ -1,0 +1,9 @@
+// Edge case: string with no characters (empty string)
+let empty = ""
+let also_empty = ""
+func takes_string(s: [u8]) -> ok
+    pass
+
+func use_empty() -> ok
+    takes_string("")
+    pass

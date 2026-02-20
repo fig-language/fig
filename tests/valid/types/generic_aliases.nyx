@@ -1,0 +1,5 @@
+// Generic type aliases
+type Slice[T] = [T]
+type OptSlice[T] = ?[T]
+type PairPtr[T] = *T
+type Array[T] = [T; 16]

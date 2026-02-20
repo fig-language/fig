@@ -1,0 +1,301 @@
+// Hash table implementation with open addressing and linear probing
+
+using core::memory
+
+const INITIAL_CAPACITY: usize = 16
+const LOAD_FACTOR_THRESHOLD: f32 = 0.75
+
+enum EntryState
+    EMPTY
+    OCCUPIED
+    DELETED
+
+struct Entry[K, V]
+    key: K
+    value: V
+    state: EntryState
+    hash: u64
+
+export struct HashMap[K, V]
+    entries: *mut Entry[K, V]
+    capacity: usize
+    size: usize
+    tombstones: usize
+
+func! HashMap[K, V]::new() -> HashMap[K, V]
+    return HashMap[K, V](
+        entries: allocate_entries[K, V](INITIAL_CAPACITY),
+        capacity: INITIAL_CAPACITY,
+        size: 0,
+        tombstones: 0
+    )
+
+func! HashMap[K, V]::with_capacity(capacity: usize) -> HashMap[K, V]
+    let actual_capacity = next_power_of_two(capacity)
+    
+    return HashMap[K, V](
+        entries: allocate_entries[K, V](actual_capacity),
+        capacity: actual_capacity,
+        size: 0,
+        tombstones: 0
+    )
+
+func! HashMap[K, V]::insert(*mut self, key: K, value: V) -> ?V
+    where K: Hash + Eq
+    if self.should_grow()
+        self.grow()
+    
+    let hash = hash_value(&key)
+    let mut_index = self.find_slot(key, hash)
+    
+    let entry = &self.entries[mut_index]
+    
+    if entry.state == EntryState::OCCUPIED
+        let old_value = entry.value
+        entry.value = value
+        return old_value
+    
+    entry.key = key
+    entry.value = value
+    entry.hash = hash
+    entry.state = EntryState::OCCUPIED
+    
+    if entry.state == EntryState::DELETED
+        self.tombstones = self.tombstones - 1
+    
+    self.size = self.size + 1
+    
+    return null
+
+func HashMap[K, V]::get(*self, key: K) -> ?*V
+    where K: Hash + Eq
+    if self.size == 0
+        return null
+    
+    let hash = hash_value(&key)
+    let mut_index = self.find_slot(key, hash)
+    
+    let entry = &self.entries[mut_index]
+    
+    if entry.state == EntryState::OCCUPIED
+        return &entry.value
+    
+    return null
+
+func HashMap[K, V]::get_mut(*mut self, key: K) -> ?*mut V
+    where K: Hash + Eq
+    if self.size == 0
+        return null
+    
+    let hash = hash_value(&key)
+    let mut_index = self.find_slot(key, hash)
+    
+    let entry = &self.entries[mut_index]
+    
+    if entry.state == EntryState::OCCUPIED
+        return &mut entry.value
+    
+    return null
+
+func HashMap[K, V]::contains(*self, key: K) -> bool
+    where K: Hash + Eq
+    return self.get(key) != null
+
+func! HashMap[K, V]::remove(*mut self, key: K) -> ?V
+    where K: Hash + Eq
+    if self.size == 0
+        return null
+    
+    let hash = hash_value(&key)
+    let mut_index = self.find_slot(key, hash)
+    
+    let entry = &self.entries[mut_index]
+    
+    if entry.state != EntryState::OCCUPIED
+        return null
+    
+    let value = entry.value
+    entry.state = EntryState::DELETED
+    
+    self.size = self.size - 1
+    self.tombstones = self.tombstones + 1
+    
+    return value
+
+func HashMap[K, V]::len(*self) -> usize
+    return self.size
+
+func HashMap[K, V]::is_empty(*self) -> bool
+    return self.size == 0
+
+func HashMap[K, V]::capacity(*self) -> usize
+    return self.capacity
+
+func! HashMap[K, V]::clear(*mut self) -> ok
+    for i in range(0, self.capacity)
+        self.entries[i].state = EntryState::EMPTY
+    
+    self.size = 0
+    self.tombstones = 0
+    pass
+
+func! HashMap[K, V]::iter(*self) -> HashMapIter[K, V]
+    return HashMapIter[K, V](
+        entries: self.entries,
+        capacity: self.capacity,
+        index: 0
+    )
+
+func HashMap[K, V]::find_slot(*self, key: K, hash: u64) -> usize
+    where K: Hash + Eq
+    mut index = (hash % (self.capacity as u64)) as usize
+    mut first_tombstone: ?usize = null
+    
+    for i in range(0, self.capacity)
+        let entry = &self.entries[index]
+        
+        if entry.state == EntryState::EMPTY
+            if first_tombstone != null
+                return first_tombstone
+            return index
+        
+        if entry.state == EntryState::DELETED
+            if first_tombstone == null
+                first_tombstone = index
+        elif entry.hash == hash && equals(&entry.key, &key)
+            return index
+        
+        index = (index + 1) % self.capacity
+    
+    if first_tombstone != null
+        return first_tombstone
+    
+    return 0
+
+func HashMap[K, V]::should_grow(*self) -> bool
+    let total_used = self.size + self.tombstones
+    let load_factor = (total_used as f32) / (self.capacity as f32)
+    return load_factor > LOAD_FACTOR_THRESHOLD
+
+func! HashMap[K, V]::grow(*mut self) -> ok
+    where K: Hash + Eq
+    let new_capacity = self.capacity * 2
+    let new_entries = allocate_entries[K, V](new_capacity)
+    
+    let old_entries = self.entries
+    let old_capacity = self.capacity
+    
+    self.entries = new_entries
+    self.capacity = new_capacity
+    self.size = 0
+    self.tombstones = 0
+    
+    for i in range(0, old_capacity)
+        let entry = &old_entries[i]
+        
+        if entry.state == EntryState::OCCUPIED
+            self.insert(entry.key, entry.value)
+    
+    deallocate_entries[K, V](old_entries, old_capacity)
+    pass
+
+struct HashMapIter[K, V]
+    entries: *Entry[K, V]
+    capacity: usize
+    index: usize
+
+func! HashMapIter[K, V]::next(*mut self) -> ?HashMapEntry[K, V]
+    for i in range(self.index, self.capacity)
+        let entry = &self.entries[i]
+        
+        if entry.state == EntryState::OCCUPIED
+            self.index = i + 1
+            
+            return HashMapEntry[K, V](
+                key: &entry.key,
+                value: &entry.value
+            )
+    
+    return null
+
+func HashMapIter[K, V]::has_next(*self) -> bool
+    for i in range(self.index, self.capacity)
+        let entry = &self.entries[i]
+        
+        if entry.state == EntryState::OCCUPIED
+            return true
+    
+    return false
+
+struct HashMapEntry[K, V]
+    key: *K
+    value: *V
+
+// Hash trait and implementations
+
+interface Hash
+    func hash(*self) -> u64
+
+func hash_value[T](value: *T) -> u64
+    where T: Hash
+    return value.hash()
+
+interface Eq
+    func equals(*self, other: *Self) -> bool
+
+func equals[T](a: *T, b: *T) -> bool
+    where T: Eq
+    return a.equals(b)
+
+// Hash implementations for common types
+
+func hash_u8(value: u8) -> u64
+    return value as u64
+
+func hash_u16(value: u16) -> u64
+    return value as u64
+
+func hash_u32(value: u32) -> u64
+    return value as u64
+
+func hash_u64(value: u64) -> u64
+    return value
+
+func hash_string(s: [u8]) -> u64
+    mut hash: u64 = 5381
+    
+    for i in range(0, s.len)
+        hash = ((hash << 5) + hash) + (s[i] as u64)
+    
+    return hash
+
+func hash_bytes(bytes: [u8]) -> u64
+    return hash_string(bytes)
+
+// Helper functions
+
+func next_power_of_two(n: usize) -> usize
+    if n == 0
+        return 1
+    
+    mut power: usize = 1
+    for i in range(0, 64)
+        if power >= n
+            break
+        power = power * 2
+    
+    return power
+
+func! allocate_entries[K, V](capacity: usize) -> *mut Entry[K, V]
+    let entries = allocate_array[Entry[K, V]](capacity)
+    
+    for i in range(0, capacity)
+        entries[i].state = EntryState::EMPTY
+    
+    return entries
+
+func! deallocate_entries[K, V](entries: *mut Entry[K, V], capacity: usize) -> ok
+    pass
+
+func! allocate_array[T](size: usize) -> *mut T
+    pass

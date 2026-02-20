@@ -1,0 +1,4 @@
+// Invalid: Requires clause on non-struct type
+func test() -> ok
+    requires T: Clone
+    pass

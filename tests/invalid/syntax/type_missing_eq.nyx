@@ -1,0 +1,3 @@
+// INVALID: type alias missing = 
+// Expected parse error: = required in type statement
+type Foo i32

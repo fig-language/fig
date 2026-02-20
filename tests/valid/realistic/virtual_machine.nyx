@@ -1,0 +1,376 @@
+// Simple virtual machine with bytecode interpreter
+
+using core::memory
+
+const STACK_SIZE: usize = 256
+const MAX_LOCALS: usize = 64
+
+enum Opcode
+    HALT
+    NOP
+    PUSH
+    POP
+    DUP
+    SWAP
+    ADD
+    SUB
+    MUL
+    DIV
+    MOD
+    NEG
+    AND
+    OR
+    XOR
+    NOT
+    EQ
+    NE
+    LT
+    LE
+    GT
+    GE
+    JMP
+    JMP_IF_TRUE
+    JMP_IF_FALSE
+    CALL
+    RET
+    LOAD_LOCAL
+    STORE_LOCAL
+    LOAD_CONST
+    PRINT
+
+union Value
+    int: i64
+    float: f64
+    bool: bool
+    nil: ok
+
+struct Instruction
+    opcode: Opcode
+    operand: i32
+
+export struct VM
+    stack: [Value]
+    stack_pointer: usize
+    program: [Instruction]
+    program_counter: usize
+    locals: [Value]
+    call_frames: [CallFrame]
+    frame_count: usize
+    constants: [Value]
+    running: bool
+
+struct CallFrame
+    return_address: usize
+    local_base: usize
+
+func! VM::new() -> VM
+    return VM(
+        stack: [],
+        stack_pointer: 0,
+        program: [],
+        program_counter: 0,
+        locals: [],
+        call_frames: [],
+        frame_count: 0,
+        constants: [],
+        running: false
+    )
+
+func! VM::load_program(*mut self, program: [Instruction]) -> ok
+    self.program = program
+    self.program_counter = 0
+    pass
+
+func! VM::add_constant(*mut self, value: Value) -> usize
+    let index = self.constants.len
+    self.constants.push(value)
+    return index
+
+func! VM::run(*mut self) -> ok
+    self.running = true
+    self.program_counter = 0
+    self.stack_pointer = 0
+    
+    for i in range(0, 100000)
+        if !self.running
+            break
+        
+        if self.program_counter >= self.program.len
+            break
+        
+        let instruction = &self.program[self.program_counter]
+        self.execute(instruction)
+        
+        self.program_counter = self.program_counter + 1
+    
+    pass
+
+func! VM::execute(*mut self, instruction: *Instruction) -> ok
+    if instruction.opcode == Opcode::HALT
+        self.running = false
+    elif instruction.opcode == Opcode::NOP
+        pass
+    elif instruction.opcode == Opcode::PUSH
+        let value = Value::int(instruction.operand as i64)
+        self.push(value)
+    elif instruction.opcode == Opcode::POP
+        self.pop()
+    elif instruction.opcode == Opcode::DUP
+        let value = self.peek(0)
+        self.push(value)
+    elif instruction.opcode == Opcode::SWAP
+        let a = self.pop()
+        let b = self.pop()
+        self.push(a)
+        self.push(b)
+    elif instruction.opcode == Opcode::ADD
+        let b = self.pop()
+        let a = self.pop()
+        let result = Value::int(a.int + b.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::SUB
+        let b = self.pop()
+        let a = self.pop()
+        let result = Value::int(a.int - b.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::MUL
+        let b = self.pop()
+        let a = self.pop()
+        let result = Value::int(a.int * b.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::DIV
+        let b = self.pop()
+        let a = self.pop()
+        let result = Value::int(a.int / b.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::MOD
+        let b = self.pop()
+        let a = self.pop()
+        let result = Value::int(a.int % b.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::NEG
+        let a = self.pop()
+        let result = Value::int(-a.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::AND
+        let b = self.pop()
+        let a = self.pop()
+        let result = Value::int(a.int & b.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::OR
+        let b = self.pop()
+        let a = self.pop()
+        let result = Value::int(a.int | b.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::XOR
+        let b = self.pop()
+        let a = self.pop()
+        let result = Value::int(a.int ^ b.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::NOT
+        let a = self.pop()
+        let result = Value::int(!a.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::EQ
+        let b = self.pop()
+        let a = self.pop()
+        let result = Value::bool(a.int == b.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::NE
+        let b = self.pop()
+        let a = self.pop()
+        let result = Value::bool(a.int != b.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::LT
+        let b = self.pop()
+        let a = self.pop()
+        let result = Value::bool(a.int < b.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::LE
+        let b = self.pop()
+        let a = self.pop()
+        let result = Value::bool(a.int <= b.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::GT
+        let b = self.pop()
+        let a = self.pop()
+        let result = Value::bool(a.int > b.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::GE
+        let b = self.pop()
+        let a = self.pop()
+        let result = Value::bool(a.int >= b.int)
+        self.push(result)
+    elif instruction.opcode == Opcode::JMP
+        self.program_counter = (instruction.operand as usize) - 1
+    elif instruction.opcode == Opcode::JMP_IF_TRUE
+        let value = self.pop()
+        if value.bool
+            self.program_counter = (instruction.operand as usize) - 1
+    elif instruction.opcode == Opcode::JMP_IF_FALSE
+        let value = self.pop()
+        if !value.bool
+            self.program_counter = (instruction.operand as usize) - 1
+    elif instruction.opcode == Opcode::CALL
+        let frame = CallFrame(
+            return_address: self.program_counter + 1,
+            local_base: self.stack_pointer
+        )
+        self.call_frames.push(frame)
+        self.frame_count = self.frame_count + 1
+        self.program_counter = (instruction.operand as usize) - 1
+    elif instruction.opcode == Opcode::RET
+        if self.frame_count > 0
+            let frame = &self.call_frames[self.frame_count - 1]
+            self.program_counter = frame.return_address - 1
+            self.stack_pointer = frame.local_base
+            self.frame_count = self.frame_count - 1
+    elif instruction.opcode == Opcode::LOAD_LOCAL
+        let index = instruction.operand as usize
+        let value = self.locals[index]
+        self.push(value)
+    elif instruction.opcode == Opcode::STORE_LOCAL
+        let index = instruction.operand as usize
+        let value = self.pop()
+        self.locals[index] = value
+    elif instruction.opcode == Opcode::LOAD_CONST
+        let index = instruction.operand as usize
+        let value = self.constants[index]
+        self.push(value)
+    elif instruction.opcode == Opcode::PRINT
+        let value = self.pop()
+        print_value(&value)
+    
+    pass
+
+func! VM::push(*mut self, value: Value) -> ok
+    if self.stack_pointer >= STACK_SIZE
+        return ok
+    
+    self.stack.push(value)
+    self.stack_pointer = self.stack_pointer + 1
+    pass
+
+func! VM::pop(*mut self) -> Value
+    if self.stack_pointer == 0
+        return Value::nil(ok)
+    
+    self.stack_pointer = self.stack_pointer - 1
+    return self.stack[self.stack_pointer]
+
+func VM::peek(*self, distance: usize) -> Value
+    if self.stack_pointer == 0
+        return Value::nil(ok)
+    
+    let index = self.stack_pointer - 1 - distance
+    return self.stack[index]
+
+func VM::stack_size(*self) -> usize
+    return self.stack_pointer
+
+func VM::is_running(*self) -> bool
+    return self.running
+
+// Assembler for human-readable assembly
+
+export struct Assembler
+    instructions: [Instruction]
+    labels: [Label]
+    constants: [Value]
+
+struct Label
+    name: [u8]
+    address: usize
+
+func! Assembler::new() -> Assembler
+    return Assembler(
+        instructions: [],
+        labels: [],
+        constants: []
+    )
+
+func! Assembler::add_label(*mut self, name: [u8]) -> ok
+    let label = Label(
+        name: name,
+        address: self.instructions.len
+    )
+    self.labels.push(label)
+    pass
+
+func! Assembler::emit(*mut self, opcode: Opcode) -> ok
+    let instruction = Instruction(opcode: opcode, operand: 0)
+    self.instructions.push(instruction)
+    pass
+
+func! Assembler::emit_with_operand(*mut self, opcode: Opcode, operand: i32) -> ok
+    let instruction = Instruction(opcode: opcode, operand: operand)
+    self.instructions.push(instruction)
+    pass
+
+func! Assembler::emit_push(*mut self, value: i64) -> ok
+    self.emit_with_operand(Opcode::PUSH, value as i32)
+    pass
+
+func! Assembler::emit_jump(*mut self, label: [u8]) -> ok
+    let address = self.find_label(label)
+    self.emit_with_operand(Opcode::JMP, address as i32)
+    pass
+
+func! Assembler::emit_jump_if_true(*mut self, label: [u8]) -> ok
+    let address = self.find_label(label)
+    self.emit_with_operand(Opcode::JMP_IF_TRUE, address as i32)
+    pass
+
+func! Assembler::emit_jump_if_false(*mut self, label: [u8]) -> ok
+    let address = self.find_label(label)
+    self.emit_with_operand(Opcode::JMP_IF_FALSE, address as i32)
+    pass
+
+func! Assembler::emit_call(*mut self, label: [u8]) -> ok
+    let address = self.find_label(label)
+    self.emit_with_operand(Opcode::CALL, address as i32)
+    pass
+
+func! Assembler::emit_load_local(*mut self, index: usize) -> ok
+    self.emit_with_operand(Opcode::LOAD_LOCAL, index as i32)
+    pass
+
+func! Assembler::emit_store_local(*mut self, index: usize) -> ok
+    self.emit_with_operand(Opcode::STORE_LOCAL, index as i32)
+    pass
+
+func! Assembler::add_constant(*mut self, value: Value) -> usize
+    let index = self.constants.len
+    self.constants.push(value)
+    return index
+
+func! Assembler::emit_load_const(*mut self, index: usize) -> ok
+    self.emit_with_operand(Opcode::LOAD_CONST, index as i32)
+    pass
+
+func Assembler::find_label(*self, name: [u8]) -> usize
+    for i in range(0, self.labels.len)
+        let label = &self.labels[i]
+        if strings_equal(label.name, name)
+            return label.address
+    
+    return 0
+
+func! Assembler::build(*self) -> [Instruction]
+    return self.instructions
+
+func! Assembler::get_constants(*self) -> [Value]
+    return self.constants
+
+func strings_equal(a: [u8], b: [u8]) -> bool
+    if a.len != b.len
+        return false
+    
+    for i in range(0, a.len)
+        if a[i] != b[i]
+            return false
+    
+    return true
+
+func! print_value(value: *Value) -> ok
+    pass

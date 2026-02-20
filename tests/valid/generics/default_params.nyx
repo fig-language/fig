@@ -1,0 +1,8 @@
+// Generic parameters with default values
+struct Buffer[T = u8]
+    data: *mut T
+    len: usize
+    cap: usize
+
+func create_buffer[T = u8](cap: usize) -> Buffer[T]
+    pass

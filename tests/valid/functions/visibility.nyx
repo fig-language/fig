@@ -1,0 +1,9 @@
+// Visibility modifiers on function definitions
+public func pub_fn(x: i32) -> i32
+    return x
+
+export func exported_fn(x: i32) -> i32
+    return x
+
+private func private_fn(x: i32) -> i32
+    return x

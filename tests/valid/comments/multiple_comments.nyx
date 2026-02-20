@@ -1,0 +1,8 @@
+// Comment at the start of a file
+// Second comment line
+// Third comment line
+
+let a = 1
+// Comment between statements
+let b = 2
+// Trailing comment

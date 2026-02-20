@@ -1,0 +1,6 @@
+// Interface with namespaced name
+interface std::io::Read
+    func! read(*mut self, buf: *mut u8, len: usize) -> usize
+
+interface core::fmt::Display
+    func fmt(*self, f: *mut Formatter) -> ok

@@ -1,0 +1,14 @@
+// Struct with visibility modifiers
+public struct PublicPoint
+    x: f64
+    y: f64
+
+export struct ExportedRect
+    x: f64
+    y: f64
+    w: f64
+    h: f64
+
+private struct PrivateNode
+    data: i32
+    next: ?*PrivateNode

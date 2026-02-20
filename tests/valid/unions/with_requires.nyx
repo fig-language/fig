@@ -1,0 +1,7 @@
+// Union with requires clause
+union std::Either[U, V]
+    requires
+        Display
+        Debug
+    left: U
+    right: V

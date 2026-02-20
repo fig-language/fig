@@ -1,0 +1,10 @@
+// Builtin namespace paths (std, core, alloc)
+using std::io
+using core::mem
+using alloc::global
+
+func builtin_ns() -> ok
+    let x = std::VERSION
+    let y = core::ARCH
+    let ptr = alloc::allocate(64)
+    pass

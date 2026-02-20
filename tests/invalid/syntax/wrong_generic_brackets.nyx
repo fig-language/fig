@@ -1,0 +1,3 @@
+// Invalid: Generic parameters using wrong brackets
+func wrong_brackets<T>(value: T) -> T
+    return value

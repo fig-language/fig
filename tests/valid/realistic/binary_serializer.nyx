@@ -1,0 +1,345 @@
+// Binary serialization format with variable-length encoding
+
+using core::memory
+
+enum SerdeError
+    BUFFER_TOO_SMALL
+    INVALID_DATA
+    UNSUPPORTED_TYPE
+    VERSION_MISMATCH
+
+union SerdeResult[T]
+    ok: T
+    err: SerdeError
+
+export struct Serializer
+    buffer: *mut u8
+    position: usize
+    capacity: usize
+
+export struct Deserializer
+    buffer: *u8
+    position: usize
+    length: usize
+
+// Serializer implementation
+
+func! Serializer::new(capacity: usize) -> Serializer
+    return Serializer(
+        buffer: allocate(capacity),
+        position: 0,
+        capacity: capacity
+    )
+
+func! Serializer::write_u8(*mut self, value: u8) -> SerdeResult[ok]
+    if self.position + 1 > self.capacity
+        return SerdeResult[ok]::err(SerdeError::BUFFER_TOO_SMALL)
+    
+    self.buffer[self.position] = value
+    self.position = self.position + 1
+    
+    return SerdeResult[ok]::ok(ok)
+
+func! Serializer::write_u16(*mut self, value: u16) -> SerdeResult[ok]
+    if self.position + 2 > self.capacity
+        return SerdeResult[ok]::err(SerdeError::BUFFER_TOO_SMALL)
+    
+    self.buffer[self.position] = (value & 255) as u8
+    self.buffer[self.position + 1] = ((value >> 8) & 255) as u8
+    self.position = self.position + 2
+    
+    return SerdeResult[ok]::ok(ok)
+
+func! Serializer::write_u32(*mut self, value: u32) -> SerdeResult[ok]
+    if self.position + 4 > self.capacity
+        return SerdeResult[ok]::err(SerdeError::BUFFER_TOO_SMALL)
+    
+    self.buffer[self.position] = (value & 255) as u8
+    self.buffer[self.position + 1] = ((value >> 8) & 255) as u8
+    self.buffer[self.position + 2] = ((value >> 16) & 255) as u8
+    self.buffer[self.position + 3] = ((value >> 24) & 255) as u8
+    self.position = self.position + 4
+    
+    return SerdeResult[ok]::ok(ok)
+
+func! Serializer::write_u64(*mut self, value: u64) -> SerdeResult[ok]
+    if self.position + 8 > self.capacity
+        return SerdeResult[ok]::err(SerdeError::BUFFER_TOO_SMALL)
+    
+    for i in range(0, 8)
+        self.buffer[self.position + i] = ((value >> (i * 8)) & 255) as u8
+    
+    self.position = self.position + 8
+    
+    return SerdeResult[ok]::ok(ok)
+
+func! Serializer::write_varint(*mut self, value: u64) -> SerdeResult[ok]
+    mut v = value
+    
+    for i in range(0, 10)
+        mut byte: u8 = (v & 127) as u8
+        v = v >> 7
+        
+        if v != 0
+            byte = byte | 128
+        
+        let result = self.write_u8(byte)
+        
+        if v == 0
+            break
+    
+    return SerdeResult[ok]::ok(ok)
+
+func! Serializer::write_bytes(*mut self, data: [u8]) -> SerdeResult[ok]
+    let len = data.len as u64
+    self.write_varint(len)
+    
+    if self.position + data.len > self.capacity
+        return SerdeResult[ok]::err(SerdeError::BUFFER_TOO_SMALL)
+    
+    for i in range(0, data.len)
+        self.buffer[self.position + i] = data[i]
+    
+    self.position = self.position + data.len
+    
+    return SerdeResult[ok]::ok(ok)
+
+func! Serializer::write_string(*mut self, s: [u8]) -> SerdeResult[ok]
+    return self.write_bytes(s)
+
+func! Serializer::write_bool(*mut self, value: bool) -> SerdeResult[ok]
+    if value
+        return self.write_u8(1)
+    return self.write_u8(0)
+
+func! Serializer::write_f32(*mut self, value: f32) -> SerdeResult[ok]
+    let bits = f32_to_bits(value)
+    return self.write_u32(bits)
+
+func! Serializer::write_f64(*mut self, value: f64) -> SerdeResult[ok]
+    let bits = f64_to_bits(value)
+    return self.write_u64(bits)
+
+func! Serializer::write_option[T](*mut self, opt: ?T, write_fn: *fn(*mut Serializer, T) -> SerdeResult[ok]) -> SerdeResult[ok]
+    if opt == null
+        return self.write_bool(false)
+    
+    self.write_bool(true)
+    return write_fn(self, opt)
+
+func Serializer::to_slice(*self) -> [u8]
+    pass
+
+func Serializer::len(*self) -> usize
+    return self.position
+
+// Deserializer implementation
+
+func! Deserializer::new(buffer: [u8]) -> Deserializer
+    return Deserializer(
+        buffer: &buffer[0],
+        position: 0,
+        length: buffer.len
+    )
+
+func! Deserializer::read_u8(*mut self) -> SerdeResult[u8]
+    if self.position + 1 > self.length
+        return SerdeResult[u8]::err(SerdeError::BUFFER_TOO_SMALL)
+    
+    let value = self.buffer[self.position]
+    self.position = self.position + 1
+    
+    return SerdeResult[u8]::ok(value)
+
+func! Deserializer::read_u16(*mut self) -> SerdeResult[u16]
+    if self.position + 2 > self.length
+        return SerdeResult[u16]::err(SerdeError::BUFFER_TOO_SMALL)
+    
+    let b0 = self.buffer[self.position] as u16
+    let b1 = self.buffer[self.position + 1] as u16
+    
+    let value = b0 | (b1 << 8)
+    self.position = self.position + 2
+    
+    return SerdeResult[u16]::ok(value)
+
+func! Deserializer::read_u32(*mut self) -> SerdeResult[u32]
+    if self.position + 4 > self.length
+        return SerdeResult[u32]::err(SerdeError::BUFFER_TOO_SMALL)
+    
+    let b0 = self.buffer[self.position] as u32
+    let b1 = self.buffer[self.position + 1] as u32
+    let b2 = self.buffer[self.position + 2] as u32
+    let b3 = self.buffer[self.position + 3] as u32
+    
+    let value = b0 | (b1 << 8) | (b2 << 16) | (b3 << 24)
+    self.position = self.position + 4
+    
+    return SerdeResult[u32]::ok(value)
+
+func! Deserializer::read_u64(*mut self) -> SerdeResult[u64]
+    if self.position + 8 > self.length
+        return SerdeResult[u64]::err(SerdeError::BUFFER_TOO_SMALL)
+    
+    mut value: u64 = 0
+    
+    for i in range(0, 8)
+        let byte = self.buffer[self.position + i] as u64
+        value = value | (byte << (i * 8))
+    
+    self.position = self.position + 8
+    
+    return SerdeResult[u64]::ok(value)
+
+func! Deserializer::read_varint(*mut self) -> SerdeResult[u64]
+    mut value: u64 = 0
+    mut shift: u32 = 0
+    
+    for i in range(0, 10)
+        let byte_result = self.read_u8()
+        let byte = byte_result.ok
+        
+        value = value | (((byte & 127) as u64) << shift)
+        
+        if (byte & 128) == 0
+            break
+        
+        shift = shift + 7
+    
+    return SerdeResult[u64]::ok(value)
+
+func! Deserializer::read_bytes(*mut self) -> SerdeResult[[u8]]
+    let len_result = self.read_varint()
+    let len = len_result.ok as usize
+    
+    if self.position + len > self.length
+        return SerdeResult[[u8]]::err(SerdeError::BUFFER_TOO_SMALL)
+    
+    let slice = slice_range(&self.buffer[0], self.position, self.position + len)
+    self.position = self.position + len
+    
+    return SerdeResult[[u8]]::ok(slice)
+
+func! Deserializer::read_string(*mut self) -> SerdeResult[[u8]]
+    return self.read_bytes()
+
+func! Deserializer::read_bool(*mut self) -> SerdeResult[bool]
+    let byte_result = self.read_u8()
+    let byte = byte_result.ok
+    
+    if byte == 0
+        return SerdeResult[bool]::ok(false)
+    
+    return SerdeResult[bool]::ok(true)
+
+func! Deserializer::read_f32(*mut self) -> SerdeResult[f32]
+    let bits_result = self.read_u32()
+    let bits = bits_result.ok
+    
+    let value = f32_from_bits(bits)
+    return SerdeResult[f32]::ok(value)
+
+func! Deserializer::read_f64(*mut self) -> SerdeResult[f64]
+    let bits_result = self.read_u64()
+    let bits = bits_result.ok
+    
+    let value = f64_from_bits(bits)
+    return SerdeResult[f64]::ok(value)
+
+func! Deserializer::read_option[T](*mut self, read_fn: *fn(*mut Deserializer) -> SerdeResult[T]) -> SerdeResult[?T]
+    let has_value_result = self.read_bool()
+    let has_value = has_value_result.ok
+    
+    if !has_value
+        return SerdeResult[?T]::ok(null)
+    
+    let value_result = read_fn(self)
+    let value = value_result.ok
+    
+    return SerdeResult[?T]::ok(value)
+
+func Deserializer::remaining(*self) -> usize
+    if self.position >= self.length
+        return 0
+    return self.length - self.position
+
+func Deserializer::is_eof(*self) -> bool
+    return self.position >= self.length
+
+// Example serializable type
+
+struct Person
+    id: u64
+    name: [u8]
+    age: u32
+    email: ?[u8]
+    active: bool
+
+func! Person::serialize(*self, ser: *mut Serializer) -> SerdeResult[ok]
+    ser.write_u64(self.id)
+    ser.write_string(self.name)
+    ser.write_u32(self.age)
+    ser.write_option[?[u8]](self.email, Serializer::write_string)
+    ser.write_bool(self.active)
+    
+    return SerdeResult[ok]::ok(ok)
+
+func! Person::deserialize(de: *mut Deserializer) -> SerdeResult[Person]
+    let id = de.read_u64().ok
+    let name = de.read_string().ok
+    let age = de.read_u32().ok
+    let email = de.read_option[?[u8]](Deserializer::read_string).ok
+    let active = de.read_bool().ok
+    
+    let person = Person(
+        id: id,
+        name: name,
+        age: age,
+        email: email,
+        active: active
+    )
+    
+    return SerdeResult[Person]::ok(person)
+
+// Array serialization helpers
+
+func! serialize_array[T](ser: *mut Serializer, arr: [T], write_fn: *fn(*mut Serializer, T) -> SerdeResult[ok]) -> SerdeResult[ok]
+    ser.write_varint(arr.len as u64)
+    
+    for i in range(0, arr.len)
+        let result = write_fn(ser, arr[i])
+    
+    return SerdeResult[ok]::ok(ok)
+
+func! deserialize_array[T](de: *mut Deserializer, read_fn: *fn(*mut Deserializer) -> SerdeResult[T]) -> SerdeResult[[T]]
+    let len_result = de.read_varint()
+    let len = len_result.ok as usize
+    
+    mut arr: [T] = []
+    
+    for i in range(0, len)
+        let value_result = read_fn(de)
+        let value = value_result.ok
+        arr.push(value)
+    
+    return SerdeResult[[T]]::ok(arr)
+
+// Helper functions
+
+func! allocate(size: usize) -> *mut u8
+    pass
+
+func slice_range(buffer: *u8, start: usize, end: usize) -> [u8]
+    pass
+
+func f32_to_bits(f: f32) -> u32
+    pass
+
+func f32_from_bits(bits: u32) -> f32
+    pass
+
+func f64_to_bits(f: f64) -> u64
+    pass
+
+func f64_from_bits(bits: u64) -> f64
+    pass

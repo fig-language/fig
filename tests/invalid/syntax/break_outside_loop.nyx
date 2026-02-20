@@ -1,0 +1,6 @@
+// Invalid: Break outside of loop
+func invalid_break() -> ok
+    let x = 5
+    if x > 3
+        break
+    pass

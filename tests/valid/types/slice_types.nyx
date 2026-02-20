@@ -1,0 +1,5 @@
+// Slice type aliases
+type ByteSlice = [u8]
+type IntSlice = [i32]
+type BoolSlice = [bool]
+type SliceOfSlices = [[u8]]

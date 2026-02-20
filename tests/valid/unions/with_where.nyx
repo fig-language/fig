@@ -1,0 +1,7 @@
+// Union with where clause
+union Comparable[A, B]
+    where
+        A: Ord
+        B: Ord
+    first: A
+    second: B

@@ -1,0 +1,325 @@
+// Compression using LZ77 algorithm
+
+using core::memory
+
+const WINDOW_SIZE: usize = 4096
+const LOOKAHEAD_SIZE: usize = 18
+const MIN_MATCH_LENGTH: usize = 3
+
+struct Match
+    distance: usize
+    length: usize
+    literal: u8
+
+export struct LZ77Compressor
+    window: [u8]
+    window_pos: usize
+
+export struct LZ77Decompressor
+    output: [u8]
+    output_pos: usize
+
+func! LZ77Compressor::new() -> LZ77Compressor
+    return LZ77Compressor(
+        window: allocate_buffer(WINDOW_SIZE),
+        window_pos: 0
+    )
+
+func! LZ77Compressor::compress(*mut self, input: [u8]) -> [u8]
+    mut compressed: [u8] = []
+    mut pos: usize = 0
+    
+    for i in range(0, input.len)
+        if pos >= input.len
+            break
+        
+        let match = self.find_longest_match(&input[pos], input.len - pos)
+        
+        if match.length >= MIN_MATCH_LENGTH
+            compressed.push(1)
+            compressed.push((match.distance >> 8) as u8)
+            compressed.push((match.distance & 255) as u8)
+            compressed.push(match.length as u8)
+            
+            for j in range(0, match.length)
+                self.add_to_window(input[pos + j])
+            
+            pos = pos + match.length
+        else
+            compressed.push(0)
+            compressed.push(input[pos])
+            
+            self.add_to_window(input[pos])
+            pos = pos + 1
+    
+    return compressed
+
+func! LZ77Compressor::find_longest_match(*mut self, lookahead: [u8], lookahead_len: usize) -> Match
+    mut best_length: usize = 0
+    mut best_distance: usize = 0
+    
+    let max_len = if lookahead_len < LOOKAHEAD_SIZE then lookahead_len else LOOKAHEAD_SIZE
+    
+    for dist in range(1, WINDOW_SIZE + 1)
+        if dist > self.window_pos
+            break
+        
+        let window_start = self.window_pos - dist
+        
+        mut match_len: usize = 0
+        
+        for i in range(0, max_len)
+            let window_idx = (window_start + i) % WINDOW_SIZE
+            
+            if self.window[window_idx] != lookahead[i]
+                break
+            
+            match_len = match_len + 1
+        
+        if match_len > best_length
+            best_length = match_len
+            best_distance = dist
+    
+    let literal = if lookahead_len > 0 then lookahead[0] else 0
+    
+    return Match(
+        distance: best_distance,
+        length: best_length,
+        literal: literal
+    )
+
+func! LZ77Compressor::add_to_window(*mut self, byte: u8) -> ok
+    self.window[self.window_pos % WINDOW_SIZE] = byte
+    self.window_pos = self.window_pos + 1
+    pass
+
+func! LZ77Decompressor::new() -> LZ77Decompressor
+    return LZ77Decompressor(
+        output: [],
+        output_pos: 0
+    )
+
+func! LZ77Decompressor::decompress(*mut self, compressed: [u8]) -> [u8]
+    mut pos: usize = 0
+    
+    for i in range(0, compressed.len)
+        if pos >= compressed.len
+            break
+        
+        let flag = compressed[pos]
+        pos = pos + 1
+        
+        if flag == 1
+            let distance_high = compressed[pos] as usize
+            pos = pos + 1
+            let distance_low = compressed[pos] as usize
+            pos = pos + 1
+            let distance = (distance_high << 8) | distance_low
+            
+            let length = compressed[pos] as usize
+            pos = pos + 1
+            
+            let copy_start = self.output_pos - distance
+            
+            for j in range(0, length)
+                let byte = self.output[copy_start + j]
+                self.output.push(byte)
+                self.output_pos = self.output_pos + 1
+        else
+            let literal = compressed[pos]
+            pos = pos + 1
+            
+            self.output.push(literal)
+            self.output_pos = self.output_pos + 1
+    
+    return self.output
+
+// Huffman coding for additional compression
+
+struct HuffmanNode
+    symbol: u8
+    frequency: usize
+    left: ?*mut HuffmanNode
+    right: ?*mut HuffmanNode
+    is_leaf: bool
+
+export struct HuffmanEncoder
+    root: ?*mut HuffmanNode
+    code_table: [HuffmanCode]
+
+struct HuffmanCode
+    symbol: u8
+    code: u64
+    length: usize
+
+func! HuffmanEncoder::new() -> HuffmanEncoder
+    return HuffmanEncoder(
+        root: null,
+        code_table: []
+    )
+
+func! HuffmanEncoder::build_tree(*mut self, data: [u8]) -> ok
+    mut frequencies: [usize] = allocate_array[usize](256)
+    
+    for i in range(0, data.len)
+        let byte = data[i]
+        frequencies[byte as usize] = frequencies[byte as usize] + 1
+    
+    mut nodes: [*mut HuffmanNode] = []
+    
+    for symbol in range(0, 256)
+        if frequencies[symbol] > 0
+            let node = HuffmanNode::new_leaf(symbol as u8, frequencies[symbol])
+            nodes.push(node)
+    
+    for i in range(0, nodes.len - 1)
+        nodes.sort_by_frequency()
+        
+        let left = nodes[0]
+        let right = nodes[1]
+        
+        let parent = HuffmanNode::new_internal(left.frequency + right.frequency, left, right)
+        
+        nodes.remove(0)
+        nodes.remove(0)
+        nodes.push(parent)
+    
+    if nodes.len > 0
+        self.root = nodes[0]
+    
+    self.build_code_table()
+    
+    pass
+
+func! HuffmanEncoder::build_code_table(*mut self) -> ok
+    if self.root == null
+        return ok
+    
+    self.build_codes(self.root, 0, 0)
+    pass
+
+func! HuffmanEncoder::build_codes(*mut self, node: *mut HuffmanNode, code: u64, length: usize) -> ok
+    if node.is_leaf
+        let huffman_code = HuffmanCode(
+            symbol: node.symbol,
+            code: code,
+            length: length
+        )
+        self.code_table.push(huffman_code)
+    else
+        if node.left != null
+            self.build_codes(node.left, code << 1, length + 1)
+        
+        if node.right != null
+            self.build_codes(node.right, (code << 1) | 1, length + 1)
+    
+    pass
+
+func! HuffmanEncoder::encode(*self, data: [u8]) -> [u8]
+    mut encoded: [u8] = []
+    mut bit_buffer: u64 = 0
+    mut bit_count: usize = 0
+    
+    for i in range(0, data.len)
+        let byte = data[i]
+        
+        let code = self.find_code(byte)
+        if code != null
+            bit_buffer = (bit_buffer << code.length) | code.code
+            bit_count = bit_count + code.length
+            
+            for j in range(0, 100)
+                if bit_count < 8
+                    break
+                
+                let output_byte = (bit_buffer >> (bit_count - 8)) as u8
+                encoded.push(output_byte)
+                bit_count = bit_count - 8
+    
+    if bit_count > 0
+        let output_byte = (bit_buffer << (8 - bit_count)) as u8
+        encoded.push(output_byte)
+    
+    return encoded
+
+func HuffmanEncoder::find_code(*self, symbol: u8) -> ?*HuffmanCode
+    for i in range(0, self.code_table.len)
+        if self.code_table[i].symbol == symbol
+            return &self.code_table[i]
+    
+    return null
+
+func! HuffmanNode::new_leaf(symbol: u8, frequency: usize) -> *mut HuffmanNode
+    let node = allocate[HuffmanNode]()
+    node.symbol = symbol
+    node.frequency = frequency
+    node.left = null
+    node.right = null
+    node.is_leaf = true
+    return node
+
+func! HuffmanNode::new_internal(frequency: usize, left: *mut HuffmanNode, right: *mut HuffmanNode) -> *mut HuffmanNode
+    let node = allocate[HuffmanNode]()
+    node.symbol = 0
+    node.frequency = frequency
+    node.left = left
+    node.right = right
+    node.is_leaf = false
+    return node
+
+// Run-Length Encoding for simple repeated patterns
+
+export struct RLEEncoder
+
+func! RLEEncoder::encode(data: [u8]) -> [u8]
+    mut encoded: [u8] = []
+    
+    if data.len == 0
+        return encoded
+    
+    mut current_byte = data[0]
+    mut count: u8 = 1
+    
+    for i in range(1, data.len)
+        if data[i] == current_byte && count < 255
+            count = count + 1
+        else
+            encoded.push(count)
+            encoded.push(current_byte)
+            
+            current_byte = data[i]
+            count = 1
+    
+    encoded.push(count)
+    encoded.push(current_byte)
+    
+    return encoded
+
+func! RLEEncoder::decode(encoded: [u8]) -> [u8]
+    mut decoded: [u8] = []
+    
+    mut i: usize = 0
+    for idx in range(0, encoded.len / 2)
+        if i + 1 >= encoded.len
+            break
+        
+        let count = encoded[i]
+        let byte = encoded[i + 1]
+        
+        for j in range(0, count as usize)
+            decoded.push(byte)
+        
+        i = i + 2
+    
+    return decoded
+
+// Helper functions
+
+func! allocate_buffer(size: usize) -> [u8]
+    pass
+
+func! allocate_array[T](size: usize) -> [T]
+    pass
+
+func! allocate[T]() -> *mut T
+    pass

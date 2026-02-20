@@ -1,0 +1,17 @@
+// Struct with namespaced name (associated type)
+struct math::Matrix[T, U]
+    requires
+        Add
+        Mul
+    where
+        T: Numeric
+        U: Numeric
+    private rows: usize
+    private cols: usize
+    private data: [T]
+
+struct std::collections::HashMap[K, V]
+    where
+        K: Hash + Eq
+    private buckets: [?*Entry[K, V]]
+    private len: usize

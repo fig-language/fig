@@ -1,0 +1,5 @@
+// Edge case: function where where clause immediately precedes single pass statement
+func single_pass_with_where[T](x: T) -> T
+    where
+        T: Clone
+    pass

@@ -1,0 +1,4 @@
+// INVALID: func definition body must start with indent
+// Expected parse error: indented block required
+func bad_func() -> ok
+pass

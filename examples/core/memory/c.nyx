@@ -1,9 +1,9 @@
 namespace core::memory::c
 
 
-extern fn! malloc(size: usize) -> *mut u8
-extern fn! free(ptr: *mut u8)
-extern fn! memcpy(dest: *mut u8, src: *u8, n: usize)
-extern fn! memset(dest: *mut u8, value: u8, n: usize)
-extern fn! realloc(ptr: *mut u8, new_size: usize) -> *mut u8
-extern fn! memcmp(ptr1: *u8, ptr2: *u8, n: usize) -> i32
+public extern func! malloc(size: usize) -> *mut u8
+public extern func! free(ptr: *mut u8)
+public extern func! memcpy(dest: *mut u8, src: *u8, n: usize)
+public extern func! memset(dest: *mut u8, value: u8, n: usize)
+public extern func! realloc(ptr: *mut u8, new_size: usize) -> *mut u8
+public extern func! memcmp(ptr1: *u8, ptr2: *u8, n: usize) -> i32

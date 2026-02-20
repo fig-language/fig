@@ -7,47 +7,51 @@ struct SharedInner[T]
     strong_count: usize
     weak_count: usize
 
-fn![T] SharedInner[T].release(*mut self)
+export func![T] SharedInner[T].release(*mut self)
+    if self.strong_count == 0
+        self.value.drop()
     if self.strong_count == 0 && self.weak_count == 0
         SystemAllocator.deallocate(self as *mut u8)
 
 
-struct Shared[T]
+export struct Shared[T]
     inner: *mut SharedInner[T]
 
-fn![T] Shared[T]::new(value: T) -> Shared[T]
+export func![T] Shared[T]::new(value: T) -> Shared[T]
     let inner_ptr: *mut SharedInner[T] = SystemAllocator.allocate![SharedInner[T]]()
     (*inner_ptr).value = value
     (*inner_ptr).strong_count = 1
     (*inner_ptr).weak_count = 0
     return Shared(inner_ptr)
 
-fn![T] Shared[T].clone(*self) -> Shared[T]
+export func![T] Shared[T].clone(*self) -> Shared[T]
     (*self.inner).strong_count += 1
     return Shared(self.inner)
 
-fn![T] Shared[T].drop(*mut self)
+export func![T] Shared[T].drop(*mut self)
     (*self.inner).strong_count -= 1
     (*self.inner).release()
 
-fn[T] Shared[T].borrow(*self) -> *T
+export func[T] Shared[T].borrow(*self) -> *T
     return &(*self.inner).value
 
-fn![T] Shared[T].downgrade(*self) -> WeakRef[T]
+export func[T] Shared[T].borrow_mut(*mut self) -> *mut T
+    return &(*self.inner).value as *mut T
+
+export func![T] Shared[T].downgrade(*self) -> WeakRef[T]
     (*self.inner).weak_count += 1
     return WeakRef(self.inner)
 
-
-struct WeakRef[T]
+export struct WeakRef[T]
     inner: *mut SharedInner[T]
 
-fn![T] WeakRef[T].upgrade(*self) -> ?Shared[T]
+export func![T] WeakRef[T].upgrade(*self) -> ?Shared[T]
     if (*self.inner).strong_count == 0
         return null
     (*self.inner).strong_count += 1
     return Shared(self.inner)
 
-fn![T] WeakRef[T].drop(*mut self)
+export func![T] WeakRef[T].drop(*mut self)
     (*self.inner).weak_count -= 1
     (*self.inner).release()
 

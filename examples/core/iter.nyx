@@ -1,29 +1,30 @@
 namespace core::iter
     
-interface Iterator[T]
-    fn next(self: *mut Self) -> ?T
-
+export interface Iterator[T]
+   func next(*mut self) -> ?T
+    
 /// This shows how we can implement a default method for an interface.
 /// This is a method that can be used by any type that implements the interface,
 /// without the type having to implement the method itself.
-fn[T] Iterator[T]::count(self: *mut Self) -> usize
+export func[T] Iterator[T]::count(*mut self) -> usize
     let count: usize = 0
     while self.next().is_some()
         count += 1
     return count
 
+
 interface PeekableIterator[T]
     extends
         Iterator[T]
-    fn peek(self: *Self) -> ?T
+    func peek(*self) -> ?T
 
 interface ResettableIterator[T]
     extends
         Iterator[T]
-    fn! reset(self: *mut Self) -> ok
+    func! reset(*mut self) -> ok
 
 interface DoubleEndedIterator[T]
     extends
         Iterator[T]
-    fn! next_back(self: *mut Self) -> ?T
+    func! next_back(*mut self) -> ?T
 

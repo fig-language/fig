@@ -1,5 +1,5 @@
 
-type Array[T] = []T
+type Slice[T] = [T]
 type String = Array[u8]
 
 struct Vector2[T]
@@ -10,29 +10,29 @@ struct Vector2[T]
     x: T
     y: T
 
-fn Vector2::new(x: T, y: T) -> Vector2[T]
+func Vector2::new(x: T, y: T) -> Vector2[T]
     // Vector2(x, y)
     pass
 
-fn Vector2::unit() -> Vector2[T]
+func Vector2::unit() -> Vector2[T]
     // Vector2:
     //    x: T::unit()
     //    y: T::unit()
     pass
 
-fn Vector2::zero() -> Vector2[T]
+func Vector2::zero() -> Vector2[T]
     //Vector2:
     //    x: T::zero()
     //    y: T::zero()
     pass
 
-fn Vector2::display(self) -> String
+func Vector2::display(self) -> String
     $"({self.x}, {self.y})"
   
 interface Display[T]
     where
         T: Into[String]
-    fn display() -> T
+    func display() -> T
 
 interface Numeric[T]
     extends
@@ -44,38 +44,38 @@ interface Numeric[T]
         Display
     where
         T: Sized
-    fn add(self: T, other: T) -> T
-    fn sub(self: T, other: T) -> T
-    fn mul(self: T, other: T) -> T
-    fn div(self: T, other: T) -> T
-    fn neg(self: T) -> T
+    func add(self, other: T) -> T
+    func sub(self, other: T) -> T
+    func mul(self, other: T) -> T
+    func div(self, other: T) -> T
+    func neg(self) -> T
 
 enum Direction
-    Up
-    Down
-    Left
-    Right
+    UP
+    DOWN
+    LEFT
+    RIGHT
 
 union Either[T, U]
     a: T
     b: U
 
-fn reversed(name: String) -> String
+func reversed(name: String) -> String
     name.reverse()
 
 interface Add[T]
-    fn add(self: T, other: T) -> T
+    func add(self: T, other: T) -> T
 
-fn print(value: String)
+func print(value: String)
     std::print(value)
 
-// fn increment(value: i32) -> i32
+// func increment(value: i32) -> i32
 //    let result =
 //        let incremented = value + 1
 //        incremented
 //    result
 
-fn add::[T](a: T, b: T) -> T
+func add::[T](a: T, b: T) -> T
     where
         T: Add[T]
     let x = 1
@@ -105,7 +105,7 @@ struct math::Matrix[T, U, V, W, X, Y, Z]
 
 // Thus function demonstrates the use of an anonymous union type as a 
 // return type, which can be one of several types depending on the conditions
-fn could() -> i32 | u8 | SomeError:
+func could() -> i32 | u8 | SomeError:
     if some_condition:
       42
     else if some_other_condition:
@@ -115,7 +115,7 @@ fn could() -> i32 | u8 | SomeError:
           reason: "An error occurred"
           timestamp: std::time::now()
 
-fn consume_could() -> ok ! SomeError:
+func consume_could() -> ok ! SomeError:
     let result = could()
     match result:
         i32 any_name => std::print($"Got an integer: {result}")

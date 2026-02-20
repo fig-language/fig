@@ -1,4 +1,5 @@
-fn main::[T, U, V](x: i32, y: i32)
+
+func main::[T, U, V](x: i32, y: i32)
     where
         T: Copy
         U: Display
@@ -13,37 +14,37 @@ fn main::[T, U, V](x: i32, y: i32)
     let msg: string = "Hello world!"
     let special = $"Hello {23}!"
     io.println(msg)
-
-fn add(a: i32, b: i32) -> i32
+    
+func add(a: i32, b: i32) -> i32
     where
         T: Add[T]
         U: Display
     let something = a + (b / 10) == 10
     $"Result is {a.add(b)::C}"
-
-extern fn! malloc(size: usize) -> *mut u8
-extern fn! free(ptr: *mut u8)
-extern fn! memcpy(dest: *mut u8, src: *u8, n: usize) -> *mut u8
-
-fn Vector2::add(a: i32) -> i32
+    
+extern func! malloc(size: usize) -> *mut u8
+extern func! free(ptr: *mut u8)
+extern func! memcpy(dest: *mut u8, src: *u8, n: usize) -> *mut u8
+    
+func Vector2::add(a: i32) -> i32
     where
         T: Add[T]
     self.x += a
     self.y += a
-
-fn Vector2.scale(factor: f64[T]) -> Self
+    
+func Vector2.scale(factor: f64[T]) -> Self
     where
         T: Mul[T]
     self.x *= factor
     self.y *= factor
 
-fn some_string::[T]() -> String
+func some_string::[T]() -> String
     where
         T: Display
         U: Display + Ord + Clone + Hash
     $"This is a string with type {T.display()} and {U.display()}"
 
-fn nop() -> ok
+func nop() -> ok
     pass
 
 let x = 10
@@ -88,11 +89,11 @@ interface Drawable[T]
     extends
         Display
         Debug
-    fn draw(self: Self) -> ok
-    fn resize(self: Self, width: T, height: T) -> ok
+    func draw(self: Self) -> ok
+    func resize(self: Self, width: T, height: T) -> ok
 
 interface Iterator[T]
-    fn next(self: Self) -> Option[T]
+    func next(self: Self) -> Option[T]
 
 const HELLO_THERE = true
 

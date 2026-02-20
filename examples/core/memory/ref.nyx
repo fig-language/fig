@@ -1,0 +1,89 @@
+namespace std::memory::ref
+    
+using std::memory::shared
+
+
+// ======================================================
+// Clone Interface
+// ======================================================
+
+export interface Clone
+    func! clone(*self) -> Self
+
+
+// ======================================================
+// Deref Interfaces
+// ======================================================
+
+export interface Deref[T]
+    func deref(*self) -> *T
+
+export interface DerefMut[T]
+    extends
+        Deref[T]
+    func deref_mut(*mut self) -> *mut T
+
+
+
+// ======================================================
+// Ref[T] — Immutable Reference
+// ======================================================
+
+export struct Ref[T]
+    inner: Shared[T]
+
+
+// -------- Constructors --------
+
+export func![T] Ref[T]::new(value: T) -> Ref[T]
+    let shared = Shared::new(value)
+    return Ref(shared)
+
+
+// -------- Clone Implementation --------
+
+
+export func![T] Ref[T].clone(*self) -> Self
+        return Ref(self.inner.clone())
+
+
+// -------- Deref Implementation --------
+
+export func![T] Ref[T].deref(*self) -> *T
+        return self.inner.borrow()
+
+
+
+// ======================================================
+// RefMut[T] — Mutable Reference
+// ======================================================
+
+export struct RefMut[T]
+    inner: Shared[T]
+
+
+// -------- Constructors --------
+
+export func![T] RefMut[T]::new(value: T) -> RefMut[T]
+    let shared = Shared::new(value)
+    return RefMut(shared)
+
+
+// -------- Clone Implementation --------
+// NOTE: This allows multiple mutable handles.
+// If you want single-writer semantics,
+// you would instead forbid Clone here.
+
+export func![T] RefMut[T].clone(*self) -> Self
+        return RefMut(self.inner.clone())
+
+
+// -------- Deref Implementation --------
+
+export func![T] RefMut[T].deref(*self) -> *T
+        return self.inner.borrow()
+
+
+export func![T] RefMut[T].deref_mut(*mut self) -> *mut T
+        return self.inner.borrow_mut()
+

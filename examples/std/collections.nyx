@@ -3,40 +3,260 @@ namespace std::collections
 using core::memory
 using core::iter
 
-interface List[T]
-    fn! push(self: *mut Self, item: T)
-    fn! pop(self: *mut Self) -> ?T
-    fn! insert(self: *mut Self, index: usize, item: T)
-    fn! remove(self: *mut Self, index: usize) -> ?T
-    fn! clear(self: *mut Self)
+export interface List[T]
+    func! push(*mut self, item: T)
+    func! pop(*mut self) -> ?T
+    func! insert(*mut self, index: usize, item: T)
+    func! remove(*mut self, index: usize) -> ?T
+    func! clear(*mut self)
 
-    fn peek(self: *Self) -> ?*T
-    fn peek_mut(self: *mut Self) -> ?*mut T
-    fn get(self: *Self, index: usize) -> ?*T
-    fn get_mut(self: *mut Self, index: usize) -> ?*mut T
-    fn len(self: *Self) -> usize
+    func peek(*self) -> ?*T
+    func peek_mut(*mut self) -> ?*mut T
+    func get(*self, index: usize) -> ?*T
+    func get_mut(*mut self, index: usize) -> ?*mut T
+    func len(*self) -> usize
 
-    fn iter(self: *Self) -> Iterator[T]
-    fn iter_mut(self: *mut Self) -> Iterator[T]
+    func contains(*self, item: T) -> bool
+    func index_of(*self, item: T) -> ?usize
 
-    fn contains(self: *Self, item: T) -> bool
-    fn index_of(self: *Self, item: T) -> ?usize
+    func iter(*self) -> Iterator[T]
+    func iter_mut(*mut self) -> Iterator[T]
 
 
-struct Seq[T]
-    requires
-        List[T]
-    items: SliceMut[T]
+struct SeqBuffer[T]
+    ptr: *mut T
+    cap: usize
     len: usize
 
+
+export struct Seq[T]
+    requires
+        List[T]
+    buffer: Shared[SeqBuffer[T]]
+
 const[T] Seq[T]::DEFAULT_CAPACITY: usize = 4
+const[T] Seq[T]::GROW_FACTOR: usize = 2
 
-fn![T] Seq[T]::new() -> Seq[T]
-    // Allocate a new empty internal array on the heap using the system allocator.
-    let capacity = Seq[T]::DEFAULT_CAPACITY
-    let items_ptr: *mut T = SystemAllocator.allocate_array![T](capacity)
-    let items = SliceMut::new(items_ptr, capacity)
-    return Seq(items, 0)
+export func![T] Seq[T]::new() -> Seq[T]
+    let cap = Seq[T]::DEFAULT_CAPACITY
+    let ptr: *mut T = SystemAllocator.allocate_array![T](cap)
+    let buf = SeqBuffer(ptr, cap, 0)
+    return Seq(Shared::new(buf))
 
-fn![T] Seq[T]::push(self: *mut Self, item: T)
-    pass
+export func![T] Seq[T]::contains_space(*self) -> bool
+    let buf = self.buffer.borrow()
+    return buf.len < buf.cap
+
+export func![T] Seq[T]::grow(*mut self)
+    let old_buf = self.buffer.borrow()
+    let new_cap = old_buf.cap * Seq[T]::GROW_FACTOR
+    let new_ptr: *mut T = SystemAllocator.allocate_array![T](new_cap)
+    for i in range(0, old_buf.len)
+      *(new_ptr + i) = *(old_buf.ptr + i)
+    let new_buf = SeqBuffer(ptr: new_ptr, cap: new_cap, len: old_buf.len)
+    self.buffer.borrow_mut() = new_buf
+
+export func![T] Seq[T]::push(*mut self, item: T)
+    if !self.contains_space()
+        self.grow()
+    let buf = self.buffer.borrow_mut()
+    *(buf.ptr + buf.len) = item
+    buf.len += 1
+
+
+export func![T] Seq[T]::pop(*mut self) -> ?T
+    let buf = self.buffer.borrow_mut()
+    if buf.len == 0
+        return null
+    buf.len -= 1
+    return *(buf.ptr + buf.len)
+
+export func![T] Seq[T]::insert(*mut self, index: usize, item: T)
+    let buf = self.buffer.borrow_mut()
+    if index > buf.len
+        panic("Index out of bounds")
+    if !self.contains_space()
+        self.grow()
+    for i in range(buf.len, index, -1)
+        *(buf.ptr + i) = *(buf.ptr + i - 1)
+    *(buf.ptr + index) = item
+    buf.len += 1
+
+export func![T] Seq[T]::remove(*mut self, index: usize) -> ?T
+    let buf = self.buffer.borrow_mut()
+    if index >= buf.len
+        return null
+    let item = *(buf.ptr + index)
+    for i in range(index, buf.len - 1)
+        *(buf.ptr + i) = *(buf.ptr + i + 1)
+    buf.len -= 1
+    return item
+
+export func![T] Seq[T]::clear(*mut self)
+    let buf = self.buffer.borrow_mut()
+    buf.len = 0
+
+export func![T] Seq[T]::peek(*self) -> ?*T
+    let buf = self.buffer.borrow()
+    if buf.len == 0
+        return null
+    return (buf.ptr + (buf.len - 1)) as *T
+
+export func![T] Seq[T]::peek_mut(*mut self) -> ?*mut T
+    let buf = self.buffer.borrow_mut()
+    if buf.len == 0
+        return null
+    return buf.ptr + (buf.len - 1)
+
+export func![T] Seq[T]::get(*self, index: usize) -> ?*T
+    let buf = self.buffer.borrow()
+    if index >= buf.len
+        return null
+    return (buf.ptr + index) as *T
+
+export func![T] Seq[T]::get_mut(*mut self, index: usize) -> ?*mut T
+    let buf = self.buffer.borrow_mut()
+    if index >= buf.len
+        return null
+    return buf.ptr + index
+
+export func![T] Seq[T]::len(*self) -> usize
+    let buf = self.buffer.borrow()
+    return buf.len
+
+export func![T] Seq[T]::contains(*self, item: T) -> bool
+    let buf = self.buffer.borrow()
+    for i in range(0, buf.len)
+        if *(buf.ptr + i) == item
+            return true
+    return false
+
+export func![T] Seq[T]::index_of(*self, item: T) -> ?usize
+    let buf = self.buffer.borrow()
+    for i in range(0, buf.len)
+        if *(buf.ptr + i) == item
+            return i
+    return null
+
+export func![T] Seq[T]::iter(*self) -> Iterator[*T]
+    let buf = self.buffer.borrow()
+    return SeqIterator(buf.ptr, buf.len)
+
+export func![T] Seq[T]::iter_mut(*mut self) -> Iterator[*mut T]
+    let buf = self.buffer.borrow_mut()
+    return SeqIteratorMut(buf.ptr, buf.len)
+
+
+struct SeqIterator[T]
+    requires
+        Iterator[*T]
+    ptr: *T
+    len: usize
+    index: usize
+
+export func![T] SeqIterator[T]::new(ptr: *T, len: usize) -> SeqIterator[*T]
+    return SeqIterator(ptr, len, index: 0)
+
+export func![T] SeqIterator[T].next(*mut self) -> ?*T
+    if self.index < self.len
+        let item = self.ptr + self.index
+        self.index += 1
+        return item
+    return null
+
+export struct SeqIteratorMut[T]
+    requires
+        Iterator[*mut T]
+    ptr: *mut T
+    len: usize
+    index: usize
+
+export func![T] SeqIteratorMut[T]::new(ptr: *mut T, len: usize) -> SeqIteratorMut[T]
+    return SeqIteratorMut(ptr, len, index: 0)
+
+export func![T] SeqIteratorMut[T].next(*mut self) -> ?*mut T
+    if self.index < self.len
+        let item: *mut T = self.ptr + self.indx
+        self.index += 1
+        return item
+    return null
+
+
+/// TODO: Implement a linked list data structure that implements List[T].
+/// NOTE: Not yet sure if this, and the other collections, should use
+/// Ref[T], MutRef[T], Shared[T], or raw pointers. Maybe in the future
+/// we could have different versioins of the collections like
+/// LinkedList[T] and LinkedListUnsafe[T]. The LinkedList[T] would use
+/// reference counting to ensure memory safety, while
+/// LinkedListUnsafe[T] would use raw pointers and require the user to
+/// be careful not to cause memory safety issues.
+struct LinkedListNode[T]
+    value: T
+    next: ?*mut LinkedListNode[T]
+
+
+struct LinkedList[T]
+    requires
+        List[T]
+    head: ?*mut LinkedListNode[T]
+    tail: ?*mut LinkedListNode[T]
+    len: usize
+
+export func![T] LinkedList[T]::new() -> LinkedList[T]
+    return LinkedList(head: null, tail: null, len: 0)
+
+export func![T] LinkedList[T]::push(*mut self, item: T)
+    let new_node = SystemAllocator.allocate![LinkedListNode[T]]()
+    (*new_node).value = item
+    (*new_node).next = null
+    if self.head.is_null()
+        self.head = new_node
+        self.tail = new_node
+    else
+        (*self.tail).next = new_node
+        self.tail = new_node
+    self.len += 1
+
+
+struct LinkedListIterator[T]
+    requires
+        Iterator[T]
+    list: Shared[LinkedList[T]]
+    current: ?*mut LinkedListNode[T]
+
+
+struct KeyValuePair[K, V]
+    key: K
+    value: V
+
+
+/// TODO: Implement a hash map using separate chaining with linked lists for collision
+/// resolution. The HashMap struct should support the expected operations including
+/// insertion, deletion, lookup, and iteration over key-value pairs.
+struct HashMap[K, V]
+    buckets: Shared[Seq[KeyValuePair[K, V]]]
+
+
+/// TODO: Implement an iterator for the HashMap that iterates over all the key-value
+/// pairs in the hash map. The iterator should traverse each bucket and yield the
+/// key-value pairs contained within it.
+struct HashMapIterator[K, V]
+    requires
+        Iterator[KeyValuePair[K, V]]
+    map: Shared[HashMap[K, V]]
+    bucket_index: usize
+    pair_index: usize
+
+
+/// TODO: Implement a double-ended queue (deque) data structure that allows for efficient
+/// insertion and deletion at both the front and back of the queue.
+struct Deque[T]
+    front: Shared[Seq[T]]
+    back: Shared[Seq[T]]
+
+
+/// TODO: Implement a B-tree data structure that supports efficient insertion, deletion,
+/// and lookup operations including range queries.
+struct BTreeMap[K, V]
+    root: ?*mut BTreeNode[K, V]
+    len: usize

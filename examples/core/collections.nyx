@@ -1,6 +1,6 @@
 namespace core::collections
 
     
-interface Indexable[T]
-    fn get(*self, index: usize) -> ?T
-    fn len(*self) -> usize
+export interface Indexable[T]
+    func get(*self, index: usize) -> ?T
+    func len(*self) -> usize

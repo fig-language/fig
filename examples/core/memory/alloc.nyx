@@ -4,70 +4,70 @@ using core::memory
 
 /// The Allocator interface, inspired by Odin and Zig.
 /// Any heap allocator must implement these methods.
-interface Allocator
+export interface Allocator
     /// Allocate `size` bytes on the heap. Returns a pointer to the memory.
-    fn! allocate(*self, size: usize) -> *mut u8
+    func! allocate(*self, size: usize) -> *mut u8
 
     /// Deallocate memory previously allocated by this allocator.
-    fn! deallocate(*self, ptr: *mut u8)
+    func! deallocate(*self, ptr: *mut u8)
 
     /// Allocate `size` bytes and initialize them to zero.
-    fn! allocate_zeroed(*self, size: usize) -> *mut u8
+    func! allocate_zeroed(*self, size: usize) -> *mut u8
 
     /// Reallocate a previously allocated block to a new size.
-    fn! reallocate(*self, ptr: *mut u8, new_size: usize) -> *mut u8
+    func! reallocate(*self, ptr: *mut u8, new_size: usize) -> *mut u8
 
     /// Copy memory from `src` to `dest`, similar to `memcpy`.
-    fn! copy(*self, dest: *mut u8, src: *u8, n: usize)
+    func! copy(*self, dest: *mut u8, src: *u8, n: usize)
 
     /// Fill `n` bytes at `dest` with `value`, similar to `memset`.
-    fn! fill(*self, dest: *mut u8, value: u8, n: usize)
+    func! fill(*self, dest: *mut u8, value: u8, n: usize)
 
     /// Compare `n` bytes at `ptr1` and `ptr2`, similar to `memcmp`.
-    fn! compare(*self, ptr1: *u8, ptr2: *u8, n: usize) -> i32
+    func! compare(*self, ptr1: *u8, ptr2: *u8, n: usize) -> i32
 
 
 // A simple system allocator that uses the C standard library functions for memory management.
-struct SystemAllocator
+export struct SystemAllocator
     requires
         Allocator
 
 // ================= Typed allocation (preferred) =================
 
-fn! SystemAllocator::allocate_array[T](*self, count: usize) -> *mut T
+export func! SystemAllocator.allocate_array::[T](*self, count: usize) -> *mut T
     return self.allocate_bytes(sizeof(T) * count) as *mut T
 
-fn! SystemAllocator::allocate[T](*self, count: usize) -> *mut T
+export func! SystemAllocator.allocate::[T](*self, count: usize) -> *mut T
     return self.allocate[T](1)
 
-fn! SystemAllocator::allocate_one[T](*self) -> *mut T
+export func! SystemAllocator.allocate_one::[T](*self) -> *mut T
     return self.allocate
 
 // ================= Byte-level allocation =================
 
-fn! SystemAllocator::allocate_bytes(*self, size: usize) -> *mut u8
+export func! SystemAllocator.allocate_bytes(*self, size: usize) -> *mut u8
     return c::malloc(size)
 
-fn! SystemAllocator::allocate_bytes_zeroed(*self, size: usize) -> *mut u8
+export func! SystemAllocator.allocate_bytes_zeroed(*self, size: usize) -> *mut u8
     let ptr = c::malloc(size)
     if ptr != null
         c::memset(ptr, 0u8, size)
     return ptr
 
-fn! SystemAllocator::reallocate_bytes(*self, ptr: *mut u8, new_size: usize) -> *mut u8
+public func! SystemAllocator.reallocate_bytes(*self, ptr: *mut u8, new_size: usize) -> *mut u8
     return c::realloc(ptr, new_size)
 
-fn! SystemAllocator::deallocate(*self, ptr: *mut u8)
+public func! SystemAllocator.deallocate(*self, ptr: *mut u8)
     return c::free(ptr)
 
 // ================= Byte-level memory manipulation =================
 
-fn! SystemAllocator::copy_bytes(*self, dest: *mut u8, src: *u8, n: usize)
+public func! SystemAllocator.copy_bytes(*self, dest: *mut u8, src: *u8, n: usize)
     return c::memcpy(dest, src, n)
 
-fn! SystemAllocator::fill_bytes(*self, dest: *mut u8, value: u8, n: usize)
+public func! SystemAllocator.fill_bytes(*self, dest: *mut u8, value: u8, n: usize)
     return c::memset(dest, value, n)
 
-fn! SystemAllocator::compare_bytes(*self, ptr1: *u8, ptr2: *u8, n: usize) -> i32
+public func! SystemAllocator.compare_bytes(*self, ptr1: *u8, ptr2: *u8, n: usize) -> i32
     return c::memcmp(ptr1, ptr2, n)
 

@@ -1,26 +1,26 @@
 interface Math
-    fn add(self: Self, other: Self) -> Self
-    fn sub(self: Self, other: Self) -> Self
+    func add(self: Self, other: Self) -> Self
+    func sub(self: Self, other: Self) -> Self
 
 interface AddTo[T]
-    fn add::[Scale](self: Self, other: T, scale: Scale) -> Self
+    func add::[Scale](self: Self, other: T, scale: Scale) -> Self
 
 struct Vector2
     x: f64
     y: f64
 
-fn Vector2.add(other: Vector2) -> Vector2
+func Vector2.add(other: Vector2) -> Vector2
     self.x += other.x
     self.y += other.y
     self
 
-fn Vector2.sub(other: Vector2) -> Vector2
+func Vector2.sub(other: Vector2) -> Vector2
     self.x -= other.x
     self.y -= other.y
     self
 
 
-fn[T] ::*T::add_to::[Scale](other: i32, scale: Scale) -> *T
+func[T] ::*T::add_to::[Scale](other: i32, scale: Scale) -> *T
     pass
 
 
@@ -28,10 +28,10 @@ fn[T] ::*T::add_to::[Scale](other: i32, scale: Scale) -> *T
 // it means *T will NOT satisfy the Math interface because
 // these functions are not methods of *T, they are just free
 // functions that take *T as parameters.
-fn add::[T](self: *T, other: *T) -> *T
+func add::[T](self: *T, other: *T) -> *T
     pass
 
-fn sub::[T](self: *T, other: *T) -> *T
+func sub::[T](self: *T, other: *T) -> *T
     pass
 
 
@@ -41,17 +41,17 @@ fn sub::[T](self: *T, other: *T) -> *T
 // the second add function defines the method *T.sub for every
 // type T. This means that *T will satisfy the Math interface
 // for all T.
-fn[T] ::*T::add(other: *T) -> *T
+func[T] ::*T::add(other: *T) -> *T
     pass
 
-fn[T] ::*T::sub(other: *T) -> *T
+func[T] ::*T::sub(other: *T) -> *T
     pass
 
 // Undecided
-fn[T] ::*T::add(self: *T, other: *T) -> *T
+func[T] ::*T::add(self: *T, other: *T) -> *T
     pass
 
-fn[T] ::*T::sub(self: *T, other: *T) -> *T
+func[T] ::*T::sub(self: *T, other: *T) -> *T
     pass
 
 // Here we have two sets of generic parameters, T and U.
@@ -60,21 +60,21 @@ fn[T] ::*T::sub(self: *T, other: *T) -> *T
 // method called something::[U]. As apposed to T, U is
 // a type parameter that will be specified at the time of
 // the method call.
-fn[T] ::[]T::something::[U](self: []T) -> ok
+func[T] ::[]T::something::[U](self: []T) -> ok
     pass
 
 // This is the same as the previous function but uses the
 // dot syntax for the self parameter. The self paramater
 // is then available implicitly in the function body
-fn[T] ::[]T.something::[U]() -> ok
+func[T] ::[]T.something::[U]() -> ok
     pass
 
 struct Array[T]
     data: []T
     len: usize
 
-fn something::Array[T]::insert(value: T) -> ok
+func something::Array[T]::insert(value: T) -> ok
     pass
 
-fn Array[i32]::cool_insert(value: i32) -> ok
+func Array[i32]::cool_insert(value: i32) -> ok
     pass

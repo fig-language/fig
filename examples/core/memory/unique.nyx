@@ -3,15 +3,15 @@ namespace std::memory::unique
 using core::memory
 
 // ----------------------
-// Inner Unique structure
+// Inner Unique export structure
 // ----------------------
-struct Unique[T]
+export struct Unique[T]
     inner: ?*mut T
 
 // ----------------------
 // Create a new Unique
 // ----------------------
-fn![T] Unique[T]::new(value: T) -> Unique[T]
+export func![T] Unique[T]::new(value: T) -> Unique[T]
     let ptr: *mut T = SystemAllocator.allocate![T]()
     *ptr = value
     return Unique(ptr)
@@ -19,7 +19,7 @@ fn![T] Unique[T]::new(value: T) -> Unique[T]
 // ----------------------
 // Drop the Unique (free memory)
 // ----------------------
-fn![T] Unique[T]::drop(self: *mut Self)
+export func![T] Unique[T].drop(*mut self)
     if self.inner != null
         SystemAllocator.deallocate(self.inner as *mut u8)
         self.inner = null
@@ -29,7 +29,7 @@ fn![T] Unique[T]::drop(self: *mut Self)
 // ----------------------
 
 // Moving a Unique transfers ownership
-fn![T] Unique[T]::move(self: *mut Self) -> Unique[T]
+export func![T] Unique[T].move(*mut self) -> Unique[T]
     let u = Unique(self.inner)
     self.inner = null
     return u
@@ -39,10 +39,19 @@ fn![T] Unique[T]::move(self: *mut Self) -> Unique[T]
 // ----------------------
 
 // Immutable borrow
-fn[T] Unique[T]::get(self: *Self) -> *T
+export func[T] Unique[T].get(*self) -> *T
     return self.inner
 
 // Mutable borrow
-fn[T] Unique[T]::get_mut(self: *mut Self) -> *mut T
+export func[T] Unique[T].get_mut(*mut self) -> *mut T
     return self.inner
 
+// ----------------------
+// Deref implementations
+// ----------------------
+
+export func[T] Unique[T].deref(*self) -> *T
+    return self.get()
+
+export func[T] Unique[T].deref_mut(*mut self) -> *mut T
+    return self.get_mut()

@@ -1,0 +1,53 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Public
+- Func
+- Ident: pub_fn
+- LParen
+- Ident: x
+- Colon
+- I32
+- RParen
+- Arrow
+- I32
+- Newline
+- Indent
+- Return
+- Ident: x
+- Newline
+- Dedent
+- Export
+- Func
+- Ident: exported_fn
+- LParen
+- Ident: x
+- Colon
+- I32
+- RParen
+- Arrow
+- I32
+- Newline
+- Indent
+- Return
+- Ident: x
+- Newline
+- Dedent
+- Private
+- Func
+- Ident: private_fn
+- LParen
+- Ident: x
+- Colon
+- I32
+- RParen
+- Arrow
+- I32
+- Newline
+- Indent
+- Return
+- Ident: x
+- Newline
+- Dedent

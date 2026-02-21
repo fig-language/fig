@@ -27,8 +27,8 @@ pub enum Expression {
     /// String literal
     StringLiteral(String),
 
-    /// Ok literal (unit type)
-    OkLiteral,
+    /// Null literal (unit type)
+    Null,
 
     /// Identifier/variable reference
     Identifier(String),
@@ -150,7 +150,7 @@ pub enum Type {
     F32,
     F64,
     Bool,
-    Ok,
+    Null,
 
     /// Self type (used in methods and interfaces)
     SelfType,

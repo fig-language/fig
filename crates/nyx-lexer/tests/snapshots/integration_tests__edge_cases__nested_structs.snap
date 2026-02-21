@@ -1,0 +1,32 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Struct
+- Ident: Inner
+- Newline
+- Indent
+- Ident: x
+- Colon
+- I32
+- Newline
+- Dedent
+- Struct
+- Ident: Outer
+- Newline
+- Indent
+- Ident: inner
+- Colon
+- Ident: Inner
+- Newline
+- Dedent
+- Struct
+- Ident: DeepNest
+- Newline
+- Indent
+- Ident: outer
+- Colon
+- Ident: Outer
+- Newline
+- Dedent

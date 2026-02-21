@@ -1,0 +1,86 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Enum
+- LBracket
+- U8
+- RBracket
+- Ident: SmallEnum
+- Newline
+- Indent
+- Ident: A
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Ident: B
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "127"
+    suffix: ~
+- Newline
+- Ident: C
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "255"
+    suffix: ~
+- Newline
+- Dedent
+- Enum
+- LBracket
+- U16
+- RBracket
+- Ident: MediumEnum
+- Newline
+- Indent
+- Ident: FIRST
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Ident: LAST
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "65535"
+    suffix: ~
+- Newline
+- Dedent
+- Enum
+- LBracket
+- I32
+- RBracket
+- Ident: SignedEnum
+- Newline
+- Indent
+- Ident: NEG
+- Eq
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Ident: ZERO
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Ident: POS
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent

@@ -1,0 +1,40 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Type
+- Ident: HashMap
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Eq
+- Core
+- Colon
+- Colon
+- Ident: Map
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Type
+- Ident: Set
+- LBracket
+- Ident: T
+- RBracket
+- Eq
+- Std
+- Colon
+- Colon
+- Ident: collections
+- Colon
+- Colon
+- Ident: HashSet
+- LBracket
+- Ident: T
+- RBracket
+- Newline

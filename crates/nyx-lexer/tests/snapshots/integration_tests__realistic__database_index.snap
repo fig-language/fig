@@ -1,0 +1,2297 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Using
+- Core
+- Colon
+- Colon
+- Ident: memory
+- Newline
+- Const
+- Ident: ORDER
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "100"
+    suffix: ~
+- Newline
+- Const
+- Ident: MIN_KEYS
+- Colon
+- USize
+- Eq
+- Ident: ORDER
+- Slash
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Enum
+- Ident: NodeType
+- Newline
+- Indent
+- Ident: LEAF
+- Newline
+- Ident: INTERNAL
+- Newline
+- Dedent
+- Struct
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Indent
+- Ident: keys
+- Colon
+- LBracket
+- Ident: K
+- RBracket
+- Newline
+- Ident: values
+- Colon
+- LBracket
+- Ident: V
+- RBracket
+- Newline
+- Ident: children
+- Colon
+- LBracket
+- Star
+- Mut
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- RBracket
+- Newline
+- Ident: next_leaf
+- Colon
+- Question
+- Star
+- Mut
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Ident: node_type
+- Colon
+- Ident: NodeType
+- Newline
+- Ident: num_keys
+- Colon
+- USize
+- Newline
+- Ident: parent
+- Colon
+- Question
+- Star
+- Mut
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Dedent
+- Export
+- Struct
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Indent
+- Ident: root
+- Colon
+- Question
+- Star
+- Mut
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Ident: first_leaf
+- Colon
+- Question
+- Star
+- Mut
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Ident: size
+- Colon
+- USize
+- Newline
+- Ident: height
+- Colon
+- USize
+- Newline
+- Dedent
+- Struct
+- Ident: RangeQueryResult
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Indent
+- Ident: keys
+- Colon
+- LBracket
+- Ident: K
+- RBracket
+- Newline
+- Ident: values
+- Colon
+- LBracket
+- Ident: V
+- RBracket
+- Newline
+- Ident: count
+- Colon
+- USize
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Arrow
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Indent
+- Return
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- LParen
+- Newline
+- Indent
+- Ident: root
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: first_leaf
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: size
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Newline
+- Ident: height
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Dedent
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: insert
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: key
+- Colon
+- Ident: K
+- Comma
+- Ident: value
+- Colon
+- Ident: V
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Where
+- Ident: K
+- Colon
+- Ident: Ord
+- Plus
+- Ident: Clone
+- Comma
+- Ident: V
+- Colon
+- Ident: Clone
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: root
+- EqEq
+- "Null"
+- Newline
+- Indent
+- Let
+- Ident: leaf
+- Eq
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: new_leaf
+- LParen
+- RParen
+- Newline
+- Ident: leaf
+- Dot
+- Ident: keys
+- Dot
+- Ident: push
+- LParen
+- Ident: key
+- RParen
+- Newline
+- Ident: leaf
+- Dot
+- Ident: values
+- Dot
+- Ident: push
+- LParen
+- Ident: value
+- RParen
+- Newline
+- Ident: leaf
+- Dot
+- Ident: num_keys
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- SelfLower
+- Dot
+- Ident: root
+- Eq
+- Ident: leaf
+- Newline
+- SelfLower
+- Dot
+- Ident: first_leaf
+- Eq
+- Ident: leaf
+- Newline
+- SelfLower
+- Dot
+- Ident: size
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- SelfLower
+- Dot
+- Ident: height
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Return
+- OkLiteral
+- Newline
+- Newline
+- Dedent
+- Let
+- Ident: insertion_leaf
+- Eq
+- SelfLower
+- Dot
+- Ident: find_leaf
+- LParen
+- SelfLower
+- Dot
+- Ident: root
+- Comma
+- Ident: key
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: insert_into_leaf
+- LParen
+- Ident: insertion_leaf
+- Comma
+- Ident: key
+- Comma
+- Ident: value
+- RParen
+- Newline
+- Newline
+- SelfLower
+- Dot
+- Ident: size
+- Eq
+- SelfLower
+- Dot
+- Ident: size
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: insert_into_leaf
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: leaf
+- Colon
+- Star
+- Mut
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Comma
+- Ident: key
+- Colon
+- Ident: K
+- Comma
+- Ident: value
+- Colon
+- Ident: V
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Where
+- Ident: K
+- Colon
+- Ident: Ord
+- Plus
+- Ident: Clone
+- Comma
+- Ident: V
+- Colon
+- Ident: Clone
+- Newline
+- Mut
+- Ident: insert_pos
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: leaf
+- Dot
+- Ident: num_keys
+- RParen
+- Newline
+- Indent
+- If
+- Ident: key
+- Dot
+- Ident: compare
+- LParen
+- And
+- Ident: leaf
+- Dot
+- Ident: keys
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- Lt
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- Break
+- Newline
+- Dedent
+- Ident: insert_pos
+- Eq
+- Ident: i
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Dedent
+- Ident: leaf
+- Dot
+- Ident: keys
+- Dot
+- Ident: insert
+- LParen
+- Ident: insert_pos
+- Comma
+- Ident: key
+- RParen
+- Newline
+- Ident: leaf
+- Dot
+- Ident: values
+- Dot
+- Ident: insert
+- LParen
+- Ident: insert_pos
+- Comma
+- Ident: value
+- RParen
+- Newline
+- Ident: leaf
+- Dot
+- Ident: num_keys
+- Eq
+- Ident: leaf
+- Dot
+- Ident: num_keys
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- If
+- Ident: leaf
+- Dot
+- Ident: num_keys
+- Gt
+- Ident: ORDER
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: split_leaf
+- LParen
+- Ident: leaf
+- RParen
+- Newline
+- Newline
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: split_leaf
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: leaf
+- Colon
+- Star
+- Mut
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Where
+- Ident: K
+- Colon
+- Ident: Clone
+- Comma
+- Ident: V
+- Colon
+- Ident: Clone
+- Newline
+- Let
+- Ident: new_leaf
+- Eq
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: new_leaf
+- LParen
+- RParen
+- Newline
+- Newline
+- Let
+- Ident: mid
+- Eq
+- Ident: ORDER
+- Slash
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- Ident: mid
+- Comma
+- Ident: leaf
+- Dot
+- Ident: num_keys
+- RParen
+- Newline
+- Indent
+- Ident: new_leaf
+- Dot
+- Ident: keys
+- Dot
+- Ident: push
+- LParen
+- Ident: leaf
+- Dot
+- Ident: keys
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- Newline
+- Ident: new_leaf
+- Dot
+- Ident: values
+- Dot
+- Ident: push
+- LParen
+- Ident: leaf
+- Dot
+- Ident: values
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- Newline
+- Newline
+- Dedent
+- Ident: new_leaf
+- Dot
+- Ident: num_keys
+- Eq
+- Ident: leaf
+- Dot
+- Ident: num_keys
+- Minus
+- Ident: mid
+- Newline
+- Ident: leaf
+- Dot
+- Ident: num_keys
+- Eq
+- Ident: mid
+- Newline
+- Newline
+- Ident: new_leaf
+- Dot
+- Ident: next_leaf
+- Eq
+- Ident: leaf
+- Dot
+- Ident: next_leaf
+- Newline
+- Ident: leaf
+- Dot
+- Ident: next_leaf
+- Eq
+- Ident: new_leaf
+- Newline
+- Newline
+- Let
+- Ident: promoted_key
+- Eq
+- Ident: new_leaf
+- Dot
+- Ident: keys
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RBracket
+- Newline
+- Newline
+- If
+- Ident: leaf
+- Dot
+- Ident: parent
+- EqEq
+- "Null"
+- Newline
+- Indent
+- Let
+- Ident: new_root
+- Eq
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: new_internal
+- LParen
+- RParen
+- Newline
+- Ident: new_root
+- Dot
+- Ident: keys
+- Dot
+- Ident: push
+- LParen
+- Ident: promoted_key
+- RParen
+- Newline
+- Ident: new_root
+- Dot
+- Ident: children
+- Dot
+- Ident: push
+- LParen
+- Ident: leaf
+- RParen
+- Newline
+- Ident: new_root
+- Dot
+- Ident: children
+- Dot
+- Ident: push
+- LParen
+- Ident: new_leaf
+- RParen
+- Newline
+- Ident: new_root
+- Dot
+- Ident: num_keys
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Ident: leaf
+- Dot
+- Ident: parent
+- Eq
+- Ident: new_root
+- Newline
+- Ident: new_leaf
+- Dot
+- Ident: parent
+- Eq
+- Ident: new_root
+- Newline
+- Newline
+- SelfLower
+- Dot
+- Ident: root
+- Eq
+- Ident: new_root
+- Newline
+- SelfLower
+- Dot
+- Ident: height
+- Eq
+- SelfLower
+- Dot
+- Ident: height
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- Else
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: insert_into_parent
+- LParen
+- Ident: leaf
+- Dot
+- Ident: parent
+- Comma
+- Ident: promoted_key
+- Comma
+- Ident: new_leaf
+- RParen
+- Newline
+- Newline
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: insert_into_parent
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: parent
+- Colon
+- Star
+- Mut
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Comma
+- Ident: key
+- Colon
+- Ident: K
+- Comma
+- Ident: child
+- Colon
+- Star
+- Mut
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Where
+- Ident: K
+- Colon
+- Ident: Ord
+- Plus
+- Ident: Clone
+- Newline
+- Mut
+- Ident: insert_pos
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: parent
+- Dot
+- Ident: num_keys
+- RParen
+- Newline
+- Indent
+- If
+- Ident: key
+- Dot
+- Ident: compare
+- LParen
+- And
+- Ident: parent
+- Dot
+- Ident: keys
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- Lt
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- Break
+- Newline
+- Dedent
+- Ident: insert_pos
+- Eq
+- Ident: i
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Dedent
+- Ident: parent
+- Dot
+- Ident: keys
+- Dot
+- Ident: insert
+- LParen
+- Ident: insert_pos
+- Comma
+- Ident: key
+- RParen
+- Newline
+- Ident: parent
+- Dot
+- Ident: children
+- Dot
+- Ident: insert
+- LParen
+- Ident: insert_pos
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Comma
+- Ident: child
+- RParen
+- Newline
+- Ident: parent
+- Dot
+- Ident: num_keys
+- Eq
+- Ident: parent
+- Dot
+- Ident: num_keys
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Ident: child
+- Dot
+- Ident: parent
+- Eq
+- Ident: parent
+- Newline
+- Newline
+- If
+- Ident: parent
+- Dot
+- Ident: num_keys
+- Gt
+- Ident: ORDER
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: split_internal
+- LParen
+- Ident: parent
+- RParen
+- Newline
+- Newline
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: split_internal
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: node
+- Colon
+- Star
+- Mut
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Where
+- Ident: K
+- Colon
+- Ident: Clone
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: find_leaf
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: node
+- Colon
+- Star
+- Mut
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Comma
+- Ident: key
+- Colon
+- Ident: K
+- RParen
+- Arrow
+- Star
+- Mut
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Indent
+- Where
+- Ident: K
+- Colon
+- Ident: Ord
+- Newline
+- If
+- Ident: node
+- Dot
+- Ident: is_leaf
+- LParen
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: node
+- Newline
+- Newline
+- Dedent
+- Mut
+- Ident: child_index
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: node
+- Dot
+- Ident: num_keys
+- RParen
+- Newline
+- Indent
+- If
+- Ident: key
+- Dot
+- Ident: compare
+- LParen
+- And
+- Ident: node
+- Dot
+- Ident: keys
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- Lt
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- Break
+- Newline
+- Dedent
+- Ident: child_index
+- Eq
+- Ident: i
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Dedent
+- Return
+- SelfLower
+- Dot
+- Ident: find_leaf
+- LParen
+- Ident: node
+- Dot
+- Ident: children
+- LBracket
+- Ident: child_index
+- RBracket
+- Comma
+- Ident: key
+- RParen
+- Newline
+- Dedent
+- Func
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: search
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: key
+- Colon
+- Ident: K
+- RParen
+- Arrow
+- Question
+- Star
+- Ident: V
+- Newline
+- Indent
+- Where
+- Ident: K
+- Colon
+- Ident: Ord
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: root
+- EqEq
+- "Null"
+- Newline
+- Indent
+- Return
+- "Null"
+- Newline
+- Newline
+- Dedent
+- Let
+- Ident: leaf
+- Eq
+- SelfLower
+- Dot
+- Ident: find_leaf
+- LParen
+- SelfLower
+- Dot
+- Ident: root
+- Comma
+- Ident: key
+- RParen
+- Newline
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: leaf
+- Dot
+- Ident: num_keys
+- RParen
+- Newline
+- Indent
+- If
+- Ident: key
+- Dot
+- Ident: compare
+- LParen
+- And
+- Ident: leaf
+- Dot
+- Ident: keys
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- And
+- Ident: leaf
+- Dot
+- Ident: values
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Return
+- "Null"
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: range_query
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: start
+- Colon
+- Ident: K
+- Comma
+- Ident: end
+- Colon
+- Ident: K
+- RParen
+- Arrow
+- Ident: RangeQueryResult
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Indent
+- Where
+- Ident: K
+- Colon
+- Ident: Ord
+- Plus
+- Ident: Clone
+- Comma
+- Ident: V
+- Colon
+- Ident: Clone
+- Newline
+- Mut
+- Ident: result
+- Eq
+- Ident: RangeQueryResult
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- LParen
+- Ident: keys
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Ident: values
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Ident: count
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RParen
+- Newline
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: root
+- EqEq
+- "Null"
+- Newline
+- Indent
+- Return
+- Ident: result
+- Newline
+- Newline
+- Dedent
+- Let
+- Ident: leaf
+- Eq
+- SelfLower
+- Dot
+- Ident: find_leaf
+- LParen
+- SelfLower
+- Dot
+- Ident: root
+- Comma
+- Ident: start
+- RParen
+- Newline
+- Newline
+- Mut
+- Ident: current
+- Eq
+- Ident: leaf
+- Newline
+- Newline
+- For
+- Ident: round
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "1000"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- If
+- Ident: current
+- EqEq
+- "Null"
+- Newline
+- Indent
+- Break
+- Newline
+- Newline
+- Dedent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: current
+- Dot
+- Ident: num_keys
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: key
+- Eq
+- And
+- Ident: current
+- Dot
+- Ident: keys
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Newline
+- If
+- Ident: key
+- Dot
+- Ident: compare
+- LParen
+- And
+- Ident: start
+- RParen
+- Ge
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- AndAnd
+- Ident: key
+- Dot
+- Ident: compare
+- LParen
+- And
+- Ident: end
+- RParen
+- Le
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- Ident: result
+- Dot
+- Ident: keys
+- Dot
+- Ident: push
+- LParen
+- Ident: current
+- Dot
+- Ident: keys
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- Newline
+- Ident: result
+- Dot
+- Ident: values
+- Dot
+- Ident: push
+- LParen
+- Ident: current
+- Dot
+- Ident: values
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- Newline
+- Ident: result
+- Dot
+- Ident: count
+- Eq
+- Ident: result
+- Dot
+- Ident: count
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Dedent
+- If
+- Ident: key
+- Dot
+- Ident: compare
+- LParen
+- And
+- Ident: end
+- RParen
+- Gt
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- Break
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Ident: current
+- Eq
+- Ident: current
+- Dot
+- Ident: next_leaf
+- Newline
+- Newline
+- Dedent
+- Return
+- Ident: result
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: scan_all
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Ident: RangeQueryResult
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Indent
+- Where
+- Ident: K
+- Colon
+- Ident: Clone
+- Comma
+- Ident: V
+- Colon
+- Ident: Clone
+- Newline
+- Mut
+- Ident: result
+- Eq
+- Ident: RangeQueryResult
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- LParen
+- Ident: keys
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Ident: values
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Ident: count
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RParen
+- Newline
+- Newline
+- Mut
+- Ident: current
+- Eq
+- SelfLower
+- Dot
+- Ident: first_leaf
+- Newline
+- Newline
+- For
+- Ident: round
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "1000"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- If
+- Ident: current
+- EqEq
+- "Null"
+- Newline
+- Indent
+- Break
+- Newline
+- Newline
+- Dedent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: current
+- Dot
+- Ident: num_keys
+- RParen
+- Newline
+- Indent
+- Ident: result
+- Dot
+- Ident: keys
+- Dot
+- Ident: push
+- LParen
+- Ident: current
+- Dot
+- Ident: keys
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- Newline
+- Ident: result
+- Dot
+- Ident: values
+- Dot
+- Ident: push
+- LParen
+- Ident: current
+- Dot
+- Ident: values
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- Newline
+- Ident: result
+- Dot
+- Ident: count
+- Eq
+- Ident: result
+- Dot
+- Ident: count
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Dedent
+- Ident: current
+- Eq
+- Ident: current
+- Dot
+- Ident: next_leaf
+- Newline
+- Newline
+- Dedent
+- Return
+- Ident: result
+- Newline
+- Dedent
+- Func
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: len
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- USize
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: size
+- Newline
+- Dedent
+- Func
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: height
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- USize
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: height
+- Newline
+- Dedent
+- Func
+- Ident: BPlusTree
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: is_empty
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: size
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: new_leaf
+- LParen
+- RParen
+- Arrow
+- Star
+- Mut
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: node
+- Eq
+- Ident: allocate
+- LBracket
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- RBracket
+- LParen
+- RParen
+- Newline
+- Ident: node
+- Dot
+- Ident: keys
+- Eq
+- LBracket
+- RBracket
+- Newline
+- Ident: node
+- Dot
+- Ident: values
+- Eq
+- LBracket
+- RBracket
+- Newline
+- Ident: node
+- Dot
+- Ident: children
+- Eq
+- LBracket
+- RBracket
+- Newline
+- Ident: node
+- Dot
+- Ident: next_leaf
+- Eq
+- "Null"
+- Newline
+- Ident: node
+- Dot
+- Ident: node_type
+- Eq
+- Ident: NodeType
+- Colon
+- Colon
+- Ident: LEAF
+- Newline
+- Ident: node
+- Dot
+- Ident: num_keys
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Ident: node
+- Dot
+- Ident: parent
+- Eq
+- "Null"
+- Newline
+- Return
+- Ident: node
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: new_internal
+- LParen
+- RParen
+- Arrow
+- Star
+- Mut
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: node
+- Eq
+- Ident: allocate
+- LBracket
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- RBracket
+- LParen
+- RParen
+- Newline
+- Ident: node
+- Dot
+- Ident: keys
+- Eq
+- LBracket
+- RBracket
+- Newline
+- Ident: node
+- Dot
+- Ident: values
+- Eq
+- LBracket
+- RBracket
+- Newline
+- Ident: node
+- Dot
+- Ident: children
+- Eq
+- LBracket
+- RBracket
+- Newline
+- Ident: node
+- Dot
+- Ident: next_leaf
+- Eq
+- "Null"
+- Newline
+- Ident: node
+- Dot
+- Ident: node_type
+- Eq
+- Ident: NodeType
+- Colon
+- Colon
+- Ident: INTERNAL
+- Newline
+- Ident: node
+- Dot
+- Ident: num_keys
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Ident: node
+- Dot
+- Ident: parent
+- Eq
+- "Null"
+- Newline
+- Return
+- Ident: node
+- Newline
+- Dedent
+- Func
+- Ident: BPlusTreeNode
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: is_leaf
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: node_type
+- EqEq
+- Ident: NodeType
+- Colon
+- Colon
+- Ident: LEAF
+- Newline
+- Newline
+- Dedent
+- Interface
+- Ident: Ord
+- Newline
+- Indent
+- Func
+- Ident: compare
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: other
+- Colon
+- Star
+- SelfKeyword
+- RParen
+- Arrow
+- I32
+- Newline
+- Dedent
+- Interface
+- Ident: Clone
+- Newline
+- Indent
+- Func
+- Ident: clone
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- SelfKeyword
+- Newline
+- Newline
+- Dedent
+- Struct
+- Ident: CompositeKey
+- Newline
+- Indent
+- Ident: primary
+- Colon
+- U64
+- Newline
+- Ident: secondary
+- Colon
+- U64
+- Newline
+- Dedent
+- Func
+- Ident: CompositeKey
+- Colon
+- Colon
+- Ident: compare
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: other
+- Colon
+- Star
+- Ident: CompositeKey
+- RParen
+- Arrow
+- I32
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: primary
+- Lt
+- Ident: other
+- Dot
+- Ident: primary
+- Newline
+- Indent
+- Return
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Dedent
+- If
+- SelfLower
+- Dot
+- Ident: primary
+- Gt
+- Ident: other
+- Dot
+- Ident: primary
+- Newline
+- Indent
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Dedent
+- If
+- SelfLower
+- Dot
+- Ident: secondary
+- Lt
+- Ident: other
+- Dot
+- Ident: secondary
+- Newline
+- Indent
+- Return
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Dedent
+- If
+- SelfLower
+- Dot
+- Ident: secondary
+- Gt
+- Ident: other
+- Dot
+- Ident: secondary
+- Newline
+- Indent
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Dedent
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Dedent
+- Func
+- Ident: CompositeKey
+- Colon
+- Colon
+- Ident: clone
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Ident: CompositeKey
+- Newline
+- Indent
+- Return
+- Ident: CompositeKey
+- LParen
+- Ident: primary
+- Colon
+- SelfLower
+- Dot
+- Ident: primary
+- Comma
+- Ident: secondary
+- Colon
+- SelfLower
+- Dot
+- Ident: secondary
+- RParen
+- Newline
+- Dedent
+- Struct
+- Ident: Record
+- Newline
+- Indent
+- Ident: id
+- Colon
+- U64
+- Newline
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: age
+- Colon
+- U32
+- Newline
+- Ident: active
+- Colon
+- Bool
+- Newline
+- Dedent
+- Func
+- Ident: Record
+- Colon
+- Colon
+- Ident: clone
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Ident: Record
+- Newline
+- Indent
+- Return
+- Ident: Record
+- LParen
+- Ident: id
+- Colon
+- SelfLower
+- Dot
+- Ident: id
+- Comma
+- Ident: name
+- Colon
+- SelfLower
+- Dot
+- Ident: name
+- Comma
+- Ident: age
+- Colon
+- SelfLower
+- Dot
+- Ident: age
+- Comma
+- Ident: active
+- Colon
+- SelfLower
+- Dot
+- Ident: active
+- RParen
+- Newline
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: allocate
+- LBracket
+- Ident: T
+- RBracket
+- LParen
+- RParen
+- Arrow
+- Star
+- Mut
+- Ident: T
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

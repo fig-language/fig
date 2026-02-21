@@ -1,0 +1,54 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Let
+- Ident: _unused
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "42"
+    suffix: ~
+- Newline
+- Mut
+- Ident: _counter
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Let
+- Ident: __low
+- Eq
+- "True"
+- Newline
+- Let
+- Ident: _x_
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "99"
+    suffix: ~
+- Newline
+- Func
+- Ident: _helper
+- LParen
+- Ident: _arg
+- Colon
+- I32
+- RParen
+- Arrow
+- I32
+- Newline
+- Indent
+- Return
+- Ident: _arg
+- Star
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Dedent

@@ -21,6 +21,8 @@ pub enum Token {
     #[regex(r"(\r?\n)+")]
     Newline,
     // Keywords
+    #[token("func")]
+    Func,
     #[token("fn")]
     Fn,
     #[token("let")]
@@ -49,14 +51,20 @@ pub enum Token {
     False,
     #[token("ok")]
     OkLiteral,
+    #[token("null")]
+    Null,
     #[token("raw")]
     Raw,
     #[token("super")]
     Super,
+    #[token("self")]
+    SelfLower,
     #[token("if")]
     If,
     #[token("else")]
     Else,
+    #[token("elif")]
+    Elif,
     #[token("for")]
     For,
     #[token("while")]
@@ -85,6 +93,34 @@ pub enum Token {
     Namespace,
     #[token("pass")]
     Pass,
+    #[token("block")]
+    Block,
+    #[token("using")]
+    Using,
+    #[token("extern")]
+    Extern,
+    #[token("packed")]
+    Packed,
+    #[token("public")]
+    Public,
+    #[token("export")]
+    Export,
+    #[token("private")]
+    Private,
+    #[token("as")]
+    As,
+    #[token("sizeof")]
+    Sizeof,
+    #[token("alignof")]
+    Alignof,
+    #[token("offsetof")]
+    Offsetof,
+    #[token("std")]
+    Std,
+    #[token("core")]
+    Core,
+    #[token("alloc")]
+    Alloc,
 
     // Primitive Types
     #[token("u8")]

@@ -1,0 +1,19 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Interface
+- Ident: Printable
+- Newline
+- Indent
+- Func
+- Ident: print
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Dedent

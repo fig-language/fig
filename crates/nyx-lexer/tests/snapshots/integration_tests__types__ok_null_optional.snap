@@ -1,0 +1,33 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Type
+- Ident: Unit
+- Eq
+- OkLiteral
+- Newline
+- Type
+- Ident: Nothing
+- Eq
+- "Null"
+- Newline
+- Type
+- Ident: OptInt
+- Eq
+- Question
+- I32
+- Newline
+- Type
+- Ident: OptBool
+- Eq
+- Question
+- Bool
+- Newline
+- Type
+- Ident: OptFloat
+- Eq
+- Question
+- F64
+- Newline

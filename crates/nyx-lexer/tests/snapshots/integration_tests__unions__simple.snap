@@ -1,0 +1,18 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Union
+- Ident: IntOrFloat
+- Newline
+- Indent
+- Ident: integer
+- Colon
+- I32
+- Newline
+- Ident: floating
+- Colon
+- F64
+- Newline
+- Dedent

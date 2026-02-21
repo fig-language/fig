@@ -1,0 +1,193 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Namespace
+- Ident: str
+- Newline
+- Func
+- Ident: len
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- USize
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: is_empty
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- Ident: len
+- LParen
+- Ident: s
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Dedent
+- Func
+- Ident: starts_with
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: prefix
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: ends_with
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: suffix
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: contains
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: sub
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: trim
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: split
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: delimiter
+- Colon
+- U8
+- RParen
+- Arrow
+- LBracket
+- LBracket
+- U8
+- RBracket
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: to_upper
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: to_lower
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

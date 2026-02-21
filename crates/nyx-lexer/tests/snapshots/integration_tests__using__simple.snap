@@ -1,0 +1,23 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Using
+- Std
+- Colon
+- Colon
+- Ident: io
+- Newline
+- Using
+- Core
+- Colon
+- Colon
+- Ident: memory
+- Newline
+- Using
+- Core
+- Colon
+- Colon
+- Ident: iter
+- Newline

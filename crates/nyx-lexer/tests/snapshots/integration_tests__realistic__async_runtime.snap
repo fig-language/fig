@@ -1,0 +1,2407 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Using
+- Core
+- Colon
+- Colon
+- Ident: memory
+- Newline
+- Using
+- Std
+- Colon
+- Colon
+- Ident: sync
+- Newline
+- Enum
+- Ident: TaskState
+- Newline
+- Indent
+- Ident: READY
+- Newline
+- Ident: RUNNING
+- Newline
+- Ident: SUSPENDED
+- Newline
+- Ident: COMPLETED
+- Newline
+- Ident: CANCELLED
+- Newline
+- Dedent
+- Union
+- Ident: PollResult
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- Ident: ready
+- Colon
+- Ident: T
+- Newline
+- Ident: pending
+- Colon
+- OkLiteral
+- Newline
+- Dedent
+- Export
+- Struct
+- Ident: Future
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- Ident: poll_fn
+- Colon
+- Star
+- Fn
+- LParen
+- Star
+- Mut
+- Ident: Context
+- RParen
+- Arrow
+- Ident: PollResult
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Ident: state
+- Colon
+- Ident: TaskState
+- Newline
+- Ident: waker
+- Colon
+- Question
+- Ident: Waker
+- Newline
+- Dedent
+- Export
+- Struct
+- Ident: Task
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- Ident: id
+- Colon
+- U64
+- Newline
+- Ident: future
+- Colon
+- Ident: Future
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Ident: priority
+- Colon
+- U8
+- Newline
+- Ident: wake_count
+- Colon
+- USize
+- Newline
+- Dedent
+- Export
+- Struct
+- Ident: Runtime
+- Newline
+- Indent
+- Ident: task_queue
+- Colon
+- Ident: TaskQueue
+- Newline
+- Ident: executor
+- Colon
+- Ident: Executor
+- Newline
+- Ident: reactor
+- Colon
+- Ident: Reactor
+- Newline
+- Ident: running
+- Colon
+- Bool
+- Newline
+- Ident: next_task_id
+- Colon
+- U64
+- Newline
+- Dedent
+- Struct
+- Ident: Context
+- Newline
+- Indent
+- Ident: waker
+- Colon
+- Ident: Waker
+- Newline
+- Ident: task_id
+- Colon
+- U64
+- Newline
+- Dedent
+- Struct
+- Ident: Waker
+- Newline
+- Indent
+- Ident: task_id
+- Colon
+- U64
+- Newline
+- Ident: wake_fn
+- Colon
+- Star
+- Fn
+- LParen
+- U64
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Dedent
+- Struct
+- Ident: Executor
+- Newline
+- Indent
+- Ident: ready_queue
+- Colon
+- LBracket
+- U64
+- RBracket
+- Newline
+- Ident: tasks
+- Colon
+- Ident: HashMap
+- LBracket
+- U64
+- Comma
+- Ident: Task
+- LBracket
+- OkLiteral
+- RBracket
+- RBracket
+- Newline
+- Ident: current_task
+- Colon
+- Question
+- U64
+- Newline
+- Dedent
+- Struct
+- Ident: Reactor
+- Newline
+- Indent
+- Ident: io_completions
+- Colon
+- LBracket
+- Ident: IoCompletion
+- RBracket
+- Newline
+- Ident: timers
+- Colon
+- LBracket
+- Ident: Timer
+- RBracket
+- Newline
+- Ident: epoll_fd
+- Colon
+- I32
+- Newline
+- Dedent
+- Struct
+- Ident: TaskQueue
+- Newline
+- Indent
+- Ident: tasks
+- Colon
+- LBracket
+- U64
+- RBracket
+- Newline
+- Ident: lock
+- Colon
+- Ident: Mutex
+- Newline
+- Ident: condition
+- Colon
+- Ident: ConditionVariable
+- Newline
+- Dedent
+- Struct
+- Ident: IoCompletion
+- Newline
+- Indent
+- Ident: task_id
+- Colon
+- U64
+- Newline
+- Ident: fd
+- Colon
+- I32
+- Newline
+- Ident: ready
+- Colon
+- Bool
+- Newline
+- Dedent
+- Struct
+- Ident: Timer
+- Newline
+- Indent
+- Ident: task_id
+- Colon
+- U64
+- Newline
+- Ident: deadline
+- Colon
+- U64
+- Newline
+- Ident: fired
+- Colon
+- Bool
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Runtime
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Arrow
+- Ident: Runtime
+- Newline
+- Indent
+- Return
+- Ident: Runtime
+- LParen
+- Newline
+- Indent
+- Ident: task_queue
+- Colon
+- Ident: TaskQueue
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Comma
+- Newline
+- Ident: executor
+- Colon
+- Ident: Executor
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Comma
+- Newline
+- Ident: reactor
+- Colon
+- Ident: Reactor
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Comma
+- Newline
+- Ident: running
+- Colon
+- "False"
+- Comma
+- Newline
+- Ident: next_task_id
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Dedent
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Runtime
+- Colon
+- Colon
+- Ident: spawn
+- LBracket
+- Ident: T
+- RBracket
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: future
+- Colon
+- Ident: Future
+- LBracket
+- Ident: T
+- RBracket
+- RParen
+- Arrow
+- U64
+- Newline
+- Indent
+- Let
+- Ident: task_id
+- Eq
+- SelfLower
+- Dot
+- Ident: next_task_id
+- Newline
+- SelfLower
+- Dot
+- Ident: next_task_id
+- Eq
+- SelfLower
+- Dot
+- Ident: next_task_id
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Let
+- Ident: task
+- Eq
+- Ident: Task
+- LBracket
+- Ident: T
+- RBracket
+- LParen
+- Newline
+- Indent
+- Ident: id
+- Colon
+- Ident: task_id
+- Comma
+- Newline
+- Ident: future
+- Colon
+- Ident: future
+- Comma
+- Newline
+- Ident: priority
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Newline
+- Ident: wake_count
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Dedent
+- RParen
+- Newline
+- Newline
+- SelfLower
+- Dot
+- Ident: executor
+- Dot
+- Ident: add_task
+- LParen
+- Ident: task_id
+- Comma
+- Ident: task
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: task_queue
+- Dot
+- Ident: push
+- LParen
+- Ident: task_id
+- RParen
+- Newline
+- Newline
+- Return
+- Ident: task_id
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Runtime
+- Colon
+- Colon
+- Ident: block_on
+- LBracket
+- Ident: T
+- RBracket
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: future
+- Colon
+- Ident: Future
+- LBracket
+- Ident: T
+- RBracket
+- RParen
+- Arrow
+- Ident: T
+- Newline
+- Indent
+- Let
+- Ident: task_id
+- Eq
+- SelfLower
+- Dot
+- Ident: spawn
+- LBracket
+- Ident: T
+- RBracket
+- LParen
+- Ident: future
+- RParen
+- Newline
+- Newline
+- SelfLower
+- Dot
+- Ident: running
+- Eq
+- "True"
+- Newline
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "1000000"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- If
+- Bang
+- SelfLower
+- Dot
+- Ident: running
+- Newline
+- Indent
+- Break
+- Newline
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: run_once
+- LParen
+- RParen
+- Newline
+- Newline
+- Let
+- Ident: task
+- Eq
+- SelfLower
+- Dot
+- Ident: executor
+- Dot
+- Ident: get_task
+- LParen
+- Ident: task_id
+- RParen
+- Newline
+- If
+- Ident: task
+- Ne
+- "Null"
+- AndAnd
+- Ident: task
+- Dot
+- Ident: future
+- Dot
+- Ident: state
+- EqEq
+- Ident: TaskState
+- Colon
+- Colon
+- Ident: COMPLETED
+- Newline
+- Indent
+- Break
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Let
+- Ident: task
+- Eq
+- SelfLower
+- Dot
+- Ident: executor
+- Dot
+- Ident: get_task
+- LParen
+- Ident: task_id
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Runtime
+- Colon
+- Colon
+- Ident: run
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: running
+- Eq
+- "True"
+- Newline
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "1000000"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- If
+- Bang
+- SelfLower
+- Dot
+- Ident: running
+- Newline
+- Indent
+- Break
+- Newline
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: run_once
+- LParen
+- RParen
+- Newline
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: executor
+- Dot
+- Ident: is_empty
+- LParen
+- RParen
+- Newline
+- Indent
+- Break
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Runtime
+- Colon
+- Colon
+- Ident: run_once
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: task_id
+- Eq
+- SelfLower
+- Dot
+- Ident: task_queue
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- If
+- Ident: task_id
+- EqEq
+- "Null"
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: reactor
+- Dot
+- Ident: poll
+- LParen
+- RParen
+- Newline
+- Return
+- OkLiteral
+- Newline
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: executor
+- Dot
+- Ident: current_task
+- Eq
+- Ident: task_id
+- Newline
+- Newline
+- Let
+- Ident: task
+- Eq
+- SelfLower
+- Dot
+- Ident: executor
+- Dot
+- Ident: get_task_mut
+- LParen
+- Ident: task_id
+- RParen
+- Newline
+- If
+- Ident: task
+- EqEq
+- "Null"
+- Newline
+- Indent
+- Return
+- OkLiteral
+- Newline
+- Newline
+- Dedent
+- Ident: task
+- Dot
+- Ident: future
+- Dot
+- Ident: state
+- Eq
+- Ident: TaskState
+- Colon
+- Colon
+- Ident: RUNNING
+- Newline
+- Newline
+- Let
+- Ident: waker
+- Eq
+- Ident: Waker
+- LParen
+- Newline
+- Indent
+- Ident: task_id
+- Colon
+- Ident: task_id
+- Comma
+- Newline
+- Ident: wake_fn
+- Colon
+- Ident: wake_task
+- Newline
+- Dedent
+- RParen
+- Newline
+- Newline
+- Let
+- Ident: mut_context
+- Eq
+- Ident: Context
+- LParen
+- Newline
+- Indent
+- Ident: waker
+- Colon
+- Ident: waker
+- Comma
+- Newline
+- Ident: task_id
+- Colon
+- Ident: task_id
+- Newline
+- Dedent
+- RParen
+- Newline
+- Newline
+- Let
+- Ident: poll_result
+- Eq
+- LParen
+- Ident: task
+- Dot
+- Ident: future
+- Dot
+- Ident: poll_fn
+- RParen
+- LParen
+- And
+- Ident: mut_context
+- RParen
+- Newline
+- Newline
+- Ident: task
+- Dot
+- Ident: future
+- Dot
+- Ident: state
+- Eq
+- Ident: TaskState
+- Colon
+- Colon
+- Ident: SUSPENDED
+- Newline
+- Newline
+- SelfLower
+- Dot
+- Ident: executor
+- Dot
+- Ident: current_task
+- Eq
+- "Null"
+- Newline
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Runtime
+- Colon
+- Colon
+- Ident: shutdown
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: running
+- Eq
+- "False"
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: wake_task
+- LParen
+- Ident: task_id
+- Colon
+- U64
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Future
+- LBracket
+- Ident: T
+- RBracket
+- Colon
+- Colon
+- Ident: new
+- LParen
+- Ident: poll_fn
+- Colon
+- Star
+- Fn
+- LParen
+- Star
+- Mut
+- Ident: Context
+- RParen
+- Arrow
+- Ident: PollResult
+- LBracket
+- Ident: T
+- RBracket
+- RParen
+- Arrow
+- Ident: Future
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- Return
+- Ident: Future
+- LBracket
+- Ident: T
+- RBracket
+- LParen
+- Newline
+- Indent
+- Ident: poll_fn
+- Colon
+- Ident: poll_fn
+- Comma
+- Newline
+- Ident: state
+- Colon
+- Ident: TaskState
+- Colon
+- Colon
+- Ident: READY
+- Comma
+- Newline
+- Ident: waker
+- Colon
+- "Null"
+- Newline
+- Dedent
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Future
+- LBracket
+- Ident: T
+- RBracket
+- Colon
+- Colon
+- Ident: poll
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: ctx
+- Colon
+- Star
+- Mut
+- Ident: Context
+- RParen
+- Arrow
+- Ident: PollResult
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- Return
+- LParen
+- SelfLower
+- Dot
+- Ident: poll_fn
+- RParen
+- LParen
+- Ident: ctx
+- RParen
+- Newline
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: async_sleep
+- LParen
+- Ident: duration_ms
+- Colon
+- U64
+- RParen
+- Arrow
+- Ident: Future
+- LBracket
+- OkLiteral
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: poll_fn
+- Eq
+- Ident: sleep_poll
+- Newline
+- Return
+- Ident: Future
+- LBracket
+- OkLiteral
+- RBracket
+- Colon
+- Colon
+- Ident: new
+- LParen
+- Ident: poll_fn
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: sleep_poll
+- LParen
+- Ident: ctx
+- Colon
+- Star
+- Mut
+- Ident: Context
+- RParen
+- Arrow
+- Ident: PollResult
+- LBracket
+- OkLiteral
+- RBracket
+- Newline
+- Indent
+- Return
+- Ident: PollResult
+- LBracket
+- OkLiteral
+- RBracket
+- Colon
+- Colon
+- Ident: pending
+- LParen
+- OkLiteral
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: async_read
+- LParen
+- Ident: fd
+- Colon
+- I32
+- Comma
+- Ident: buffer
+- Colon
+- Star
+- Mut
+- U8
+- Comma
+- Ident: size
+- Colon
+- USize
+- RParen
+- Arrow
+- Ident: Future
+- LBracket
+- USize
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: poll_fn
+- Eq
+- Ident: read_poll
+- Newline
+- Return
+- Ident: Future
+- LBracket
+- USize
+- RBracket
+- Colon
+- Colon
+- Ident: new
+- LParen
+- Ident: poll_fn
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: read_poll
+- LParen
+- Ident: ctx
+- Colon
+- Star
+- Mut
+- Ident: Context
+- RParen
+- Arrow
+- Ident: PollResult
+- LBracket
+- USize
+- RBracket
+- Newline
+- Indent
+- Return
+- Ident: PollResult
+- LBracket
+- USize
+- RBracket
+- Colon
+- Colon
+- Ident: pending
+- LParen
+- OkLiteral
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: async_write
+- LParen
+- Ident: fd
+- Colon
+- I32
+- Comma
+- Ident: buffer
+- Colon
+- Star
+- U8
+- Comma
+- Ident: size
+- Colon
+- USize
+- RParen
+- Arrow
+- Ident: Future
+- LBracket
+- USize
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: poll_fn
+- Eq
+- Ident: write_poll
+- Newline
+- Return
+- Ident: Future
+- LBracket
+- USize
+- RBracket
+- Colon
+- Colon
+- Ident: new
+- LParen
+- Ident: poll_fn
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: write_poll
+- LParen
+- Ident: ctx
+- Colon
+- Star
+- Mut
+- Ident: Context
+- RParen
+- Arrow
+- Ident: PollResult
+- LBracket
+- USize
+- RBracket
+- Newline
+- Indent
+- Return
+- Ident: PollResult
+- LBracket
+- USize
+- RBracket
+- Colon
+- Colon
+- Ident: pending
+- LParen
+- OkLiteral
+- RParen
+- Newline
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Executor
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Arrow
+- Ident: Executor
+- Newline
+- Indent
+- Return
+- Ident: Executor
+- LParen
+- Newline
+- Indent
+- Ident: ready_queue
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Newline
+- Ident: tasks
+- Colon
+- Ident: HashMap
+- LBracket
+- U64
+- Comma
+- Ident: Task
+- LBracket
+- OkLiteral
+- RBracket
+- RBracket
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Comma
+- Newline
+- Ident: current_task
+- Colon
+- "Null"
+- Newline
+- Dedent
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Executor
+- Colon
+- Colon
+- Ident: add_task
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: task_id
+- Colon
+- U64
+- Comma
+- Ident: task
+- Colon
+- Ident: Task
+- LBracket
+- OkLiteral
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: tasks
+- Dot
+- Ident: insert
+- LParen
+- Ident: task_id
+- Comma
+- Ident: task
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: ready_queue
+- Dot
+- Ident: push
+- LParen
+- Ident: task_id
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Executor
+- Colon
+- Colon
+- Ident: get_task
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: task_id
+- Colon
+- U64
+- RParen
+- Arrow
+- Question
+- Star
+- Ident: Task
+- LBracket
+- OkLiteral
+- RBracket
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: tasks
+- Dot
+- Ident: get
+- LParen
+- Ident: task_id
+- RParen
+- Newline
+- Dedent
+- Func
+- Ident: Executor
+- Colon
+- Colon
+- Ident: get_task_mut
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: task_id
+- Colon
+- U64
+- RParen
+- Arrow
+- Question
+- Star
+- Mut
+- Ident: Task
+- LBracket
+- OkLiteral
+- RBracket
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: tasks
+- Dot
+- Ident: get_mut
+- LParen
+- Ident: task_id
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Executor
+- Colon
+- Colon
+- Ident: remove_task
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: task_id
+- Colon
+- U64
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: tasks
+- Dot
+- Ident: remove
+- LParen
+- Ident: task_id
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Executor
+- Colon
+- Colon
+- Ident: is_empty
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: tasks
+- Dot
+- Ident: len
+- LParen
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Reactor
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Arrow
+- Ident: Reactor
+- Newline
+- Indent
+- Return
+- Ident: Reactor
+- LParen
+- Newline
+- Indent
+- Ident: io_completions
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Newline
+- Ident: timers
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Newline
+- Ident: epoll_fd
+- Colon
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Reactor
+- Colon
+- Colon
+- Ident: poll
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: poll_io
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: poll_timers
+- LParen
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Reactor
+- Colon
+- Colon
+- Ident: poll_io
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: io_completions
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: completion
+- Eq
+- And
+- Mut
+- SelfLower
+- Dot
+- Ident: io_completions
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- If
+- Ident: completion
+- Dot
+- Ident: ready
+- Newline
+- Indent
+- Ident: wake_task
+- LParen
+- Ident: completion
+- Dot
+- Ident: task_id
+- RParen
+- Newline
+- Ident: completion
+- Dot
+- Ident: ready
+- Eq
+- "False"
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Reactor
+- Colon
+- Colon
+- Ident: poll_timers
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: now
+- Eq
+- Ident: get_current_time
+- LParen
+- RParen
+- Newline
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: timers
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: timer
+- Eq
+- And
+- Mut
+- SelfLower
+- Dot
+- Ident: timers
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- If
+- Bang
+- Ident: timer
+- Dot
+- Ident: fired
+- AndAnd
+- Ident: now
+- Ge
+- Ident: timer
+- Dot
+- Ident: deadline
+- Newline
+- Indent
+- Ident: wake_task
+- LParen
+- Ident: timer
+- Dot
+- Ident: task_id
+- RParen
+- Newline
+- Ident: timer
+- Dot
+- Ident: fired
+- Eq
+- "True"
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Reactor
+- Colon
+- Colon
+- Ident: register_io
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: task_id
+- Colon
+- U64
+- Comma
+- Ident: fd
+- Colon
+- I32
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: completion
+- Eq
+- Ident: IoCompletion
+- LParen
+- Newline
+- Indent
+- Ident: task_id
+- Colon
+- Ident: task_id
+- Comma
+- Newline
+- Ident: fd
+- Colon
+- Ident: fd
+- Comma
+- Newline
+- Ident: ready
+- Colon
+- "False"
+- Newline
+- Dedent
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: io_completions
+- Dot
+- Ident: push
+- LParen
+- Ident: completion
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Reactor
+- Colon
+- Colon
+- Ident: register_timer
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: task_id
+- Colon
+- U64
+- Comma
+- Ident: deadline
+- Colon
+- U64
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: timer
+- Eq
+- Ident: Timer
+- LParen
+- Newline
+- Indent
+- Ident: task_id
+- Colon
+- Ident: task_id
+- Comma
+- Newline
+- Ident: deadline
+- Colon
+- Ident: deadline
+- Comma
+- Newline
+- Ident: fired
+- Colon
+- "False"
+- Newline
+- Dedent
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: timers
+- Dot
+- Ident: push
+- LParen
+- Ident: timer
+- RParen
+- Newline
+- Pass
+- Newline
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: TaskQueue
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Arrow
+- Ident: TaskQueue
+- Newline
+- Indent
+- Return
+- Ident: TaskQueue
+- LParen
+- Newline
+- Indent
+- Ident: tasks
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Newline
+- Ident: lock
+- Colon
+- Ident: Mutex
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Comma
+- Newline
+- Ident: condition
+- Colon
+- Ident: ConditionVariable
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Newline
+- Dedent
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: TaskQueue
+- Colon
+- Colon
+- Ident: push
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: task_id
+- Colon
+- U64
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: lock
+- Dot
+- Ident: acquire
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: tasks
+- Dot
+- Ident: push
+- LParen
+- Ident: task_id
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: condition
+- Dot
+- Ident: notify_one
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: lock
+- Dot
+- Ident: release
+- LParen
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: TaskQueue
+- Colon
+- Colon
+- Ident: pop
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Question
+- U64
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: lock
+- Dot
+- Ident: acquire
+- LParen
+- RParen
+- Newline
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: tasks
+- Dot
+- Ident: len
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: lock
+- Dot
+- Ident: release
+- LParen
+- RParen
+- Newline
+- Return
+- "Null"
+- Newline
+- Newline
+- Dedent
+- Let
+- Ident: task_id
+- Eq
+- SelfLower
+- Dot
+- Ident: tasks
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RBracket
+- Newline
+- SelfLower
+- Dot
+- Ident: tasks
+- Dot
+- Ident: remove
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RParen
+- Newline
+- Newline
+- SelfLower
+- Dot
+- Ident: lock
+- Dot
+- Ident: release
+- LParen
+- RParen
+- Newline
+- Newline
+- Return
+- Ident: task_id
+- Newline
+- Newline
+- Dedent
+- Struct
+- Ident: Mutex
+- Newline
+- Indent
+- Ident: locked
+- Colon
+- Bool
+- Newline
+- Dedent
+- Struct
+- Ident: ConditionVariable
+- Newline
+- Indent
+- Ident: waiting
+- Colon
+- USize
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Mutex
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Arrow
+- Ident: Mutex
+- Newline
+- Indent
+- Return
+- Ident: Mutex
+- LParen
+- Ident: locked
+- Colon
+- "False"
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Mutex
+- Colon
+- Colon
+- Ident: acquire
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "1000000"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- If
+- Bang
+- SelfLower
+- Dot
+- Ident: locked
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: locked
+- Eq
+- "True"
+- Newline
+- Break
+- Newline
+- Dedent
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Mutex
+- Colon
+- Colon
+- Ident: release
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: locked
+- Eq
+- "False"
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: ConditionVariable
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Arrow
+- Ident: ConditionVariable
+- Newline
+- Indent
+- Return
+- Ident: ConditionVariable
+- LParen
+- Ident: waiting
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: ConditionVariable
+- Colon
+- Colon
+- Ident: wait
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: mutex
+- Colon
+- Star
+- Ident: Mutex
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: waiting
+- Eq
+- SelfLower
+- Dot
+- Ident: waiting
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Ident: mutex
+- Dot
+- Ident: release
+- LParen
+- RParen
+- Newline
+- Ident: mutex
+- Dot
+- Ident: acquire
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: waiting
+- Eq
+- SelfLower
+- Dot
+- Ident: waiting
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: ConditionVariable
+- Colon
+- Colon
+- Ident: notify_one
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: ConditionVariable
+- Colon
+- Colon
+- Ident: notify_all
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Newline
+- Dedent
+- Struct
+- Ident: HashMap
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Indent
+- Ident: size
+- Colon
+- USize
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HashMap
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Arrow
+- Ident: HashMap
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Indent
+- Return
+- Ident: HashMap
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- LParen
+- Ident: size
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HashMap
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: insert
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: key
+- Colon
+- Ident: K
+- Comma
+- Ident: value
+- Colon
+- Ident: V
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: size
+- Eq
+- SelfLower
+- Dot
+- Ident: size
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: HashMap
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: get
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: key
+- Colon
+- Ident: K
+- RParen
+- Arrow
+- Question
+- Star
+- Ident: V
+- Newline
+- Indent
+- Return
+- "Null"
+- Newline
+- Dedent
+- Func
+- Ident: HashMap
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: get_mut
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: key
+- Colon
+- Ident: K
+- RParen
+- Arrow
+- Question
+- Star
+- Mut
+- Ident: V
+- Newline
+- Indent
+- Return
+- "Null"
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HashMap
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: remove
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: key
+- Colon
+- Ident: K
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: size
+- Gt
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: size
+- Eq
+- SelfLower
+- Dot
+- Ident: size
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: HashMap
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Colon
+- Colon
+- Ident: len
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- USize
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: size
+- Newline
+- Dedent
+- Func
+- Ident: get_current_time
+- LParen
+- RParen
+- Arrow
+- U64
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

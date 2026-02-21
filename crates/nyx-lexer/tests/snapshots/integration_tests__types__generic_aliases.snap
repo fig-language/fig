@@ -1,0 +1,50 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Type
+- Ident: Slice
+- LBracket
+- Ident: T
+- RBracket
+- Eq
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Type
+- Ident: OptSlice
+- LBracket
+- Ident: T
+- RBracket
+- Eq
+- Question
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Type
+- Ident: PairPtr
+- LBracket
+- Ident: T
+- RBracket
+- Eq
+- Star
+- Ident: T
+- Newline
+- Type
+- Ident: Array
+- LBracket
+- Ident: T
+- RBracket
+- Eq
+- LBracket
+- Ident: T
+- Semicolon
+- IntegerLiteral:
+    base: Decimal
+    digits: "16"
+    suffix: ~
+- RBracket
+- Newline

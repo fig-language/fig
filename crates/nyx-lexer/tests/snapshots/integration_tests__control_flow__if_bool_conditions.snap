@@ -1,0 +1,87 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Func
+- Ident: bool_conditions
+- LParen
+- Ident: a
+- Colon
+- Bool
+- Comma
+- Ident: b
+- Colon
+- Bool
+- Comma
+- Ident: x
+- Colon
+- I32
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- If
+- Ident: a
+- AndAnd
+- Ident: b
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- If
+- Ident: a
+- OrOr
+- Ident: b
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- If
+- Bang
+- Ident: a
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- If
+- Ident: x
+- Gt
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- AndAnd
+- Ident: x
+- Lt
+- IntegerLiteral:
+    base: Decimal
+    digits: "100"
+    suffix: ~
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- If
+- Ident: a
+- AndAnd
+- Bang
+- Ident: b
+- OrOr
+- Ident: x
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Dedent

@@ -1,0 +1,37 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Let
+- Ident: empty
+- Eq
+- StringLiteral: ""
+- Newline
+- Let
+- Ident: hello
+- Eq
+- StringLiteral: hello
+- Newline
+- Let
+- Ident: world
+- Eq
+- StringLiteral: world
+- Newline
+- Let
+- Ident: sentence
+- Eq
+- StringLiteral: The quick brown fox
+- Newline
+- Let
+- Ident: with_spaces
+- Eq
+- StringLiteral: hello world
+- Newline
+- Let
+- Ident: escapedquote
+- Eq
+- StringLiteral: "She said "
+- StringLiteral: hello
+- StringLiteral: ""
+- Newline

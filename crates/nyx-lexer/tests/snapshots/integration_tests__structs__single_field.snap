@@ -1,0 +1,14 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Struct
+- Ident: Wrapper
+- Newline
+- Indent
+- Ident: value
+- Colon
+- I32
+- Newline
+- Dedent

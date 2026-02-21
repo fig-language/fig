@@ -1,0 +1,44 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Type
+- Ident: DoubleRaw
+- Eq
+- Star
+- Mut
+- Star
+- Mut
+- U8
+- Newline
+- Type
+- Ident: OptPtrToSlice
+- Eq
+- Question
+- Star
+- LBracket
+- U8
+- RBracket
+- Newline
+- Type
+- Ident: SliceOfOptInts
+- Eq
+- LBracket
+- Question
+- I32
+- RBracket
+- Newline
+- Type
+- Ident: PtrToArray
+- Eq
+- Star
+- LBracket
+- U8
+- Semicolon
+- IntegerLiteral:
+    base: Decimal
+    digits: "32"
+    suffix: ~
+- RBracket
+- Newline

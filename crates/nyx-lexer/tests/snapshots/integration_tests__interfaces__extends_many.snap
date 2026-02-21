@@ -1,0 +1,48 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Interface
+- Ident: FullNumeric
+- Newline
+- Indent
+- Extends
+- Newline
+- Indent
+- Ident: Add
+- Newline
+- Ident: Sub
+- Newline
+- Ident: Mul
+- Newline
+- Ident: Div
+- Newline
+- Ident: Neg
+- Newline
+- Ident: Eq
+- Newline
+- Ident: Ord
+- Newline
+- Ident: Display
+- Newline
+- Dedent
+- Func
+- Ident: abs
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- SelfKeyword
+- Newline
+- Func
+- Ident: signum
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- I32
+- Newline
+- Dedent

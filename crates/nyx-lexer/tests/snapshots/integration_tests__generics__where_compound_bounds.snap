@@ -1,0 +1,69 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Func
+- Ident: process
+- LBracket
+- Ident: T
+- RBracket
+- LParen
+- Ident: val
+- Colon
+- Ident: T
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Where
+- Newline
+- Indent
+- Ident: T
+- Colon
+- Ident: Display
+- Plus
+- Ident: Debug
+- Plus
+- Ident: Clone
+- Newline
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: sorted_insert
+- LBracket
+- Ident: T
+- RBracket
+- LParen
+- Ident: slice
+- Colon
+- Star
+- Mut
+- LBracket
+- Ident: T
+- RBracket
+- Comma
+- Ident: val
+- Colon
+- Ident: T
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Where
+- Newline
+- Indent
+- Ident: T
+- Colon
+- Ident: Ord
+- Plus
+- Ident: Copy
+- Newline
+- Dedent
+- Pass
+- Newline
+- Dedent

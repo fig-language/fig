@@ -174,7 +174,7 @@ Atom: Expression = {
     BooleanLiteral,
     CharLiteral,
     StringLiteral,
-    OkLiteral,
+    NullLiteral,
     Identifier,
     ArrayLiteral,
     Parenthesized,
@@ -217,8 +217,8 @@ StringLiteral: Expression = {
     },
 };
 
-OkLiteral: Expression = {
-    "ok" => Expression::OkLiteral,
+NullLiteral: Expression = {
+    "null" => Expression::Null,
 };
 
 Identifier: Expression = {
@@ -311,11 +311,11 @@ PointerElementType: Option<Box<Type>> = {
 }
 
 ArrayType: Type = {
-    "[" <size:ArraySize> "]" <element_type:ArrayType> => Type::Array{ 
+    "["  <element_type:ArrayType> ";" <size:ArraySize> "]" => Type::Array{ 
         element_type: Box::new(element_type), 
         size: Some(size) 
     },
-    "[" "]" <element_type:ArrayType> => Type::Array{ 
+    "[" <element_type:ArrayType> "]" => Type::Array{ 
         element_type: Box::new(element_type), 
         size: None 
     },
@@ -512,7 +512,7 @@ pub Function: Function = {
 };
 
 FunctionSignature: FunctionSignature = {
-    "fn" <name: "ident"> <generic_params: GenericParameterList?>
+    "func" <name: "ident"> <generic_params: GenericParameterList?>
     "(" <params: Comma<FunctionParameter>> ")"
     <return_type: ("->" <Type>)?>
     "NEWLINE"
@@ -565,7 +565,7 @@ pub Interface: Interface = {
 };
 
 InterfaceMethodSignature: FunctionSignature = {
-    "fn" <name: "ident"> <generic_params: GenericParameterList?>
+    "func" <name: "ident"> <generic_params: GenericParameterList?>
     "(" <params: Comma<FunctionParameter>> ")"
     <return_type: ("->" <Type>)?>
     => {
@@ -679,7 +679,7 @@ extern {
         "NEWLINE" => Token::Newline,
         
         // Keywords
-        "fn" => Token::Fn,
+        "func" => Token::Func,
         "let" => Token::Let,
         "mut" => Token::Mut,
         "const" => Token::Const,
@@ -693,10 +693,14 @@ extern {
         "true" => Token::True,
         "false" => Token::False,
         "ok" => Token::OkLiteral,
+        "null" => Token::Null,
         "raw" => Token::Raw,
         "super" => Token::Super,
+        "self" => Token::SelfLower,
+        "Self" => Token::SelfKeyword,
         "if" => Token::If,
         "else" => Token::Else,
+        "elif" => Token::Elif,
         "for" => Token::For,
         "while" => Token::While,
         "break" => Token::Break,
@@ -704,13 +708,26 @@ extern {
         "match" => Token::Match,
         "return" => Token::Return,
         "mutable" => Token::Mutable,
-        "Self" => Token::SelfKeyword,
         "in" => Token::In,
         "where" => Token::Where,
         "requires" => Token::Requires,
         "extends" => Token::Extends,
         "namespace" => Token::Namespace,
         "pass" => Token::Pass,
+        "block" => Token::Block,
+        "using" => Token::Using,
+        "extern" => Token::Extern,
+        "packed" => Token::Packed,
+        "public" => Token::Public,
+        "export" => Token::Export,
+        "private" => Token::Private,
+        "as" => Token::As,
+        "sizeof" => Token::Sizeof,
+        "alignof" => Token::Alignof,
+        "offsetof" => Token::Offsetof,
+        "std" => Token::Std,
+        "core" => Token::Core,
+        "alloc" => Token::Alloc,
 
         // Primitive Types
         "u8" => Token::U8,

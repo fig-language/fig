@@ -1,0 +1,41 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Func
+- Ident: greet
+- LParen
+- RParen
+- Newline
+- Newline
+- Indent
+- Pass
+- Newline
+- Newline
+- Dedent
+- Struct
+- Ident: Point
+- Newline
+- Indent
+- Ident: x
+- Colon
+- I32
+- Newline
+- Ident: y
+- Colon
+- I32
+- Newline
+- Newline
+- Dedent
+- Enum
+- Ident: Color
+- Newline
+- Indent
+- Ident: RED
+- Newline
+- Ident: GREEN
+- Newline
+- Ident: BLUE
+- Newline
+- Dedent

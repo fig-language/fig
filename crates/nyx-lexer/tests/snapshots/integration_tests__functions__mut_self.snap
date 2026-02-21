@@ -1,0 +1,46 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Struct
+- Ident: Node
+- Newline
+- Indent
+- Ident: data
+- Colon
+- I32
+- Newline
+- Dedent
+- Func
+- Ident: Node
+- Colon
+- Colon
+- Ident: consume
+- LParen
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- I32
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Node
+- Colon
+- Colon
+- Ident: transform
+- LParen
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: Node
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

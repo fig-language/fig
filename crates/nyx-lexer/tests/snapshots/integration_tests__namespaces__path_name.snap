@@ -1,0 +1,36 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Namespace
+- Std
+- Colon
+- Colon
+- Ident: collections
+- Newline
+- Indent
+- Export
+- Struct
+- Ident: Seq
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- Ident: data
+- Colon
+- Star
+- Mut
+- Ident: T
+- Newline
+- Ident: len
+- Colon
+- USize
+- Newline
+- Ident: cap
+- Colon
+- USize
+- Newline
+- Dedent
+- Dedent

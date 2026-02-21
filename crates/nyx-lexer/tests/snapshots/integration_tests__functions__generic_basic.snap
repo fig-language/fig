@@ -1,0 +1,65 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Func
+- Ident: identity
+- LBracket
+- Ident: T
+- RBracket
+- LParen
+- Ident: x
+- Colon
+- Ident: T
+- RParen
+- Arrow
+- Ident: T
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: swap
+- LBracket
+- Ident: A
+- Comma
+- Ident: B
+- RBracket
+- LParen
+- Ident: a
+- Colon
+- Ident: A
+- Comma
+- Ident: b
+- Colon
+- Ident: B
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: first
+- LBracket
+- Ident: T
+- RBracket
+- LParen
+- Ident: slice
+- Colon
+- LBracket
+- Ident: T
+- RBracket
+- RParen
+- Arrow
+- Question
+- Ident: T
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

@@ -1,0 +1,48 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Func
+- Ident: nop
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Func
+- Ident: identity
+- LParen
+- Ident: x
+- Colon
+- I32
+- RParen
+- Arrow
+- I32
+- Newline
+- Func
+- Ident: add
+- LParen
+- Ident: a
+- Colon
+- I32
+- Comma
+- Ident: b
+- Colon
+- I32
+- RParen
+- Arrow
+- I32
+- Newline
+- Func
+- Ident: greet
+- LParen
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline

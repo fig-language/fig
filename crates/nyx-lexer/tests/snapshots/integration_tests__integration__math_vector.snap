@@ -1,0 +1,227 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Struct
+- Ident: Vec2
+- Newline
+- Indent
+- Ident: x
+- Colon
+- F64
+- Newline
+- Ident: y
+- Colon
+- F64
+- Newline
+- Dedent
+- Struct
+- Ident: Vec3
+- Newline
+- Indent
+- Ident: x
+- Colon
+- F64
+- Newline
+- Ident: y
+- Colon
+- F64
+- Newline
+- Ident: z
+- Colon
+- F64
+- Newline
+- Dedent
+- Func
+- Ident: Vec2
+- Colon
+- Colon
+- Ident: new
+- LParen
+- Ident: x
+- Colon
+- F64
+- Comma
+- Ident: y
+- Colon
+- F64
+- RParen
+- Arrow
+- Ident: Vec2
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Vec2
+- Colon
+- Colon
+- Ident: zero
+- LParen
+- RParen
+- Arrow
+- Ident: Vec2
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Vec2
+- Colon
+- Colon
+- Ident: add
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: other
+- Colon
+- Star
+- Ident: Vec2
+- RParen
+- Arrow
+- Ident: Vec2
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Vec2
+- Colon
+- Colon
+- Ident: sub
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: other
+- Colon
+- Star
+- Ident: Vec2
+- RParen
+- Arrow
+- Ident: Vec2
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Vec2
+- Colon
+- Colon
+- Ident: scale
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: s
+- Colon
+- F64
+- RParen
+- Arrow
+- Ident: Vec2
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Vec2
+- Colon
+- Colon
+- Ident: dot
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: other
+- Colon
+- Star
+- Ident: Vec2
+- RParen
+- Arrow
+- F64
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Vec2
+- Colon
+- Colon
+- Ident: len
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- F64
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Vec2
+- Colon
+- Colon
+- Ident: normalize
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Ident: Vec2
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Vec3
+- Colon
+- Colon
+- Ident: cross
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: other
+- Colon
+- Star
+- Ident: Vec3
+- RParen
+- Arrow
+- Ident: Vec3
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Vec3
+- Colon
+- Colon
+- Ident: dot
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: other
+- Colon
+- Star
+- Ident: Vec3
+- RParen
+- Arrow
+- F64
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

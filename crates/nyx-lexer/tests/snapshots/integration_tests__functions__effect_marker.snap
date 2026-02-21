@@ -1,0 +1,67 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Func
+- Bang
+- Ident: read_file
+- LParen
+- Ident: path
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: write_file
+- LParen
+- Ident: path
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: data
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: allocate
+- LBracket
+- Ident: T
+- RBracket
+- LParen
+- Ident: count
+- Colon
+- USize
+- RParen
+- Arrow
+- Star
+- Mut
+- Ident: T
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

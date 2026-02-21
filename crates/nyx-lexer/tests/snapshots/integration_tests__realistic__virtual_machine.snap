@@ -1,0 +1,2952 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Using
+- Core
+- Colon
+- Colon
+- Ident: memory
+- Newline
+- Const
+- Ident: STACK_SIZE
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "256"
+    suffix: ~
+- Newline
+- Const
+- Ident: MAX_LOCALS
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "64"
+    suffix: ~
+- Newline
+- Enum
+- Ident: Opcode
+- Newline
+- Indent
+- Ident: HALT
+- Newline
+- Ident: NOP
+- Newline
+- Ident: PUSH
+- Newline
+- Ident: POP
+- Newline
+- Ident: DUP
+- Newline
+- Ident: SWAP
+- Newline
+- Ident: ADD
+- Newline
+- Ident: SUB
+- Newline
+- Ident: MUL
+- Newline
+- Ident: DIV
+- Newline
+- Ident: MOD
+- Newline
+- Ident: NEG
+- Newline
+- Ident: AND
+- Newline
+- Ident: OR
+- Newline
+- Ident: XOR
+- Newline
+- Ident: NOT
+- Newline
+- Ident: EQ
+- Newline
+- Ident: NE
+- Newline
+- Ident: LT
+- Newline
+- Ident: LE
+- Newline
+- Ident: GT
+- Newline
+- Ident: GE
+- Newline
+- Ident: JMP
+- Newline
+- Ident: JMP_IF_TRUE
+- Newline
+- Ident: JMP_IF_FALSE
+- Newline
+- Ident: CALL
+- Newline
+- Ident: RET
+- Newline
+- Ident: LOAD_LOCAL
+- Newline
+- Ident: STORE_LOCAL
+- Newline
+- Ident: LOAD_CONST
+- Newline
+- Ident: PRINT
+- Newline
+- Dedent
+- Union
+- Ident: Value
+- Newline
+- Indent
+- Ident: int
+- Colon
+- I64
+- Newline
+- Ident: float
+- Colon
+- F64
+- Newline
+- Bool
+- Colon
+- Bool
+- Newline
+- Ident: nil
+- Colon
+- OkLiteral
+- Newline
+- Dedent
+- Struct
+- Ident: Instruction
+- Newline
+- Indent
+- Ident: opcode
+- Colon
+- Ident: Opcode
+- Newline
+- Ident: operand
+- Colon
+- I32
+- Newline
+- Dedent
+- Export
+- Struct
+- Ident: VM
+- Newline
+- Indent
+- Ident: stack
+- Colon
+- LBracket
+- Ident: Value
+- RBracket
+- Newline
+- Ident: stack_pointer
+- Colon
+- USize
+- Newline
+- Ident: program
+- Colon
+- LBracket
+- Ident: Instruction
+- RBracket
+- Newline
+- Ident: program_counter
+- Colon
+- USize
+- Newline
+- Ident: locals
+- Colon
+- LBracket
+- Ident: Value
+- RBracket
+- Newline
+- Ident: call_frames
+- Colon
+- LBracket
+- Ident: CallFrame
+- RBracket
+- Newline
+- Ident: frame_count
+- Colon
+- USize
+- Newline
+- Ident: constants
+- Colon
+- LBracket
+- Ident: Value
+- RBracket
+- Newline
+- Ident: running
+- Colon
+- Bool
+- Newline
+- Dedent
+- Struct
+- Ident: CallFrame
+- Newline
+- Indent
+- Ident: return_address
+- Colon
+- USize
+- Newline
+- Ident: local_base
+- Colon
+- USize
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: VM
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Arrow
+- Ident: VM
+- Newline
+- Indent
+- Return
+- Ident: VM
+- LParen
+- Newline
+- Indent
+- Ident: stack
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Newline
+- Ident: stack_pointer
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Newline
+- Ident: program
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Newline
+- Ident: program_counter
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Newline
+- Ident: locals
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Newline
+- Ident: call_frames
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Newline
+- Ident: frame_count
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Newline
+- Ident: constants
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Newline
+- Ident: running
+- Colon
+- "False"
+- Newline
+- Dedent
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: VM
+- Colon
+- Colon
+- Ident: load_program
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: program
+- Colon
+- LBracket
+- Ident: Instruction
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: program
+- Eq
+- Ident: program
+- Newline
+- SelfLower
+- Dot
+- Ident: program_counter
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: VM
+- Colon
+- Colon
+- Ident: add_constant
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: value
+- Colon
+- Ident: Value
+- RParen
+- Arrow
+- USize
+- Newline
+- Indent
+- Let
+- Ident: index
+- Eq
+- SelfLower
+- Dot
+- Ident: constants
+- Dot
+- Ident: len
+- Newline
+- SelfLower
+- Dot
+- Ident: constants
+- Dot
+- Ident: push
+- LParen
+- Ident: value
+- RParen
+- Newline
+- Return
+- Ident: index
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: VM
+- Colon
+- Colon
+- Ident: run
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: running
+- Eq
+- "True"
+- Newline
+- SelfLower
+- Dot
+- Ident: program_counter
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- SelfLower
+- Dot
+- Ident: stack_pointer
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "100000"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- If
+- Bang
+- SelfLower
+- Dot
+- Ident: running
+- Newline
+- Indent
+- Break
+- Newline
+- Newline
+- Dedent
+- If
+- SelfLower
+- Dot
+- Ident: program_counter
+- Ge
+- SelfLower
+- Dot
+- Ident: program
+- Dot
+- Ident: len
+- Newline
+- Indent
+- Break
+- Newline
+- Newline
+- Dedent
+- Let
+- Ident: instruction
+- Eq
+- And
+- SelfLower
+- Dot
+- Ident: program
+- LBracket
+- SelfLower
+- Dot
+- Ident: program_counter
+- RBracket
+- Newline
+- SelfLower
+- Dot
+- Ident: execute
+- LParen
+- Ident: instruction
+- RParen
+- Newline
+- Newline
+- SelfLower
+- Dot
+- Ident: program_counter
+- Eq
+- SelfLower
+- Dot
+- Ident: program_counter
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: VM
+- Colon
+- Colon
+- Ident: execute
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: instruction
+- Colon
+- Star
+- Ident: Instruction
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- If
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: HALT
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: running
+- Eq
+- "False"
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: NOP
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: PUSH
+- Newline
+- Indent
+- Let
+- Ident: value
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Ident: int
+- LParen
+- Ident: instruction
+- Dot
+- Ident: operand
+- As
+- I64
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: value
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: POP
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: DUP
+- Newline
+- Indent
+- Let
+- Ident: value
+- Eq
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: value
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: SWAP
+- Newline
+- Indent
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: b
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: a
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: b
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: ADD
+- Newline
+- Indent
+- Let
+- Ident: b
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Ident: int
+- LParen
+- Ident: a
+- Dot
+- Ident: int
+- Plus
+- Ident: b
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: SUB
+- Newline
+- Indent
+- Let
+- Ident: b
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Ident: int
+- LParen
+- Ident: a
+- Dot
+- Ident: int
+- Minus
+- Ident: b
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: MUL
+- Newline
+- Indent
+- Let
+- Ident: b
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Ident: int
+- LParen
+- Ident: a
+- Dot
+- Ident: int
+- Star
+- Ident: b
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: DIV
+- Newline
+- Indent
+- Let
+- Ident: b
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Ident: int
+- LParen
+- Ident: a
+- Dot
+- Ident: int
+- Slash
+- Ident: b
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: MOD
+- Newline
+- Indent
+- Let
+- Ident: b
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Ident: int
+- LParen
+- Ident: a
+- Dot
+- Ident: int
+- Percent
+- Ident: b
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: NEG
+- Newline
+- Indent
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Ident: int
+- LParen
+- Minus
+- Ident: a
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: AND
+- Newline
+- Indent
+- Let
+- Ident: b
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Ident: int
+- LParen
+- Ident: a
+- Dot
+- Ident: int
+- And
+- Ident: b
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: OR
+- Newline
+- Indent
+- Let
+- Ident: b
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Ident: int
+- LParen
+- Ident: a
+- Dot
+- Ident: int
+- Or
+- Ident: b
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: XOR
+- Newline
+- Indent
+- Let
+- Ident: b
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Ident: int
+- LParen
+- Ident: a
+- Dot
+- Ident: int
+- Caret
+- Ident: b
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: NOT
+- Newline
+- Indent
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Ident: int
+- LParen
+- Bang
+- Ident: a
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: EQ
+- Newline
+- Indent
+- Let
+- Ident: b
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Bool
+- LParen
+- Ident: a
+- Dot
+- Ident: int
+- EqEq
+- Ident: b
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: NE
+- Newline
+- Indent
+- Let
+- Ident: b
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Bool
+- LParen
+- Ident: a
+- Dot
+- Ident: int
+- Ne
+- Ident: b
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: LT
+- Newline
+- Indent
+- Let
+- Ident: b
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Bool
+- LParen
+- Ident: a
+- Dot
+- Ident: int
+- Lt
+- Ident: b
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: LE
+- Newline
+- Indent
+- Let
+- Ident: b
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Bool
+- LParen
+- Ident: a
+- Dot
+- Ident: int
+- Le
+- Ident: b
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: GT
+- Newline
+- Indent
+- Let
+- Ident: b
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Bool
+- LParen
+- Ident: a
+- Dot
+- Ident: int
+- Gt
+- Ident: b
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: GE
+- Newline
+- Indent
+- Let
+- Ident: b
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: a
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: result
+- Eq
+- Ident: Value
+- Colon
+- Colon
+- Bool
+- LParen
+- Ident: a
+- Dot
+- Ident: int
+- Ge
+- Ident: b
+- Dot
+- Ident: int
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: result
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: JMP
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: program_counter
+- Eq
+- LParen
+- Ident: instruction
+- Dot
+- Ident: operand
+- As
+- USize
+- RParen
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: JMP_IF_TRUE
+- Newline
+- Indent
+- Let
+- Ident: value
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- If
+- Ident: value
+- Dot
+- Bool
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: program_counter
+- Eq
+- LParen
+- Ident: instruction
+- Dot
+- Ident: operand
+- As
+- USize
+- RParen
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: JMP_IF_FALSE
+- Newline
+- Indent
+- Let
+- Ident: value
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- If
+- Bang
+- Ident: value
+- Dot
+- Bool
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: program_counter
+- Eq
+- LParen
+- Ident: instruction
+- Dot
+- Ident: operand
+- As
+- USize
+- RParen
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: CALL
+- Newline
+- Indent
+- Let
+- Ident: frame
+- Eq
+- Ident: CallFrame
+- LParen
+- Newline
+- Indent
+- Ident: return_address
+- Colon
+- SelfLower
+- Dot
+- Ident: program_counter
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Comma
+- Newline
+- Ident: local_base
+- Colon
+- SelfLower
+- Dot
+- Ident: stack_pointer
+- Newline
+- Dedent
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: call_frames
+- Dot
+- Ident: push
+- LParen
+- Ident: frame
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: frame_count
+- Eq
+- SelfLower
+- Dot
+- Ident: frame_count
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- SelfLower
+- Dot
+- Ident: program_counter
+- Eq
+- LParen
+- Ident: instruction
+- Dot
+- Ident: operand
+- As
+- USize
+- RParen
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: RET
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: frame_count
+- Gt
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- Let
+- Ident: frame
+- Eq
+- And
+- SelfLower
+- Dot
+- Ident: call_frames
+- LBracket
+- SelfLower
+- Dot
+- Ident: frame_count
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- RBracket
+- Newline
+- SelfLower
+- Dot
+- Ident: program_counter
+- Eq
+- Ident: frame
+- Dot
+- Ident: return_address
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- SelfLower
+- Dot
+- Ident: stack_pointer
+- Eq
+- Ident: frame
+- Dot
+- Ident: local_base
+- Newline
+- SelfLower
+- Dot
+- Ident: frame_count
+- Eq
+- SelfLower
+- Dot
+- Ident: frame_count
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: LOAD_LOCAL
+- Newline
+- Indent
+- Let
+- Ident: index
+- Eq
+- Ident: instruction
+- Dot
+- Ident: operand
+- As
+- USize
+- Newline
+- Let
+- Ident: value
+- Eq
+- SelfLower
+- Dot
+- Ident: locals
+- LBracket
+- Ident: index
+- RBracket
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: value
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: STORE_LOCAL
+- Newline
+- Indent
+- Let
+- Ident: index
+- Eq
+- Ident: instruction
+- Dot
+- Ident: operand
+- As
+- USize
+- Newline
+- Let
+- Ident: value
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: locals
+- LBracket
+- Ident: index
+- RBracket
+- Eq
+- Ident: value
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: LOAD_CONST
+- Newline
+- Indent
+- Let
+- Ident: index
+- Eq
+- Ident: instruction
+- Dot
+- Ident: operand
+- As
+- USize
+- Newline
+- Let
+- Ident: value
+- Eq
+- SelfLower
+- Dot
+- Ident: constants
+- LBracket
+- Ident: index
+- RBracket
+- Newline
+- SelfLower
+- Dot
+- Ident: push
+- LParen
+- Ident: value
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: instruction
+- Dot
+- Ident: opcode
+- EqEq
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: PRINT
+- Newline
+- Indent
+- Let
+- Ident: value
+- Eq
+- SelfLower
+- Dot
+- Ident: pop
+- LParen
+- RParen
+- Newline
+- Ident: print_value
+- LParen
+- And
+- Ident: value
+- RParen
+- Newline
+- Newline
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: VM
+- Colon
+- Colon
+- Ident: push
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: value
+- Colon
+- Ident: Value
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: stack_pointer
+- Ge
+- Ident: STACK_SIZE
+- Newline
+- Indent
+- Return
+- OkLiteral
+- Newline
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: stack
+- Dot
+- Ident: push
+- LParen
+- Ident: value
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: stack_pointer
+- Eq
+- SelfLower
+- Dot
+- Ident: stack_pointer
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: VM
+- Colon
+- Colon
+- Ident: pop
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: Value
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: stack_pointer
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- Ident: Value
+- Colon
+- Colon
+- Ident: nil
+- LParen
+- OkLiteral
+- RParen
+- Newline
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: stack_pointer
+- Eq
+- SelfLower
+- Dot
+- Ident: stack_pointer
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Return
+- SelfLower
+- Dot
+- Ident: stack
+- LBracket
+- SelfLower
+- Dot
+- Ident: stack_pointer
+- RBracket
+- Newline
+- Dedent
+- Func
+- Ident: VM
+- Colon
+- Colon
+- Ident: peek
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: distance
+- Colon
+- USize
+- RParen
+- Arrow
+- Ident: Value
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: stack_pointer
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- Ident: Value
+- Colon
+- Colon
+- Ident: nil
+- LParen
+- OkLiteral
+- RParen
+- Newline
+- Newline
+- Dedent
+- Let
+- Ident: index
+- Eq
+- SelfLower
+- Dot
+- Ident: stack_pointer
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Minus
+- Ident: distance
+- Newline
+- Return
+- SelfLower
+- Dot
+- Ident: stack
+- LBracket
+- Ident: index
+- RBracket
+- Newline
+- Dedent
+- Func
+- Ident: VM
+- Colon
+- Colon
+- Ident: stack_size
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- USize
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: stack_pointer
+- Newline
+- Dedent
+- Func
+- Ident: VM
+- Colon
+- Colon
+- Ident: is_running
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: running
+- Newline
+- Newline
+- Dedent
+- Export
+- Struct
+- Ident: Assembler
+- Newline
+- Indent
+- Ident: instructions
+- Colon
+- LBracket
+- Ident: Instruction
+- RBracket
+- Newline
+- Ident: labels
+- Colon
+- LBracket
+- Ident: Label
+- RBracket
+- Newline
+- Ident: constants
+- Colon
+- LBracket
+- Ident: Value
+- RBracket
+- Newline
+- Dedent
+- Struct
+- Ident: Label
+- Newline
+- Indent
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: address
+- Colon
+- USize
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: new
+- LParen
+- RParen
+- Arrow
+- Ident: Assembler
+- Newline
+- Indent
+- Return
+- Ident: Assembler
+- LParen
+- Newline
+- Indent
+- Ident: instructions
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Newline
+- Ident: labels
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Newline
+- Ident: constants
+- Colon
+- LBracket
+- RBracket
+- Newline
+- Dedent
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: add_label
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: label
+- Eq
+- Ident: Label
+- LParen
+- Newline
+- Indent
+- Ident: name
+- Colon
+- Ident: name
+- Comma
+- Newline
+- Ident: address
+- Colon
+- SelfLower
+- Dot
+- Ident: instructions
+- Dot
+- Ident: len
+- Newline
+- Dedent
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: labels
+- Dot
+- Ident: push
+- LParen
+- Ident: label
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: emit
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: opcode
+- Colon
+- Ident: Opcode
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: instruction
+- Eq
+- Ident: Instruction
+- LParen
+- Ident: opcode
+- Colon
+- Ident: opcode
+- Comma
+- Ident: operand
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: instructions
+- Dot
+- Ident: push
+- LParen
+- Ident: instruction
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: emit_with_operand
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: opcode
+- Colon
+- Ident: Opcode
+- Comma
+- Ident: operand
+- Colon
+- I32
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: instruction
+- Eq
+- Ident: Instruction
+- LParen
+- Ident: opcode
+- Colon
+- Ident: opcode
+- Comma
+- Ident: operand
+- Colon
+- Ident: operand
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: instructions
+- Dot
+- Ident: push
+- LParen
+- Ident: instruction
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: emit_push
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: value
+- Colon
+- I64
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: emit_with_operand
+- LParen
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: PUSH
+- Comma
+- Ident: value
+- As
+- I32
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: emit_jump
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: label
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: address
+- Eq
+- SelfLower
+- Dot
+- Ident: find_label
+- LParen
+- Ident: label
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: emit_with_operand
+- LParen
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: JMP
+- Comma
+- Ident: address
+- As
+- I32
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: emit_jump_if_true
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: label
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: address
+- Eq
+- SelfLower
+- Dot
+- Ident: find_label
+- LParen
+- Ident: label
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: emit_with_operand
+- LParen
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: JMP_IF_TRUE
+- Comma
+- Ident: address
+- As
+- I32
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: emit_jump_if_false
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: label
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: address
+- Eq
+- SelfLower
+- Dot
+- Ident: find_label
+- LParen
+- Ident: label
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: emit_with_operand
+- LParen
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: JMP_IF_FALSE
+- Comma
+- Ident: address
+- As
+- I32
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: emit_call
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: label
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: address
+- Eq
+- SelfLower
+- Dot
+- Ident: find_label
+- LParen
+- Ident: label
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: emit_with_operand
+- LParen
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: CALL
+- Comma
+- Ident: address
+- As
+- I32
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: emit_load_local
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: index
+- Colon
+- USize
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: emit_with_operand
+- LParen
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: LOAD_LOCAL
+- Comma
+- Ident: index
+- As
+- I32
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: emit_store_local
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: index
+- Colon
+- USize
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: emit_with_operand
+- LParen
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: STORE_LOCAL
+- Comma
+- Ident: index
+- As
+- I32
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: add_constant
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: value
+- Colon
+- Ident: Value
+- RParen
+- Arrow
+- USize
+- Newline
+- Indent
+- Let
+- Ident: index
+- Eq
+- SelfLower
+- Dot
+- Ident: constants
+- Dot
+- Ident: len
+- Newline
+- SelfLower
+- Dot
+- Ident: constants
+- Dot
+- Ident: push
+- LParen
+- Ident: value
+- RParen
+- Newline
+- Return
+- Ident: index
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: emit_load_const
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: index
+- Colon
+- USize
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: emit_with_operand
+- LParen
+- Ident: Opcode
+- Colon
+- Colon
+- Ident: LOAD_CONST
+- Comma
+- Ident: index
+- As
+- I32
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: find_label
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- USize
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: labels
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: label
+- Eq
+- And
+- SelfLower
+- Dot
+- Ident: labels
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- If
+- Ident: strings_equal
+- LParen
+- Ident: label
+- Dot
+- Ident: name
+- Comma
+- Ident: name
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: label
+- Dot
+- Ident: address
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: build
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- LBracket
+- Ident: Instruction
+- RBracket
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: instructions
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Assembler
+- Colon
+- Colon
+- Ident: get_constants
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- LBracket
+- Ident: Value
+- RBracket
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: constants
+- Newline
+- Dedent
+- Func
+- Ident: strings_equal
+- LParen
+- Ident: a
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: b
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- If
+- Ident: a
+- Dot
+- Ident: len
+- Ne
+- Ident: b
+- Dot
+- Ident: len
+- Newline
+- Indent
+- Return
+- "False"
+- Newline
+- Newline
+- Dedent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: a
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- If
+- Ident: a
+- LBracket
+- Ident: i
+- RBracket
+- Ne
+- Ident: b
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Indent
+- Return
+- "False"
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Return
+- "True"
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: print_value
+- LParen
+- Ident: value
+- Colon
+- Star
+- Ident: Value
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

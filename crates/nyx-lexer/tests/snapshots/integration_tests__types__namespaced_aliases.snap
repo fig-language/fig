@@ -1,0 +1,28 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Type
+- Ident: String
+- Eq
+- LBracket
+- U8
+- RBracket
+- Newline
+- Type
+- Ident: Vector2
+- Colon
+- Colon
+- Ident: Alpine
+- Eq
+- I32
+- Newline
+- Type
+- Ident: math
+- Colon
+- Colon
+- Ident: Matrix
+- Eq
+- I32
+- Newline

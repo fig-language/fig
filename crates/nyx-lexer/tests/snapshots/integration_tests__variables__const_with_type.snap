@@ -1,0 +1,52 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Const
+- Ident: MAX_SIZE
+- Colon
+- U32
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1024"
+    suffix: ~
+- Newline
+- Const
+- Ident: DEFAULT_PORT
+- Colon
+- U16
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "8080"
+    suffix: ~
+- Newline
+- Const
+- Ident: PI
+- Colon
+- F64
+- Eq
+- FloatLiteral:
+    digits: "3.14159265358979"
+    exponent: ~
+    suffix: ~
+- Newline
+- Const
+- Ident: ENABLED
+- Colon
+- Bool
+- Eq
+- "True"
+- Newline
+- Const
+- Ident: ZERO
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline

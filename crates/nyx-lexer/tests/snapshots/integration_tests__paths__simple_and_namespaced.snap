@@ -1,0 +1,69 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Let
+- Ident: x
+- Eq
+- Ident: foo
+- Newline
+- Newline
+- Let
+- Ident: y
+- Eq
+- Std
+- Colon
+- Colon
+- Ident: io
+- Colon
+- Colon
+- Ident: stdin
+- Newline
+- Let
+- Ident: z
+- Eq
+- Core
+- Colon
+- Colon
+- Ident: math
+- Colon
+- Colon
+- Ident: PI
+- Newline
+- Newline
+- Func
+- Ident: use_paths
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: a
+- Eq
+- Ident: some_value
+- Newline
+- Let
+- Ident: b
+- Eq
+- Ident: some_module
+- Colon
+- Colon
+- Ident: some_value
+- Newline
+- Let
+- Ident: c
+- Eq
+- Ident: a
+- Colon
+- Colon
+- Ident: b
+- Colon
+- Colon
+- Ident: c
+- Newline
+- Pass
+- Newline
+- Dedent

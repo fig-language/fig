@@ -1,0 +1,26 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Using
+- Std
+- Colon
+- Colon
+- Ident: collections
+- Colon
+- Colon
+- Ident: hash_map
+- Newline
+- Using
+- Core
+- Colon
+- Colon
+- Ident: mem
+- Colon
+- Colon
+- Ident: layout
+- Colon
+- Colon
+- Ident: allocator
+- Newline

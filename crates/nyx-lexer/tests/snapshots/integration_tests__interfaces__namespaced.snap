@@ -1,0 +1,63 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Interface
+- Std
+- Colon
+- Colon
+- Ident: io
+- Colon
+- Colon
+- Ident: Read
+- Newline
+- Indent
+- Func
+- Bang
+- Ident: read
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: buf
+- Colon
+- Star
+- Mut
+- U8
+- Comma
+- Ident: len
+- Colon
+- USize
+- RParen
+- Arrow
+- USize
+- Newline
+- Dedent
+- Interface
+- Core
+- Colon
+- Colon
+- Ident: fmt
+- Colon
+- Colon
+- Ident: Display
+- Newline
+- Indent
+- Func
+- Ident: fmt
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: f
+- Colon
+- Star
+- Mut
+- Ident: Formatter
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Dedent

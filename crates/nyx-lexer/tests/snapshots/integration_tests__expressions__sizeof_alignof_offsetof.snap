@@ -1,0 +1,77 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Struct
+- Ident: Foo
+- Newline
+- Indent
+- Ident: a
+- Colon
+- U8
+- Newline
+- Ident: b
+- Colon
+- U32
+- Newline
+- Ident: c
+- Colon
+- U64
+- Newline
+- Dedent
+- Func
+- Ident: size_exprs
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: sz
+- Eq
+- Sizeof
+- LParen
+- Ident: Foo
+- RParen
+- Newline
+- Let
+- Ident: al
+- Eq
+- Alignof
+- LParen
+- Ident: Foo
+- RParen
+- Newline
+- Let
+- Ident: "off"
+- Eq
+- Offsetof
+- LParen
+- Ident: Foo
+- Comma
+- Ident: b
+- RParen
+- Newline
+- Let
+- Ident: sz2
+- Eq
+- Sizeof
+- LParen
+- U64
+- RParen
+- Newline
+- Let
+- Ident: al2
+- Eq
+- Alignof
+- LParen
+- Star
+- Mut
+- U8
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent

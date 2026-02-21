@@ -1,0 +1,57 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Func
+- Ident: empty_slice
+- LParen
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: null_terminated
+- LParen
+- Ident: s
+- Colon
+- Star
+- U8
+- Comma
+- Ident: len
+- Colon
+- USize
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: fixed_buffer
+- LParen
+- RParen
+- Arrow
+- LBracket
+- U8
+- Semicolon
+- IntegerLiteral:
+    base: Decimal
+    digits: "64"
+    suffix: ~
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

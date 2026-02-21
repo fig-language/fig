@@ -1,0 +1,100 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Struct
+- Ident: math
+- Colon
+- Colon
+- Ident: Matrix
+- LBracket
+- Ident: T
+- Comma
+- Ident: U
+- RBracket
+- Newline
+- Indent
+- Requires
+- Newline
+- Indent
+- Ident: Add
+- Newline
+- Ident: Mul
+- Newline
+- Dedent
+- Where
+- Newline
+- Indent
+- Ident: T
+- Colon
+- Ident: Numeric
+- Newline
+- Ident: U
+- Colon
+- Ident: Numeric
+- Newline
+- Dedent
+- Private
+- Ident: rows
+- Colon
+- USize
+- Newline
+- Private
+- Ident: cols
+- Colon
+- USize
+- Newline
+- Private
+- Ident: data
+- Colon
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Dedent
+- Struct
+- Std
+- Colon
+- Colon
+- Ident: collections
+- Colon
+- Colon
+- Ident: HashMap
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Indent
+- Where
+- Newline
+- Indent
+- Ident: K
+- Colon
+- Ident: Hash
+- Plus
+- Ident: Eq
+- Newline
+- Dedent
+- Private
+- Ident: buckets
+- Colon
+- LBracket
+- Question
+- Star
+- Ident: Entry
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- RBracket
+- Newline
+- Private
+- Ident: len
+- Colon
+- USize
+- Newline
+- Dedent

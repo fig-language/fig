@@ -1,0 +1,64 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Func
+- Ident: bitwise_ops
+- LParen
+- Ident: a
+- Colon
+- U32
+- Comma
+- Ident: b
+- Colon
+- U32
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: band
+- Eq
+- Ident: a
+- And
+- Ident: b
+- Newline
+- Let
+- Ident: bor
+- Eq
+- Ident: a
+- Or
+- Ident: b
+- Newline
+- Let
+- Ident: bxor
+- Eq
+- Ident: a
+- Caret
+- Ident: b
+- Newline
+- Let
+- Ident: shl
+- Eq
+- Ident: a
+- Shl
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Let
+- Ident: shr
+- Eq
+- Ident: a
+- Shr
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Pass
+- Newline
+- Dedent

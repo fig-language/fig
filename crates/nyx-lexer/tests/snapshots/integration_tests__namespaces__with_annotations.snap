@@ -1,0 +1,35 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Hash
+- Ident: deprecated
+- Newline
+- Namespace
+- Ident: legacy
+- Newline
+- Indent
+- Func
+- Ident: old_api
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Dedent
+- Hash
+- Ident: experimental
+- Newline
+- Namespace
+- Ident: nightly
+- Newline
+- Indent
+- Func
+- Ident: new_feature
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Dedent

@@ -1,0 +1,57 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Func
+- Ident: sum_range
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "10"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Dedent
+- Func
+- Ident: iterate_slice
+- LParen
+- Ident: data
+- Colon
+- LBracket
+- I32
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- For
+- Ident: item
+- In
+- Ident: data
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Dedent

@@ -1,0 +1,47 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Func
+- Ident: get_zero
+- LParen
+- RParen
+- Arrow
+- I32
+- Newline
+- Indent
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Dedent
+- Func
+- Ident: get_true
+- LParen
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- "True"
+- Newline
+- Dedent
+- Func
+- Ident: get_pi
+- LParen
+- RParen
+- Arrow
+- F64
+- Newline
+- Indent
+- Return
+- FloatLiteral:
+    digits: "3.14159"
+    exponent: ~
+    suffix: ~
+- Newline
+- Dedent

@@ -1,0 +1,53 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Struct
+- Ident: Point
+- Newline
+- Indent
+- Ident: x
+- Colon
+- F64
+- Newline
+- Ident: y
+- Colon
+- F64
+- Newline
+- Dedent
+- Func
+- Ident: field_access
+- LParen
+- Ident: p
+- Colon
+- Ident: Point
+- RParen
+- Arrow
+- F64
+- Newline
+- Indent
+- Let
+- Ident: x
+- Eq
+- Ident: p
+- Dot
+- Ident: x
+- Newline
+- Let
+- Ident: y
+- Eq
+- Ident: p
+- Dot
+- Ident: y
+- Newline
+- Return
+- Ident: p
+- Dot
+- Ident: x
+- Plus
+- Ident: p
+- Dot
+- Ident: y
+- Newline
+- Dedent

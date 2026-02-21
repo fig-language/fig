@@ -1,0 +1,58 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Func
+- Ident: arithmetic_ops
+- LParen
+- Ident: a
+- Colon
+- I32
+- Comma
+- Ident: b
+- Colon
+- I32
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: add
+- Eq
+- Ident: a
+- Plus
+- Ident: b
+- Newline
+- Let
+- Ident: sub
+- Eq
+- Ident: a
+- Minus
+- Ident: b
+- Newline
+- Let
+- Ident: mul
+- Eq
+- Ident: a
+- Star
+- Ident: b
+- Newline
+- Let
+- Ident: div
+- Eq
+- Ident: a
+- Slash
+- Ident: b
+- Newline
+- Let
+- Ident: mod_
+- Eq
+- Ident: a
+- Percent
+- Ident: b
+- Newline
+- Pass
+- Newline
+- Dedent

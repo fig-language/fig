@@ -1,0 +1,49 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Func
+- Ident: nested_loops
+- LParen
+- Ident: n
+- Colon
+- USize
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: n
+- RParen
+- Newline
+- Indent
+- For
+- Ident: j
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: n
+- RParen
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Dedent
+- Dedent

@@ -1,0 +1,13 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Let
+- Ident: x
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "42"
+    suffix: ~
+- Newline

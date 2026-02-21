@@ -1,0 +1,38 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Func
+- Ident: abs
+- LParen
+- Ident: x
+- Colon
+- I32
+- RParen
+- Arrow
+- I32
+- Newline
+- Indent
+- If
+- Ident: x
+- Ge
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- Ident: x
+- Newline
+- Dedent
+- Else
+- Newline
+- Indent
+- Return
+- Minus
+- Ident: x
+- Newline
+- Dedent
+- Dedent

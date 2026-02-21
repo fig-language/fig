@@ -1,0 +1,2420 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Using
+- Std
+- Colon
+- Colon
+- Ident: io
+- Newline
+- Enum
+- Ident: ArgType
+- Newline
+- Indent
+- Ident: FLAG
+- Newline
+- Ident: OPTION
+- Newline
+- Ident: POSITIONAL
+- Newline
+- Dedent
+- Struct
+- Ident: Argument
+- Newline
+- Indent
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: short_name
+- Colon
+- Question
+- U8
+- Newline
+- Ident: long_name
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: arg_type
+- Colon
+- Ident: ArgType
+- Newline
+- Ident: description
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: required
+- Colon
+- Bool
+- Newline
+- Ident: default_value
+- Colon
+- Question
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: takes_value
+- Colon
+- Bool
+- Newline
+- Dedent
+- Export
+- Struct
+- Ident: CLI
+- Newline
+- Indent
+- Ident: program_name
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: version
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: about
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: arguments
+- Colon
+- LBracket
+- Ident: Argument
+- RBracket
+- Newline
+- Ident: subcommands
+- Colon
+- LBracket
+- Ident: Subcommand
+- RBracket
+- Newline
+- Dedent
+- Struct
+- Ident: Subcommand
+- Newline
+- Indent
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: about
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: cli
+- Colon
+- Ident: CLI
+- Newline
+- Dedent
+- Struct
+- Ident: ParsedArgs
+- Newline
+- Indent
+- Ident: values
+- Colon
+- LBracket
+- Ident: ArgValue
+- RBracket
+- Newline
+- Ident: subcommand
+- Colon
+- Question
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: subcommand_args
+- Colon
+- Question
+- Ident: ParsedArgs
+- Newline
+- Dedent
+- Struct
+- Ident: ArgValue
+- Newline
+- Indent
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: value
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: present
+- Colon
+- Bool
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: CLI
+- Colon
+- Colon
+- Ident: new
+- LParen
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Ident: CLI
+- Newline
+- Indent
+- Return
+- Ident: CLI
+- LParen
+- Newline
+- Indent
+- Ident: program_name
+- Colon
+- Ident: name
+- Comma
+- Newline
+- Ident: version
+- Colon
+- StringLiteral: 0.1.0
+- Comma
+- Newline
+- Ident: about
+- Colon
+- StringLiteral: ""
+- Comma
+- Newline
+- Ident: arguments
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Newline
+- Ident: subcommands
+- Colon
+- LBracket
+- RBracket
+- Newline
+- Dedent
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: CLI
+- Colon
+- Colon
+- Ident: version
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: version
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Star
+- Mut
+- Ident: CLI
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: version
+- Eq
+- Ident: version
+- Newline
+- Return
+- SelfLower
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: CLI
+- Colon
+- Colon
+- Ident: about
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: about
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Star
+- Mut
+- Ident: CLI
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: about
+- Eq
+- Ident: about
+- Newline
+- Return
+- SelfLower
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: CLI
+- Colon
+- Colon
+- Ident: arg
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: arg
+- Colon
+- Ident: Argument
+- RParen
+- Arrow
+- Star
+- Mut
+- Ident: CLI
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: arguments
+- Dot
+- Ident: push
+- LParen
+- Ident: arg
+- RParen
+- Newline
+- Return
+- SelfLower
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: CLI
+- Colon
+- Colon
+- Ident: flag
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: long
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: short
+- Colon
+- Question
+- U8
+- Comma
+- Ident: description
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Star
+- Mut
+- Ident: CLI
+- Newline
+- Indent
+- Let
+- Ident: arg
+- Eq
+- Ident: Argument
+- LParen
+- Newline
+- Indent
+- Ident: name
+- Colon
+- Ident: long
+- Comma
+- Newline
+- Ident: short_name
+- Colon
+- Ident: short
+- Comma
+- Newline
+- Ident: long_name
+- Colon
+- Ident: long
+- Comma
+- Newline
+- Ident: arg_type
+- Colon
+- Ident: ArgType
+- Colon
+- Colon
+- Ident: FLAG
+- Comma
+- Newline
+- Ident: description
+- Colon
+- Ident: description
+- Comma
+- Newline
+- Ident: required
+- Colon
+- "False"
+- Comma
+- Newline
+- Ident: default_value
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: takes_value
+- Colon
+- "False"
+- Newline
+- Dedent
+- RParen
+- Newline
+- Newline
+- SelfLower
+- Dot
+- Ident: arguments
+- Dot
+- Ident: push
+- LParen
+- Ident: arg
+- RParen
+- Newline
+- Return
+- SelfLower
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: CLI
+- Colon
+- Colon
+- Ident: option
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: long
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: short
+- Colon
+- Question
+- U8
+- Comma
+- Ident: description
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: required
+- Colon
+- Bool
+- RParen
+- Arrow
+- Star
+- Mut
+- Ident: CLI
+- Newline
+- Indent
+- Let
+- Ident: arg
+- Eq
+- Ident: Argument
+- LParen
+- Newline
+- Indent
+- Ident: name
+- Colon
+- Ident: long
+- Comma
+- Newline
+- Ident: short_name
+- Colon
+- Ident: short
+- Comma
+- Newline
+- Ident: long_name
+- Colon
+- Ident: long
+- Comma
+- Newline
+- Ident: arg_type
+- Colon
+- Ident: ArgType
+- Colon
+- Colon
+- Ident: OPTION
+- Comma
+- Newline
+- Ident: description
+- Colon
+- Ident: description
+- Comma
+- Newline
+- Ident: required
+- Colon
+- Ident: required
+- Comma
+- Newline
+- Ident: default_value
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: takes_value
+- Colon
+- "True"
+- Newline
+- Dedent
+- RParen
+- Newline
+- Newline
+- SelfLower
+- Dot
+- Ident: arguments
+- Dot
+- Ident: push
+- LParen
+- Ident: arg
+- RParen
+- Newline
+- Return
+- SelfLower
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: CLI
+- Colon
+- Colon
+- Ident: positional
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: description
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: required
+- Colon
+- Bool
+- RParen
+- Arrow
+- Star
+- Mut
+- Ident: CLI
+- Newline
+- Indent
+- Let
+- Ident: arg
+- Eq
+- Ident: Argument
+- LParen
+- Newline
+- Indent
+- Ident: name
+- Colon
+- Ident: name
+- Comma
+- Newline
+- Ident: short_name
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: long_name
+- Colon
+- StringLiteral: ""
+- Comma
+- Newline
+- Ident: arg_type
+- Colon
+- Ident: ArgType
+- Colon
+- Colon
+- Ident: POSITIONAL
+- Comma
+- Newline
+- Ident: description
+- Colon
+- Ident: description
+- Comma
+- Newline
+- Ident: required
+- Colon
+- Ident: required
+- Comma
+- Newline
+- Ident: default_value
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: takes_value
+- Colon
+- "True"
+- Newline
+- Dedent
+- RParen
+- Newline
+- Newline
+- SelfLower
+- Dot
+- Ident: arguments
+- Dot
+- Ident: push
+- LParen
+- Ident: arg
+- RParen
+- Newline
+- Return
+- SelfLower
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: CLI
+- Colon
+- Colon
+- Ident: subcommand
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: about
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: cli
+- Colon
+- Ident: CLI
+- RParen
+- Arrow
+- Star
+- Mut
+- Ident: CLI
+- Newline
+- Indent
+- Let
+- Ident: subcmd
+- Eq
+- Ident: Subcommand
+- LParen
+- Ident: name
+- Colon
+- Ident: name
+- Comma
+- Ident: about
+- Colon
+- Ident: about
+- Comma
+- Ident: cli
+- Colon
+- Ident: cli
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: subcommands
+- Dot
+- Ident: push
+- LParen
+- Ident: subcmd
+- RParen
+- Newline
+- Return
+- SelfLower
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: CLI
+- Colon
+- Colon
+- Ident: parse
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: args
+- Colon
+- LBracket
+- LBracket
+- U8
+- RBracket
+- RBracket
+- RParen
+- Arrow
+- Ident: ParsedArgs
+- Newline
+- Indent
+- Mut
+- Ident: parsed
+- Eq
+- Ident: ParsedArgs
+- LParen
+- Newline
+- Indent
+- Ident: values
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Newline
+- Ident: subcommand
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: subcommand_args
+- Colon
+- "Null"
+- Newline
+- Dedent
+- RParen
+- Newline
+- Newline
+- Mut
+- Ident: i
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Mut
+- Ident: positional_index
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Newline
+- For
+- Ident: idx
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Comma
+- Ident: args
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- If
+- Ident: i
+- Ge
+- Ident: args
+- Dot
+- Ident: len
+- Newline
+- Indent
+- Break
+- Newline
+- Newline
+- Dedent
+- Let
+- Ident: arg
+- Eq
+- Ident: args
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: is_subcommand
+- LParen
+- Ident: arg
+- RParen
+- Newline
+- Indent
+- Ident: parsed
+- Dot
+- Ident: subcommand
+- Eq
+- Ident: arg
+- Newline
+- Newline
+- Let
+- Ident: subcmd
+- Eq
+- SelfLower
+- Dot
+- Ident: find_subcommand
+- LParen
+- Ident: arg
+- RParen
+- Newline
+- If
+- Ident: subcmd
+- Ne
+- "Null"
+- Newline
+- Indent
+- Let
+- Ident: remaining
+- Eq
+- Ident: slice_from
+- LParen
+- Ident: args
+- Comma
+- Ident: i
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- RParen
+- Newline
+- Ident: parsed
+- Dot
+- Ident: subcommand_args
+- Eq
+- Ident: subcmd
+- Dot
+- Ident: cli
+- Dot
+- Ident: parse
+- LParen
+- Ident: remaining
+- RParen
+- Newline
+- Newline
+- Dedent
+- Break
+- Newline
+- Newline
+- Dedent
+- If
+- Ident: starts_with
+- LParen
+- Ident: arg
+- Comma
+- StringLiteral: "--"
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: name
+- Eq
+- Ident: slice_from
+- LParen
+- Ident: arg
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- RParen
+- Newline
+- Let
+- Ident: arg_def
+- Eq
+- SelfLower
+- Dot
+- Ident: find_long_arg
+- LParen
+- Ident: name
+- RParen
+- Newline
+- Newline
+- If
+- Ident: arg_def
+- Ne
+- "Null"
+- AndAnd
+- Ident: arg_def
+- Dot
+- Ident: takes_value
+- Newline
+- Indent
+- Ident: i
+- Eq
+- Ident: i
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- If
+- Ident: i
+- Lt
+- Ident: args
+- Dot
+- Ident: len
+- Newline
+- Indent
+- Ident: parsed
+- Dot
+- Ident: add_value
+- LParen
+- Ident: arg_def
+- Dot
+- Ident: name
+- Comma
+- Ident: args
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- Newline
+- Dedent
+- Dedent
+- Else
+- Newline
+- Indent
+- Ident: parsed
+- Dot
+- Ident: add_flag
+- LParen
+- Ident: name
+- RParen
+- Newline
+- Dedent
+- Dedent
+- Elif
+- Ident: starts_with
+- LParen
+- Ident: arg
+- Comma
+- StringLiteral: "-"
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: short
+- Eq
+- Ident: arg
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- RBracket
+- Newline
+- Let
+- Ident: arg_def
+- Eq
+- SelfLower
+- Dot
+- Ident: find_short_arg
+- LParen
+- Ident: short
+- RParen
+- Newline
+- Newline
+- If
+- Ident: arg_def
+- Ne
+- "Null"
+- AndAnd
+- Ident: arg_def
+- Dot
+- Ident: takes_value
+- Newline
+- Indent
+- Ident: i
+- Eq
+- Ident: i
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- If
+- Ident: i
+- Lt
+- Ident: args
+- Dot
+- Ident: len
+- Newline
+- Indent
+- Ident: parsed
+- Dot
+- Ident: add_value
+- LParen
+- Ident: arg_def
+- Dot
+- Ident: name
+- Comma
+- Ident: args
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- Newline
+- Dedent
+- Dedent
+- Else
+- Newline
+- Indent
+- Ident: parsed
+- Dot
+- Ident: add_flag_by_short
+- LParen
+- Ident: short
+- RParen
+- Newline
+- Dedent
+- Dedent
+- Else
+- Newline
+- Indent
+- Let
+- Ident: positional
+- Eq
+- SelfLower
+- Dot
+- Ident: get_positional
+- LParen
+- Ident: positional_index
+- RParen
+- Newline
+- If
+- Ident: positional
+- Ne
+- "Null"
+- Newline
+- Indent
+- Ident: parsed
+- Dot
+- Ident: add_value
+- LParen
+- Ident: positional
+- Dot
+- Ident: name
+- Comma
+- Ident: arg
+- RParen
+- Newline
+- Ident: positional_index
+- Eq
+- Ident: positional_index
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Ident: i
+- Eq
+- Ident: i
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Dedent
+- Return
+- Ident: parsed
+- Newline
+- Dedent
+- Func
+- Ident: CLI
+- Colon
+- Colon
+- Ident: find_long_arg
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Question
+- Star
+- Ident: Argument
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: arguments
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- If
+- Ident: bytes_equal
+- LParen
+- SelfLower
+- Dot
+- Ident: arguments
+- LBracket
+- Ident: i
+- RBracket
+- Dot
+- Ident: long_name
+- Comma
+- Ident: name
+- RParen
+- Newline
+- Indent
+- Return
+- And
+- SelfLower
+- Dot
+- Ident: arguments
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Return
+- "Null"
+- Newline
+- Dedent
+- Func
+- Ident: CLI
+- Colon
+- Colon
+- Ident: find_short_arg
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: short
+- Colon
+- U8
+- RParen
+- Arrow
+- Question
+- Star
+- Ident: Argument
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: arguments
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: arguments
+- LBracket
+- Ident: i
+- RBracket
+- Dot
+- Ident: short_name
+- Ne
+- "Null"
+- AndAnd
+- SelfLower
+- Dot
+- Ident: arguments
+- LBracket
+- Ident: i
+- RBracket
+- Dot
+- Ident: short_name
+- EqEq
+- Ident: short
+- Newline
+- Indent
+- Return
+- And
+- SelfLower
+- Dot
+- Ident: arguments
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Return
+- "Null"
+- Newline
+- Dedent
+- Func
+- Ident: CLI
+- Colon
+- Colon
+- Ident: get_positional
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: index
+- Colon
+- USize
+- RParen
+- Arrow
+- Question
+- Star
+- Ident: Argument
+- Newline
+- Indent
+- Mut
+- Ident: count
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: arguments
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: arguments
+- LBracket
+- Ident: i
+- RBracket
+- Dot
+- Ident: arg_type
+- EqEq
+- Ident: ArgType
+- Colon
+- Colon
+- Ident: POSITIONAL
+- Newline
+- Indent
+- If
+- Ident: count
+- EqEq
+- Ident: index
+- Newline
+- Indent
+- Return
+- And
+- SelfLower
+- Dot
+- Ident: arguments
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Dedent
+- Ident: count
+- Eq
+- Ident: count
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Return
+- "Null"
+- Newline
+- Dedent
+- Func
+- Ident: CLI
+- Colon
+- Colon
+- Ident: is_subcommand
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: subcommands
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- If
+- Ident: bytes_equal
+- LParen
+- SelfLower
+- Dot
+- Ident: subcommands
+- LBracket
+- Ident: i
+- RBracket
+- Dot
+- Ident: name
+- Comma
+- Ident: name
+- RParen
+- Newline
+- Indent
+- Return
+- "True"
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Return
+- "False"
+- Newline
+- Dedent
+- Func
+- Ident: CLI
+- Colon
+- Colon
+- Ident: find_subcommand
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Question
+- Star
+- Ident: Subcommand
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: subcommands
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- If
+- Ident: bytes_equal
+- LParen
+- SelfLower
+- Dot
+- Ident: subcommands
+- LBracket
+- Ident: i
+- RBracket
+- Dot
+- Ident: name
+- Comma
+- Ident: name
+- RParen
+- Newline
+- Indent
+- Return
+- And
+- SelfLower
+- Dot
+- Ident: subcommands
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Return
+- "Null"
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: CLI
+- Colon
+- Colon
+- Ident: print_help
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Ident: println
+- LParen
+- SelfLower
+- Dot
+- Ident: program_name
+- RParen
+- Newline
+- Ident: println
+- LParen
+- SelfLower
+- Dot
+- Ident: version
+- RParen
+- Newline
+- Ident: println
+- LParen
+- SelfLower
+- Dot
+- Ident: about
+- RParen
+- Newline
+- Ident: println
+- LParen
+- StringLiteral: ""
+- RParen
+- Newline
+- Newline
+- Ident: println
+- LParen
+- StringLiteral: "USAGE:"
+- RParen
+- Newline
+- Ident: print
+- LParen
+- StringLiteral: "    "
+- RParen
+- Newline
+- Ident: print
+- LParen
+- SelfLower
+- Dot
+- Ident: program_name
+- RParen
+- Newline
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: arguments
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: arg
+- Eq
+- And
+- SelfLower
+- Dot
+- Ident: arguments
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Newline
+- If
+- Ident: arg
+- Dot
+- Ident: arg_type
+- EqEq
+- Ident: ArgType
+- Colon
+- Colon
+- Ident: FLAG
+- OrOr
+- Ident: arg
+- Dot
+- Ident: arg_type
+- EqEq
+- Ident: ArgType
+- Colon
+- Colon
+- Ident: OPTION
+- Newline
+- Indent
+- Ident: print
+- LParen
+- StringLiteral: " ["
+- RParen
+- Newline
+- If
+- Ident: arg
+- Dot
+- Ident: short_name
+- Ne
+- "Null"
+- Newline
+- Indent
+- Ident: print
+- LParen
+- StringLiteral: "-"
+- RParen
+- Newline
+- Ident: print_char
+- LParen
+- Ident: arg
+- Dot
+- Ident: short_name
+- RParen
+- Newline
+- Ident: print
+- LParen
+- StringLiteral: "|"
+- RParen
+- Newline
+- Dedent
+- Ident: print
+- LParen
+- StringLiteral: "--"
+- RParen
+- Newline
+- Ident: print
+- LParen
+- Ident: arg
+- Dot
+- Ident: long_name
+- RParen
+- Newline
+- If
+- Ident: arg
+- Dot
+- Ident: takes_value
+- Newline
+- Indent
+- Ident: print
+- LParen
+- StringLiteral: " <value>"
+- RParen
+- Newline
+- Dedent
+- Ident: print
+- LParen
+- StringLiteral: "]"
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: arg
+- Dot
+- Ident: arg_type
+- EqEq
+- Ident: ArgType
+- Colon
+- Colon
+- Ident: POSITIONAL
+- Newline
+- Indent
+- If
+- Ident: arg
+- Dot
+- Ident: required
+- Newline
+- Indent
+- Ident: print
+- LParen
+- StringLiteral: " <"
+- RParen
+- Newline
+- Ident: print
+- LParen
+- Ident: arg
+- Dot
+- Ident: name
+- RParen
+- Newline
+- Ident: print
+- LParen
+- StringLiteral: ">"
+- RParen
+- Newline
+- Dedent
+- Else
+- Newline
+- Indent
+- Ident: print
+- LParen
+- StringLiteral: " ["
+- RParen
+- Newline
+- Ident: print
+- LParen
+- Ident: arg
+- Dot
+- Ident: name
+- RParen
+- Newline
+- Ident: print
+- LParen
+- StringLiteral: "]"
+- RParen
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Dedent
+- Ident: println
+- LParen
+- StringLiteral: ""
+- RParen
+- Newline
+- Ident: println
+- LParen
+- StringLiteral: ""
+- RParen
+- Newline
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: arguments
+- Dot
+- Ident: len
+- Gt
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- Ident: println
+- LParen
+- StringLiteral: "ARGUMENTS:"
+- RParen
+- Newline
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: arguments
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: arg
+- Eq
+- And
+- SelfLower
+- Dot
+- Ident: arguments
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Newline
+- Ident: print
+- LParen
+- StringLiteral: "    "
+- RParen
+- Newline
+- Newline
+- If
+- Ident: arg
+- Dot
+- Ident: short_name
+- Ne
+- "Null"
+- Newline
+- Indent
+- Ident: print
+- LParen
+- StringLiteral: "-"
+- RParen
+- Newline
+- Ident: print_char
+- LParen
+- Ident: arg
+- Dot
+- Ident: short_name
+- RParen
+- Newline
+- Ident: print
+- LParen
+- StringLiteral: ", "
+- RParen
+- Newline
+- Newline
+- Dedent
+- If
+- Ident: arg
+- Dot
+- Ident: long_name
+- Dot
+- Ident: len
+- Gt
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- Ident: print
+- LParen
+- StringLiteral: "--"
+- RParen
+- Newline
+- Ident: print
+- LParen
+- Ident: arg
+- Dot
+- Ident: long_name
+- RParen
+- Newline
+- Dedent
+- Else
+- Newline
+- Indent
+- Ident: print
+- LParen
+- Ident: arg
+- Dot
+- Ident: name
+- RParen
+- Newline
+- Newline
+- Dedent
+- Ident: print
+- LParen
+- StringLiteral: "    "
+- RParen
+- Newline
+- Ident: println
+- LParen
+- Ident: arg
+- Dot
+- Ident: description
+- RParen
+- Newline
+- Newline
+- Dedent
+- Dedent
+- If
+- SelfLower
+- Dot
+- Ident: subcommands
+- Dot
+- Ident: len
+- Gt
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- Ident: println
+- LParen
+- StringLiteral: ""
+- RParen
+- Newline
+- Ident: println
+- LParen
+- StringLiteral: "SUBCOMMANDS:"
+- RParen
+- Newline
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: subcommands
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: cmd
+- Eq
+- And
+- SelfLower
+- Dot
+- Ident: subcommands
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Ident: print
+- LParen
+- StringLiteral: "    "
+- RParen
+- Newline
+- Ident: print
+- LParen
+- Ident: cmd
+- Dot
+- Ident: name
+- RParen
+- Newline
+- Ident: print
+- LParen
+- StringLiteral: "    "
+- RParen
+- Newline
+- Ident: println
+- LParen
+- Ident: cmd
+- Dot
+- Ident: about
+- RParen
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Pass
+- Newline
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: ParsedArgs
+- Colon
+- Colon
+- Ident: add_value
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: value
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: arg_value
+- Eq
+- Ident: ArgValue
+- LParen
+- Ident: name
+- Colon
+- Ident: name
+- Comma
+- Ident: value
+- Colon
+- Ident: value
+- Comma
+- Ident: present
+- Colon
+- "True"
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: values
+- Dot
+- Ident: push
+- LParen
+- Ident: arg_value
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: ParsedArgs
+- Colon
+- Colon
+- Ident: add_flag
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: arg_value
+- Eq
+- Ident: ArgValue
+- LParen
+- Ident: name
+- Colon
+- Ident: name
+- Comma
+- Ident: value
+- Colon
+- StringLiteral: "true"
+- Comma
+- Ident: present
+- Colon
+- "True"
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: values
+- Dot
+- Ident: push
+- LParen
+- Ident: arg_value
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: ParsedArgs
+- Colon
+- Colon
+- Ident: add_flag_by_short
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: short
+- Colon
+- U8
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: ParsedArgs
+- Colon
+- Colon
+- Ident: get
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Question
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: values
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- If
+- Ident: bytes_equal
+- LParen
+- SelfLower
+- Dot
+- Ident: values
+- LBracket
+- Ident: i
+- RBracket
+- Dot
+- Ident: name
+- Comma
+- Ident: name
+- RParen
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: values
+- LBracket
+- Ident: i
+- RBracket
+- Dot
+- Ident: value
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Return
+- "Null"
+- Newline
+- Dedent
+- Func
+- Ident: ParsedArgs
+- Colon
+- Colon
+- Ident: is_present
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: values
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- If
+- Ident: bytes_equal
+- LParen
+- SelfLower
+- Dot
+- Ident: values
+- LBracket
+- Ident: i
+- RBracket
+- Dot
+- Ident: name
+- Comma
+- Ident: name
+- RParen
+- AndAnd
+- SelfLower
+- Dot
+- Ident: values
+- LBracket
+- Ident: i
+- RBracket
+- Dot
+- Ident: present
+- Newline
+- Indent
+- Return
+- "True"
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Return
+- "False"
+- Newline
+- Newline
+- Dedent
+- Func
+- Ident: starts_with
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: prefix
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- If
+- Ident: s
+- Dot
+- Ident: len
+- Lt
+- Ident: prefix
+- Dot
+- Ident: len
+- Newline
+- Indent
+- Return
+- "False"
+- Newline
+- Newline
+- Dedent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: prefix
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- If
+- Ident: s
+- LBracket
+- Ident: i
+- RBracket
+- Ne
+- Ident: prefix
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Indent
+- Return
+- "False"
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Return
+- "True"
+- Newline
+- Dedent
+- Func
+- Ident: bytes_equal
+- LParen
+- Ident: a
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: b
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- If
+- Ident: a
+- Dot
+- Ident: len
+- Ne
+- Ident: b
+- Dot
+- Ident: len
+- Newline
+- Indent
+- Return
+- "False"
+- Newline
+- Newline
+- Dedent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: a
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- If
+- Ident: a
+- LBracket
+- Ident: i
+- RBracket
+- Ne
+- Ident: b
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Indent
+- Return
+- "False"
+- Newline
+- Newline
+- Dedent
+- Dedent
+- Return
+- "True"
+- Newline
+- Dedent
+- Func
+- Ident: slice_from
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: start
+- Colon
+- USize
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: println
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: print
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: print_char
+- LParen
+- Ident: ch
+- Colon
+- U8
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

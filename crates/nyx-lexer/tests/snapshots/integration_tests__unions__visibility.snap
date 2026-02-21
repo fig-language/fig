@@ -1,0 +1,41 @@
+---
+source: crates/nyx-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Newline
+- Public
+- Union
+- Ident: PublicResult
+- LBracket
+- Ident: T
+- Comma
+- Ident: E
+- RBracket
+- Newline
+- Indent
+- OkLiteral
+- Colon
+- Ident: T
+- Newline
+- Ident: err
+- Colon
+- Ident: E
+- Newline
+- Dedent
+- Export
+- Union
+- Ident: ExportedMaybe
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- Ident: some
+- Colon
+- Ident: T
+- Newline
+- Ident: none
+- Colon
+- OkLiteral
+- Newline
+- Dedent

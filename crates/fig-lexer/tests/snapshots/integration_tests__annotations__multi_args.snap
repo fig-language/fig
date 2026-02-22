@@ -3,13 +3,14 @@ source: crates/fig-lexer/tests/integration_tests.rs
 expression: tokens
 ---
 - Hash
-- Ident: repr
+- Ident: something
 - LParen
 - Ident: C
 - Comma
-- Packed
+- StringLiteral: hello world
 - RParen
 - Newline
+- Packed
 - Struct
 - Ident: CPacked
 - Newline

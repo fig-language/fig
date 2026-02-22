@@ -150,14 +150,15 @@ Annotations: Vec<Annotation> = {
 };
 
 // ============================================================================
-// Expressions  (precedence levels 0 - 12)
+// Expressions  (precedence levels 1 - 13)
 // ============================================================================
 
 pub Expression: Expression = {
-    #[precedence(level="0")]
-    Unary,
+    #[precedence(level="13")] #[assoc(side="left")]
+    <e: Expression> "as" <t: Type>
+        => Expression::Cast(CastExpr { expr: Box::new(e), target_type: Box::new(t) }),
 
-    #[precedence(level="11")] #[assoc(side="left")]
+    #[precedence(level="12")] #[assoc(side="left")]
     <obj: Expression> "." "!" <field: "ident">
         => Expression::FieldAccess(FieldAccessExpr { object: Box::new(obj), field, is_propagating: true }),
     <obj: Expression> "." <field: "ident">
@@ -169,7 +170,7 @@ pub Expression: Expression = {
     <obj: Expression> "[" <idx: Expression> "]"
         => Expression::Index(IndexExpr { object: Box::new(obj), index: Box::new(idx) }),
 
-    #[precedence(level="10")] #[assoc(side="left")]
+    #[precedence(level="11")] #[assoc(side="left")]
     <lhs: Expression> "*" <rhs: Expression>
         => Expression::BinaryOp(BinaryOpExpr { lhs: Box::new(lhs), op: BinaryOperator::Multiply, rhs: Box::new(rhs) }),
     <lhs: Expression> "/" <rhs: Expression>
@@ -177,19 +178,19 @@ pub Expression: Expression = {
     <lhs: Expression> "%" <rhs: Expression>
         => Expression::BinaryOp(BinaryOpExpr { lhs: Box::new(lhs), op: BinaryOperator::Modulo, rhs: Box::new(rhs) }),
 
-    #[precedence(level="9")] #[assoc(side="left")]
+    #[precedence(level="10")] #[assoc(side="left")]
     <lhs: Expression> "+" <rhs: Expression>
         => Expression::BinaryOp(BinaryOpExpr { lhs: Box::new(lhs), op: BinaryOperator::Add, rhs: Box::new(rhs) }),
     <lhs: Expression> "-" <rhs: Expression>
         => Expression::BinaryOp(BinaryOpExpr { lhs: Box::new(lhs), op: BinaryOperator::Subtract, rhs: Box::new(rhs) }),
 
-    #[precedence(level="8")] #[assoc(side="left")]
+    #[precedence(level="9")] #[assoc(side="left")]
     <lhs: Expression> "<<" <rhs: Expression>
         => Expression::BinaryOp(BinaryOpExpr { lhs: Box::new(lhs), op: BinaryOperator::ShiftLeft, rhs: Box::new(rhs) }),
     <lhs: Expression> ">>" <rhs: Expression>
         => Expression::BinaryOp(BinaryOpExpr { lhs: Box::new(lhs), op: BinaryOperator::ShiftRight, rhs: Box::new(rhs) }),
 
-    #[precedence(level="7")] #[assoc(side="left")]
+    #[precedence(level="8")] #[assoc(side="left")]
     <lhs: Expression> "<" <rhs: Expression>
         => Expression::BinaryOp(BinaryOpExpr { lhs: Box::new(lhs), op: BinaryOperator::LessThan, rhs: Box::new(rhs) }),
     <lhs: Expression> ">" <rhs: Expression>
@@ -199,35 +200,34 @@ pub Expression: Expression = {
     <lhs: Expression> ">=" <rhs: Expression>
         => Expression::BinaryOp(BinaryOpExpr { lhs: Box::new(lhs), op: BinaryOperator::GreaterThanOrEqual, rhs: Box::new(rhs) }),
 
-    #[precedence(level="6")] #[assoc(side="left")]
+    #[precedence(level="7")] #[assoc(side="left")]
     <lhs: Expression> "==" <rhs: Expression>
         => Expression::BinaryOp(BinaryOpExpr { lhs: Box::new(lhs), op: BinaryOperator::Equal, rhs: Box::new(rhs) }),
     <lhs: Expression> "!=" <rhs: Expression>
         => Expression::BinaryOp(BinaryOpExpr { lhs: Box::new(lhs), op: BinaryOperator::NotEqual, rhs: Box::new(rhs) }),
 
-    #[precedence(level="5")] #[assoc(side="left")]
+    #[precedence(level="6")] #[assoc(side="left")]
     <lhs: Expression> "&" <rhs: Expression>
         => Expression::BinaryOp(BinaryOpExpr { lhs: Box::new(lhs), op: BinaryOperator::BitwiseAnd, rhs: Box::new(rhs) }),
 
-    #[precedence(level="4")] #[assoc(side="left")]
+    #[precedence(level="5")] #[assoc(side="left")]
     <lhs: Expression> "^" <rhs: Expression>
         => Expression::BinaryOp(BinaryOpExpr { lhs: Box::new(lhs), op: BinaryOperator::BitwiseXor, rhs: Box::new(rhs) }),
 
-    #[precedence(level="3")] #[assoc(side="left")]
+    #[precedence(level="4")] #[assoc(side="left")]
     <lhs: Expression> "|" <rhs: Expression>
         => Expression::BinaryOp(BinaryOpExpr { lhs: Box::new(lhs), op: BinaryOperator::BitwiseOr, rhs: Box::new(rhs) }),
 
-    #[precedence(level="2")] #[assoc(side="left")]
+    #[precedence(level="3")] #[assoc(side="left")]
     <lhs: Expression> "&&" <rhs: Expression>
         => Expression::BinaryOp(BinaryOpExpr { lhs: Box::new(lhs), op: BinaryOperator::LogicalAnd, rhs: Box::new(rhs) }),
 
-    #[precedence(level="1")] #[assoc(side="left")]
+    #[precedence(level="2")] #[assoc(side="left")]
     <lhs: Expression> "||" <rhs: Expression>
         => Expression::BinaryOp(BinaryOpExpr { lhs: Box::new(lhs), op: BinaryOperator::LogicalOr, rhs: Box::new(rhs) }),
 
-    #[precedence(level="12")] #[assoc(side="left")]
-    <e: Expression> "as" <t: Type>
-        => Expression::Cast(CastExpr { expr: Box::new(e), target_type: Box::new(t) }),
+    #[precedence(level="1")]
+    Unary,
 };
 
 Unary: Expression = {

@@ -18,11 +18,17 @@ pub struct Path {
 
 impl Path {
     pub fn simple(name: String) -> Self {
-        Path { segments: vec![name], generic_args: vec![] }
+        Path {
+            segments: vec![name],
+            generic_args: vec![],
+        }
     }
 
     pub fn with_generics(segments: Vec<String>, generic_args: Vec<Type>) -> Self {
-        Path { segments, generic_args }
+        Path {
+            segments,
+            generic_args,
+        }
     }
 }
 
@@ -100,6 +106,9 @@ pub enum Expression {
 
     // ── Grouping ──
     Parenthesized(Box<Expression>),
+
+    // ── Assignment ──
+    Assign(AssignExpr),
 }
 
 // ============================================================================
@@ -164,6 +173,31 @@ pub struct CastExpr {
 pub struct OffsetofExpr {
     pub ty: Box<Type>,
     pub field: String,
+}
+
+// ============================================================================
+// Assignment Operations
+// ============================================================================
+
+pub struct AssignExpr {
+    lhs: Box<Expression>,
+    op: AssignOperator,
+    rhs: Box<Expression>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+pub enum AssignOperator {
+    Assign,       // =
+    AddAssign,    // +=
+    SubAssign,    // -=
+    MulAssign,    // *=
+    DivAssign,    // /=
+    ModAssign,    // %=
+    BitAndAssign, // &=
+    BitOrAssign,  // |=
+    BitXorAssign, // ^=
+    ShlAssign,    // <<=
+    ShrAssign,    // >>=
 }
 
 // ============================================================================
@@ -626,12 +660,23 @@ pub fn merge_where_clause(
 ) -> Vec<GenericParameter> {
     for constraint in where_clause {
         if let GenericParameter::Type { name, bounds, .. } = constraint {
-            if let Some(existing) = params.iter_mut().find(|p| matches!(p, GenericParameter::Type { name: n, .. } if *n == name)) {
-                if let GenericParameter::Type { bounds: existing_bounds, .. } = existing {
+            if let Some(existing) = params
+                .iter_mut()
+                .find(|p| matches!(p, GenericParameter::Type { name: n, .. } if *n == name))
+            {
+                if let GenericParameter::Type {
+                    bounds: existing_bounds,
+                    ..
+                } = existing
+                {
                     existing_bounds.extend(bounds);
                 }
             } else {
-                params.push(GenericParameter::Type { name, bounds, default_type: None });
+                params.push(GenericParameter::Type {
+                    name,
+                    bounds,
+                    default_type: None,
+                });
             }
         }
     }

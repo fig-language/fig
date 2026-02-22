@@ -1,0 +1,24 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Struct:
+      visibility: Default
+      annotations:
+        - name: something
+          args:
+            - Path:
+                segments:
+                  - C
+                generic_args: []
+            - StringLiteral: hello world
+      is_packed: true
+      name: CPacked
+      generic_params: []
+      requires: []
+      fields:
+        - name: a
+          ty: U8
+        - name: b
+          ty: I32

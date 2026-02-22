@@ -1,5 +1,5 @@
 // Annotations with multiple annotation arguments
-#repr(C, packed)
-struct CPacked
+#something(C, "hello world")
+packed struct CPacked
     a: u8
     b: i32

@@ -1,3 +1,0 @@
-// public const
-public const VERSION: u32 = 1
-public const NAME = "nyx"

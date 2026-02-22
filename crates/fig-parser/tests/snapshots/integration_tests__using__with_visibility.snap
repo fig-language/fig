@@ -1,0 +1,29 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Using:
+      visibility: Public
+      annotations: []
+      path:
+        segments:
+          - api
+          - types
+        generic_args: []
+  - Using:
+      visibility: Export
+      annotations: []
+      path:
+        segments:
+          - core
+          - primitives
+        generic_args: []
+  - Using:
+      visibility: Private
+      annotations: []
+      path:
+        segments:
+          - internal
+          - helpers
+        generic_args: []

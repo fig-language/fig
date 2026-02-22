@@ -2,15 +2,15 @@
 sidebar_position: 9
 ---
 
-# Nyx Memory Management
+# Fig Memory Management
 
-This document summarizes the memory management model in the Nyx programming language as of its bootstrapping stage. Nyx currently provides **manual memory management** without garbage collection or ownership systems.
+This document summarizes the memory management model in the Fig programming language as of its bootstrapping stage. Fig currently provides **manual memory management** without garbage collection or ownership systems.
 
 ---
 
 ## **1. No Garbage Collector**
 
-* Nyx does **not include a garbage collector** in its bootstrapped version.
+* Fig does **not include a garbage collector** in its bootstrapped version.
 * All memory management is **manual**, and the programmer is responsible for allocating and deallocating memory correctly.
 * There are **no hidden allocations**; every heap allocation requires explicit instruction.
 
@@ -30,7 +30,7 @@ This document summarizes the memory management model in the Nyx programming lang
     *   Programmer must specify the allocator.
     *   Memory persists beyond the current scope until explicitly freed.
 
-```nyx
+```fig
 mut x: i32 = 10       // stack allocation
 let buffer: *raw = allocator.allocate(1024)  // heap allocation
 ```
@@ -42,13 +42,13 @@ let buffer: *raw = allocator.allocate(1024)  // heap allocation
 *   Allocation must always specify an **allocator**; there is no default heap allocation.
 *   Example syntax:
 
-```nyx
+```fig
 let mem: *raw ! AllocError = my_allocator.allocate(size)
 ```
 
 *   Deallocation must also be explicit:
 
-```nyx
+```fig
 my_allocator.deallocate(mem)
 ```
 
@@ -58,7 +58,7 @@ my_allocator.deallocate(mem)
 
 ## **4. No Ownership or Borrowing System**
 
-*   Nyx **does not track ownership** of allocated memory.
+*   Fig **does not track ownership** of allocated memory.
 *   There is **no borrowing or lifetime system** like in Rust.
 *   All pointers (`*T` or `*raw`) are **raw**; the programmer is fully responsible for correct usage.
 *   Unsafe memory operations are allowed but must be handled carefully to avoid undefined behavior.
@@ -67,11 +67,11 @@ my_allocator.deallocate(mem)
 
 ### **Summary**
 
-*   Nyx uses **manual, explicit memory management**.
+*   Fig uses **manual, explicit memory management**.
 *   Stack and heap allocations are distinct; heap allocations always require an explicit allocator.
 *   No garbage collector, no ownership, no borrowing: all memory safety is the responsibility of the programmer.
 *   This approach provides maximum control and minimal runtime overhead, suitable for a low-level, high-performance language.
 
 ---
 
-This document serves as a reference for Nyx's **memory management principles**, explaining stack vs heap, manual allocation, and the absence of ownership or garbage collection.
+This document serves as a reference for Fig's **memory management principles**, explaining stack vs heap, manual allocation, and the absence of ownership or garbage collection.

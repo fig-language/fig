@@ -1,0 +1,62 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: get_zero
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - I32
+      body:
+        statements:
+          - Return:
+              IntegerLiteral:
+                base: Decimal
+                digits: "0"
+                suffix: ~
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: get_true
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Bool
+      body:
+        statements:
+          - Return:
+              BooleanLiteral: true
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: get_pi
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - F64
+      body:
+        statements:
+          - Return:
+              FloatLiteral:
+                digits: "3.14159"
+                exponent: ~
+                suffix: ~

@@ -1,0 +1,52 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: HashMap
+      generic_params:
+        - Type:
+            name: K
+            bounds: []
+            default_type: ~
+        - Type:
+            name: V
+            bounds: []
+            default_type: ~
+      aliased_type:
+        Path:
+          segments:
+            - core
+            - Map
+          generic_args:
+            - Path:
+                segments:
+                  - K
+                generic_args: []
+            - Path:
+                segments:
+                  - V
+                generic_args: []
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: Set
+      generic_params:
+        - Type:
+            name: T
+            bounds: []
+            default_type: ~
+      aliased_type:
+        Path:
+          segments:
+            - std
+            - collections
+            - HashSet
+          generic_args:
+            - Path:
+                segments:
+                  - T
+                generic_args: []

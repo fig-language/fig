@@ -2,9 +2,9 @@
 sidebar_position: 4
 ---
 
-# Nyx Literals
+# Fig Literals
 
-This document provides an overview of the literal values available in the Nyx programming language as of its bootstrapping stage. Literals allow developers to directly represent primitive values and aggregate structures in source code.
+This document provides an overview of the literal values available in the Fig programming language as of its bootstrapping stage. Literals allow developers to directly represent primitive values and aggregate structures in source code.
 
 ---
 
@@ -65,7 +65,7 @@ This document provides an overview of the literal values available in the Nyx pr
 
 * Arrays can be constructed using square brackets `[]`.
 
-```nyx
+```fig
 let numbers = [1, 2, 3, 4]
 let mixed: [i32] = [10, 20, 30]
 ```
@@ -78,7 +78,7 @@ let mixed: [i32] = [10, 20, 30]
 
 * The special `ok` literal represents the unit value for functions returning nothing:
 
-```nyx
+```fig
 fn do_nothing() -> ok {
     ok
 }
@@ -96,9 +96,9 @@ fn do_nothing() -> ok {
   * Boolean literals map to `bool`.
   * `ok` is a unit type literal.
   * Arrays are aggregate types.
-* Literals provide the foundation for expressions, initializations, and constant values in Nyx.
-* There are currently no tuples or map/dictionary literals in Nyx's bootstrapped version; maps must be constructed using standard library functions or constructors.
+* Literals provide the foundation for expressions, initializations, and constant values in Fig.
+* There are currently no tuples or map/dictionary literals in Fig's bootstrapped version; maps must be constructed using standard library functions or constructors.
 
 ---
 
-This document summarizes all **literal types in Nyx**, providing developers with the basic syntax and examples for numeric, boolean, character, string, array, and unit values.
+This document summarizes all **literal types in Fig**, providing developers with the basic syntax and examples for numeric, boolean, character, string, array, and unit values.

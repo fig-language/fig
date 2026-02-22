@@ -1,0 +1,81 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Namespace:
+      visibility: Default
+      annotations: []
+      name:
+        segments:
+          - math
+        generic_args: []
+      items:
+        - FunctionDeclaration:
+            signature:
+              visibility: Export
+              annotations: []
+              is_extern: false
+              is_effect: false
+              receiver: ~
+              name: add
+              generic_params: []
+              self_param: ~
+              params:
+                - name: a
+                  ty: I32
+                - name: b
+                  ty: I32
+              return_types:
+                - I32
+        - FunctionDeclaration:
+            signature:
+              visibility: Export
+              annotations: []
+              is_extern: false
+              is_effect: false
+              receiver: ~
+              name: sub
+              generic_params: []
+              self_param: ~
+              params:
+                - name: a
+                  ty: I32
+                - name: b
+                  ty: I32
+              return_types:
+                - I32
+        - FunctionDeclaration:
+            signature:
+              visibility: Export
+              annotations: []
+              is_extern: false
+              is_effect: false
+              receiver: ~
+              name: mul
+              generic_params: []
+              self_param: ~
+              params:
+                - name: a
+                  ty: I32
+                - name: b
+                  ty: I32
+              return_types:
+                - I32
+        - FunctionDeclaration:
+            signature:
+              visibility: Export
+              annotations: []
+              is_extern: false
+              is_effect: false
+              receiver: ~
+              name: div
+              generic_params: []
+              self_param: ~
+              params:
+                - name: a
+                  ty: I32
+                - name: b
+                  ty: I32
+              return_types:
+                - I32

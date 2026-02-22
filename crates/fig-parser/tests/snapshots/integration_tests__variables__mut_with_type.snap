@@ -1,0 +1,63 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: mut_typed
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Mut:
+              annotations: []
+              name: a
+              ty: I32
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "0"
+                  suffix: ~
+          - Mut:
+              annotations: []
+              name: b
+              ty: F32
+              value:
+                FloatLiteral:
+                  digits: "0.0"
+                  exponent: ~
+                  suffix: ~
+          - Mut:
+              annotations: []
+              name: c
+              ty: Bool
+              value:
+                BooleanLiteral: false
+          - Mut:
+              annotations: []
+              name: d
+              ty: U8
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "0"
+                  suffix: ~
+          - Mut:
+              annotations: []
+              name: counter
+              ty: USize
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "0"
+                  suffix: ~
+          - Pass

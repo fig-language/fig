@@ -1,0 +1,68 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - FunctionDeclaration:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: nop
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Ok
+  - FunctionDeclaration:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: identity
+        generic_params: []
+        self_param: ~
+        params:
+          - name: x
+            ty: I32
+        return_types:
+          - I32
+  - FunctionDeclaration:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: add
+        generic_params: []
+        self_param: ~
+        params:
+          - name: a
+            ty: I32
+          - name: b
+            ty: I32
+        return_types:
+          - I32
+  - FunctionDeclaration:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: greet
+        generic_params: []
+        self_param: ~
+        params:
+          - name: name
+            ty:
+              Array:
+                element_type: U8
+                size: ~
+        return_types:
+          - Ok

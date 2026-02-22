@@ -1,5 +1,5 @@
 [workspace]
 members = [
-    "crates/nyx-lexer",
-    "crates/nyx-parser",
+    "crates/fig-lexer",
+    "crates/fig-parser",
 ]

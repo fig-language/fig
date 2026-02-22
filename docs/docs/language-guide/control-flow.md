@@ -1,6 +1,6 @@
 # Control Flow
 
-Nyx provides a familiar set of control flow constructs, enabling you to manage the execution path of your programs effectively. These constructs are designed with an ergonomic syntax, allowing the omission of curly braces (`{ }`) for single-statement blocks, which can lead to more concise code.
+Fig provides a familiar set of control flow constructs, enabling you to manage the execution path of your programs effectively. These constructs are designed with an ergonomic syntax, allowing the omission of curly braces (`{ }`) for single-statement blocks, which can lead to more concise code.
 
 ---
 
@@ -12,7 +12,7 @@ Conditional statements allow your program to make decisions based on certain con
 
 The `if` statement executes a block of code if a specified condition is `true`. An optional `else` block can be provided to execute code when the condition is `false`.
 
-```nyx
+```fig
 if condition {
     // block executed if condition is true
 } else {
@@ -20,9 +20,9 @@ if condition {
 }
 ```
 
-For **single-statement blocks**, Nyx allows you to omit the curly braces, reducing boilerplate:
+For **single-statement blocks**, Fig allows you to omit the curly braces, reducing boilerplate:
 
-```nyx
+```fig
 if condition
     do_something()
 else
@@ -33,7 +33,7 @@ else
 
 You can chain multiple `if` conditions using `else if` (or `elseif`) to handle several possible scenarios:
 
-```nyx
+```fig
 if condition1 {
     // executed if condition1 is true
 } else if condition2 {
@@ -55,7 +55,7 @@ Loops allow you to repeatedly execute a block of code.
 
 The `while` loop continues to execute its block as long as a specified condition remains `true`.
 
-```nyx
+```fig
 while condition {
     // block executed as long as condition is true
 }
@@ -63,7 +63,7 @@ while condition {
 
 And its single-statement version:
 
-```nyx
+```fig
 while condition
     do_something()
 ```
@@ -74,7 +74,7 @@ The `for` loop is used for iterating over ranges or collections.
 
 Iterating over a numerical range:
 
-```nyx
+```fig
 for i in 0..10 { // block executed for i = 0, 1, ..., 9
     print(i)
 }
@@ -82,7 +82,7 @@ for i in 0..10 { // block executed for i = 0, 1, ..., 9
 
 Iterating over elements in a collection:
 
-```nyx
+```fig
 for item in collection {
     process(item)
 }
@@ -90,7 +90,7 @@ for item in collection {
 
 Single-statement version for `for` loops:
 
-```nyx
+```fig
 for i in 0..10
     print(i)
 ```
@@ -99,12 +99,12 @@ for i in 0..10
 
 ## 3. Loop Control Statements
 
-Nyx provides keywords to control the flow within loops:
+Fig provides keywords to control the flow within loops:
 
 * **`break`**: Immediately terminates the innermost loop and continues execution at the statement following the loop.
 * **`continue`**: Skips the remainder of the current iteration of the innermost loop and proceeds to the next iteration.
 
-```nyx
+```fig
 for i in 0..10 {
     if i % 2 == 0 {
         continue // skip even numbers
@@ -124,7 +124,7 @@ Both `break` and `continue` can also be used as single statements without curly 
 
 The `match` statement allows you to compare a value against a series of patterns and execute code based on the first matching pattern.
 
-```nyx
+```fig
 match value {
     0 => handle_zero(),
     1 => handle_one(),
@@ -134,7 +134,7 @@ match value {
 
 `match` can also be used as an **expression** that returns a value based on the matched arm:
 
-```nyx
+```fig
 let status_text = match status_code {
     200 => "OK",
     404 => "Not Found",
@@ -151,7 +151,7 @@ For single-statement arms in a `match` expression, the curly braces can be omitt
 
 The `return` keyword allows you to exit a function at any point and optionally provide a return value.
 
-```nyx
+```fig
 fn foo(x: i32) -> i32 {
     if x < 0 {
         return 0 // Exit early if x is negative
@@ -166,7 +166,7 @@ Similar to other control flow constructs, a function body or an `if` branch that
 
 ## 6. Comments on Scope Omission
 
-A defining characteristic of Nyx's control flow is its flexibility regarding block delimiters. For any control flow statement—`if`, `else`, `for`, `while`, `loop`, or `match` arms—the surrounding curly braces `{ }` **can be omitted if the body consists of only a single statement**. This design choice aims to:
+A defining characteristic of Fig's control flow is its flexibility regarding block delimiters. For any control flow statement—`if`, `else`, `for`, `while`, `loop`, or `match` arms—the surrounding curly braces `{ }` **can be omitted if the body consists of only a single statement**. This design choice aims to:
 
 * **Reduce boilerplate**: Making code more concise, especially for simple operations.
 * **Maintain readability**: While allowing conciseness, curly braces remain available for multi-statement blocks, ensuring clarity for more complex logic.

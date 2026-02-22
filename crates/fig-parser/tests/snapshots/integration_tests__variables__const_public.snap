@@ -1,0 +1,26 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Const:
+      visibility: Public
+      annotations: []
+      generic_params: []
+      receiver: []
+      name: VERSION
+      ty: U32
+      value:
+        IntegerLiteral:
+          base: Decimal
+          digits: "1"
+          suffix: ~
+  - Const:
+      visibility: Public
+      annotations: []
+      generic_params: []
+      receiver: []
+      name: NAME
+      ty: ~
+      value:
+        StringLiteral: fig

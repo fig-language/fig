@@ -2,15 +2,15 @@
 sidebar_position: 3
 ---
 
-# Nyx Type Aliases
+# Fig Type Aliases
 
-Nyx allows developers to define **type aliases** using the `type` keyword. Type aliases provide a new name for an existing type, improving code readability and maintainability. They can also be **generic**, making them flexible for use with multiple types.
+Fig allows developers to define **type aliases** using the `type` keyword. Type aliases provide a new name for an existing type, improving code readability and maintainability. They can also be **generic**, making them flexible for use with multiple types.
 
 ---
 
 ### **1. Basic Type Aliases**
 
-```nyx
+```fig
 // Simple alias for i32
 type Age = i32
 let my_age: Age = 30
@@ -24,7 +24,7 @@ let my_age: Age = 30
 
 * Type aliases can accept **type parameters in square brackets**, allowing reuse for different concrete types.
 
-```nyx
+```fig
 // Alias for a pair of values
 type Pair[T, U] = (T, U)
 
@@ -37,7 +37,7 @@ let p: Pair[i32, f64] = (10, 3.14)
 
 ### **3. Using Type Aliases in Function Signatures**
 
-```nyx
+```fig
 type StringMap[V] = Map[String, V]
 
 fn get_value(map: StringMap[i32], key: String) -> i32 {
@@ -61,4 +61,4 @@ fn get_value(map: StringMap[i32], key: String) -> i32 {
 
 ---
 
-This document summarizes the usage of **type aliases in Nyx**, including **generic type aliases using square brackets** and best practices for cleaner, more maintainable code.
+This document summarizes the usage of **type aliases in Fig**, including **generic type aliases using square brackets** and best practices for cleaner, more maintainable code.

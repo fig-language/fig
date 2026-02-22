@@ -1,8 +1,8 @@
-# Owned Generics and Nested Namespaces in Nyx
+# Owned Generics and Nested Namespaces in Fig
 
 ## Overview
 
-Nyx introduces a unique namespace and generic system to solve common problems seen in languages like C++, Rust, and Zig. The core idea is that every type, function, interface, union, struct, or enum can belong to a namespace **and simultaneously have its own nested namespace**, allowing generics and members to be scoped hierarchically.
+Fig introduces a unique namespace and generic system to solve common problems seen in languages like C++, Rust, and Zig. The core idea is that every type, function, interface, union, struct, or enum can belong to a namespace **and simultaneously have its own nested namespace**, allowing generics and members to be scoped hierarchically.
 
 This design provides a clear distinction between **type generics** and **function generics**, avoids ambiguities in name resolution, and maintains explicit ownership of generics.
 
@@ -16,7 +16,7 @@ This design provides a clear distinction between **type generics** and **functio
 
 **Example:**
 
-```nyx
+```fig
 namespace Geometry:
     struct Vector2:
         x: f32
@@ -37,7 +37,7 @@ namespace Math:
 
 **Example:**
 
-```nyx
+```fig
 struct Either[T, U]:
 
 fn Either[T, U]::map[V](self: Either[T, U], f: fn(T) -> V) -> Either[V, U]:
@@ -60,7 +60,7 @@ fn Either[T, U]::map[V](self: Either[T, U], f: fn(T) -> V) -> Either[V, U]:
 
 ## Example Usage
 
-```nyx
+```fig
 namespace Collections:
     struct List[T]:
         items: [T]
@@ -88,7 +88,7 @@ namespace Option:
 
 * **Rust:** Type and function generics share the same namespace within a type or trait, leading to potential shadowing and verbose annotations.
 * **C++:** Templates can collide and cause unexpected compilation errors in nested or complex hierarchies.
-* **Nyx:** Separates generics by ownership (type vs function), avoiding these pitfalls entirely.
+* **Fig:** Separates generics by ownership (type vs function), avoiding these pitfalls entirely.
 
 ---
 
@@ -105,7 +105,7 @@ namespace Option:
 
 * Using statements reduce verbosity:
 
-```nyx
+```fig
 using Geometry
 fn Vector2::scale(self: Vector2, factor: f32):
     ...

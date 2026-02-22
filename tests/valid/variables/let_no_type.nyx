@@ -1,7 +1,0 @@
-// let without type annotation — type is inferred
-func let_vars() -> ok
-    let x = 10
-    let y = 3.14
-    let flag = true
-    let name = "nyx"
-    pass

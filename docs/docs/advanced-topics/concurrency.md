@@ -1,3 +1,3 @@
 # Concurrency
 
-Nyx's approach to concurrent programming.
+Fig's approach to concurrent programming.

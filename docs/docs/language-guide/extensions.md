@@ -1,6 +1,6 @@
 # Extension Methods
 
-Nyx's extension methods provide a powerful and flexible mechanism to **add new functions to existing types** without altering their original definitions. This allows for greater code organization, modularity, and the ability to enhance external types with custom functionality.
+Fig's extension methods provide a powerful and flexible mechanism to **add new functions to existing types** without altering their original definitions. This allows for greater code organization, modularity, and the ability to enhance external types with custom functionality.
 
 ### What They Are
 
@@ -12,7 +12,7 @@ Extension methods allow you to attach functions to types—be it `struct`s, `uni
 
 The basic syntax for defining extension methods involves the `ext` keyword followed by the type to be extended:
 
-```nyx
+```fig
 ext Array<T> {
     fn push(self: &mut Array<T>, value: T) {
         // implementation to add an element to the array
@@ -34,7 +34,7 @@ In this example, `push` and `map` are added as methods to the `Array<T>` type. N
 
 ### Key Characteristics
 
-Nyx extension methods possess several important characteristics that define their behavior and usage:
+Fig extension methods possess several important characteristics that define their behavior and usage:
 
 1. **Scope-local**
     Extension methods are strictly **scope-local**. They are only available within the scope where their `ext` block is visible or in modules that explicitly import them. This prevents unintended side effects and "polluting" the global namespace with methods.
@@ -45,7 +45,7 @@ Nyx extension methods possess several important characteristics that define thei
 3. **Method call syntax**
     Despite being defined externally, functions within an `ext` block can be invoked using the familiar method call syntax, making them feel like native methods of the type:
 
-    ```nyx
+    ```fig
     let arr: Array<i32> = Array::new()
     arr.push(42) // Calls the 'push' extension method
     let doubled = arr.map(lambda x -> x * 2) // Calls the 'map' extension method
@@ -66,7 +66,7 @@ Nyx extension methods possess several important characteristics that define thei
 
 ### How It Works Under the Hood
 
-When you write code like `instance.method(args)`, the Nyx compiler performs a lookup. If `method` is not defined directly on the `instance`'s type, the compiler checks visible `ext TypeName` blocks for a function matching `method` whose first parameter's type matches `instance`'s type. If found, the compiler translates the method call into a direct function call, passing `instance` as the first argument.
+When you write code like `instance.method(args)`, the Fig compiler performs a lookup. If `method` is not defined directly on the `instance`'s type, the compiler checks visible `ext TypeName` blocks for a function matching `method` whose first parameter's type matches `instance`'s type. If found, the compiler translates the method call into a direct function call, passing `instance` as the first argument.
 
 This mechanism provides the **ergonomic benefits of method calls** (e.g., `.` syntax, chaining) without requiring the methods to be physically declared inside the type's definition, promoting a cleaner separation of concerns.
 
@@ -76,7 +76,7 @@ This mechanism provides the **ergonomic benefits of method calls** (e.g., `.` sy
 
 The `ext` visibility modifier provides fine-grained control over which extension methods can access a type's internal state.
 
-```nyx
+```fig
 struct Counter {
     ext(super) value: i32   // 'value' is accessible only within this module and its extension blocks
 }

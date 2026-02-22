@@ -1,8 +1,8 @@
-# Nyx Purity & Effect System Specification
+# Fig Purity & Effect System Specification
 
 ## Overview
 
-Nyx uses a **binary effect system** to separate pure computation from
+Fig uses a **binary effect system** to separate pure computation from
 side-effecting operations.
 
 Functions are classified into two categories:
@@ -31,7 +31,7 @@ A function declared with `fn` is guaranteed to:
 
 Pure functions **may read from memory via pointers**, but may not write.
 
-Purity in Nyx means:
+Purity in Fig means:
 
 > The function performs no side effects and does not mutate memory.
 
@@ -93,7 +93,7 @@ This ensures unknown side effects cannot enter pure code.
 
 # 5. Global Variables
 
-Nyx only permits **constant globals**.
+Fig only permits **constant globals**.
 
 Mutable global state is not allowed.
 
@@ -156,7 +156,7 @@ This creates an explicit mutation boundary in the program structure.
 
 # 9. Expression-Oriented Design
 
-Nyx remains expression-oriented:
+Fig remains expression-oriented:
 
 -   Blocks evaluate to a value
 -   Control flow constructs return values
@@ -187,7 +187,7 @@ This system guarantees:
 
 # 11. Non-Goals
 
-Nyx does NOT attempt:
+Fig does NOT attempt:
 
 -   Full referential transparency
 -   Borrow checking
@@ -201,7 +201,7 @@ low-level systems language.
 
 # 12. Conceptual Model
 
-Nyx consists of two layers:
+Fig consists of two layers:
 
 Layer 1: Pure computation graph (`fn`) Layer 2: Explicit effect layer
 (`fn!`)
@@ -225,7 +225,7 @@ complexity - Multi-effect tracking systems
 
 # 14. Summary
 
-Nyx implements a binary purity system where:
+Fig implements a binary purity system where:
 
 -   `fn` guarantees no side effects
 -   `fn!` explicitly marks effectful code

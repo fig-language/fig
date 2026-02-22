@@ -1,4 +1,0 @@
-// Const with its own generic type parameter
-const[U,V] namespace::Either[U, V]::DEFAULT: u32 = 0
-
-const[T] namespace::something::Option[T]::A_CONST_VALUE: bool = false

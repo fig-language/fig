@@ -1,0 +1,35 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Union:
+      visibility: Default
+      annotations: []
+      name: Value
+      generic_params: []
+      requires: []
+      variants:
+        - name: null_val
+          ty: Ok
+        - name: bool_val
+          ty: Bool
+        - name: int_val
+          ty: I64
+        - name: float_val
+          ty: F64
+        - name: string_val
+          ty:
+            Array:
+              element_type: U8
+              size: ~
+        - name: array_val
+          ty:
+            Pointer:
+              nullable: false
+              mutable: false
+              element_type:
+                Path:
+                  segments:
+                    - Value
+                  generic_args: []

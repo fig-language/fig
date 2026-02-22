@@ -1,6 +1,6 @@
 # Union Types
 
-A `union` in Nyx is a powerful construct for memory-efficient data representation and type-safe polymorphism. It is a **compiler-managed, safe tagged union** that allows a value to hold **exactly one of multiple possible types** at a time, with the compiler enforcing safety and memory correctness.
+A `union` in Fig is a powerful construct for memory-efficient data representation and type-safe polymorphism. It is a **compiler-managed, safe tagged union** that allows a value to hold **exactly one of multiple possible types** at a time, with the compiler enforcing safety and memory correctness.
 
 ### Overview
 
@@ -10,14 +10,14 @@ The primary purpose of a `union` is to store different types of data in the same
 
 A `union` is defined using the `union` keyword, followed by its name (which can be generic) and a list of its variants:
 
-```nyx
+```fig
 union Either[T, U: Clone] {
     a: T,
     b: U
 }
 ```
 
-*   `T` and `U` can be any valid Nyx types, including other structs, pointers, or even other unions.
+*   `T` and `U` can be any valid Fig types, including other structs, pointers, or even other unions.
 *   Critically, only **one variant is active at any time**. The compiler keeps track of which variant is currently stored.
 
 ### Memory Layout
@@ -33,18 +33,18 @@ sizeof(union) = max(sizeof(T), sizeof(U)) + 1 byte for hidden tag
 
 ### Usage and Access
 
-Nyx strictly enforces safe access to `union` variants to prevent undefined behavior.
+Fig strictly enforces safe access to `union` variants to prevent undefined behavior.
 
 *   **Construction**: Instances of a `union` can only be constructed via their variant constructors:
 
-    ```nyx
+    ```fig
     let x = Either::a(some_value_of_T); // x now holds a T
     let y = Either::b(some_value_of_U); // y now holds a U
     ```
 
 *   **Safe Access via Pattern Matching**: The primary and safest way to access the value within a `union` is through pattern matching. This allows you to handle each possible variant explicitly:
 
-    ```nyx
+    ```fig
     match x {
         a val => println("The active variant is 'a' with value: {}", val),
         b val => println("The active variant is 'b' with value: {}", val)
@@ -55,7 +55,7 @@ Nyx strictly enforces safe access to `union` variants to prevent undefined behav
 
 ### Benefits
 
-*   **Prevents Undefined Behavior**: By preventing direct access to inactive variants, Nyx's unions eliminate a common source of bugs and security vulnerabilities found in C-style unions.
+*   **Prevents Undefined Behavior**: By preventing direct access to inactive variants, Fig's unions eliminate a common source of bugs and security vulnerabilities found in C-style unions.
 *   **Encodes Safety in the Type System**: The safety guarantees are built directly into the language's type system, not relying on runtime checks or programmer discipline.
 *   **Memory Efficiency**: The single-allocation memory layout makes unions suitable for low-level programming where memory footprint is a critical concern.
 *   **Clear State Representation**: Unions provide an explicit way to model data that can be in one of several distinct states.

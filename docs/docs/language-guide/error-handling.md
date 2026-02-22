@@ -1,6 +1,6 @@
 # `T ! E` for Error Handling
 
-The `T ! E` type in Nyx is a **special built-in two-variant union** designed specifically for **error handling**. It elegantly represents the outcome of an operation that can either succeed with a value of type `T` or fail with an error of type `E`. This mechanism provides compiler-enforced error propagation and handling, promoting robust and reliable software.
+The `T ! E` type in Fig is a **special built-in two-variant union** designed specifically for **error handling**. It elegantly represents the outcome of an operation that can either succeed with a value of type `T` or fail with an error of type `E`. This mechanism provides compiler-enforced error propagation and handling, promoting robust and reliable software.
 
 ### Overview
 
@@ -10,7 +10,7 @@ The `T ! E` type in Nyx is a **special built-in two-variant union** designed spe
 
 Functions that can fail will declare `T ! E` as their return type. The `!` symbol serves as a clear separator between the success type and the error type.
 
-```nyx
+```fig
 fn allocate(size: u32) -> *raw ! AllocError {
     // ... function implementation that might return a raw pointer or an AllocError ...
 }
@@ -21,11 +21,11 @@ fn allocate(size: u32) -> *raw ! AllocError {
 
 ### Access and Usage
 
-Similar to general `union` types, Nyx ensures safe access to the variants of `T ! E`.
+Similar to general `union` types, Fig ensures safe access to the variants of `T ! E`.
 
 *   **Pattern Matching**: The most explicit way to handle a `T ! E` result is through pattern matching, which forces the programmer to consider both success and error cases:
 
-    ```nyx
+    ```fig
     let result = allocate(1024);
     match result {
         ok ptr => {
@@ -51,7 +51,7 @@ Similar to general `union` types, Nyx ensures safe access to the variants of `T 
 
 *   **Compiler-Enforced Error Handling**: `T ! E` makes error handling an explicit part of the function signature, ensuring that potential errors are addressed at compile time.
 *   **Avoids Runtime Checks with Helpers**: When using helper functions like `map` or `map_error`, the active variant is handled efficiently without explicit runtime checks by the programmer.
-*   **Integrates with Low-Level Model**: `T ! E` fits naturally with Nyx's philosophy of providing control over memory and types, offering robust error handling without sacrificing low-level performance or predictability.
+*   **Integrates with Low-Level Model**: `T ! E` fits naturally with Fig's philosophy of providing control over memory and types, offering robust error handling without sacrificing low-level performance or predictability.
 
 ---
 

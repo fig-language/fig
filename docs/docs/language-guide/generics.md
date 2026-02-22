@@ -1,6 +1,6 @@
-# Generics in Nyx
+# Generics in Fig
 
-Nyx provides powerful generic types, allowing you to write flexible and reusable code that works across various types and compile-time constants. This system ensures type safety while minimizing code duplication.
+Fig provides powerful generic types, allowing you to write flexible and reusable code that works across various types and compile-time constants. This system ensures type safety while minimizing code duplication.
 
 ## Generic Structs
 
@@ -10,7 +10,7 @@ Generic structs allow you to define data structures that can hold or operate on 
 
 A struct can be generic over one or more type parameters, denoted by `[T]` where `T` is a placeholder for a concrete type.
 
-```nyx
+```fig
 struct Buffer[T] {
     data: [64]T
 }
@@ -19,9 +19,9 @@ In this example, `Buffer[T]` can be instantiated with any type, such as `Buffer[
 
 ### Const Generics
 
-Nyx also supports *const generics*, which allow you to parameterize structs with compile-time constant values, such as sizes or capacities.
+Fig also supports *const generics*, which allow you to parameterize structs with compile-time constant values, such as sizes or capacities.
 
-```nyx
+```fig
 struct ArrayBuffer[T, N: usize] {
     data: [N]T
 }
@@ -30,13 +30,13 @@ Here, `ArrayBuffer` takes both a type parameter `T` and a const parameter `N` of
 
 ### First-Order Generics
 
-All generics in Nyx are first-order. This means that type parameters represent concrete types, and there are no higher-kinded types. This simplifies the type system while still offering significant flexibility.
+All generics in Fig are first-order. This means that type parameters represent concrete types, and there are no higher-kinded types. This simplifies the type system while still offering significant flexibility.
 
 ## Generic Functions
 
 Functions can also be generic, allowing them to operate on a variety of types.
 
-```nyx
+```fig
 fn identity[T](value: T) -> T {
     value
 }
@@ -45,7 +45,7 @@ The `identity` function can take any type `T` as input and return a value of the
 
 ## Monomorphization
 
-Nyx employs a process called *monomorphization* for generics. At compile time, the compiler generates a specific version of a generic struct or function for each unique set of type and const parameters it is instantiated with. This means that:
+Fig employs a process called *monomorphization* for generics. At compile time, the compiler generates a specific version of a generic struct or function for each unique set of type and const parameters it is instantiated with. This means that:
 
 *   There is **zero runtime cost** associated with using generics.
 *   The generated code is as efficient as if you had written it specifically for each concrete type.

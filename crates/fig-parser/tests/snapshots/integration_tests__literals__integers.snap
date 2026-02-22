@@ -1,0 +1,84 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: integers
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Let:
+              annotations: []
+              name: a
+              ty: ~
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "0"
+                  suffix: ~
+          - Let:
+              annotations: []
+              name: b
+              ty: ~
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "1"
+                  suffix: ~
+          - Let:
+              annotations: []
+              name: c
+              ty: ~
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "42"
+                  suffix: ~
+          - Let:
+              annotations: []
+              name: d
+              ty: ~
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "255"
+                  suffix: ~
+          - Let:
+              annotations: []
+              name: e
+              ty: ~
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "65535"
+                  suffix: ~
+          - Let:
+              annotations: []
+              name: f
+              ty: ~
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "4294967295"
+                  suffix: ~
+          - Let:
+              annotations: []
+              name: g
+              ty: ~
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "9999999999"
+                  suffix: ~
+          - Pass

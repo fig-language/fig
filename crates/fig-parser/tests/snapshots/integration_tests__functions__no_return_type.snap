@@ -1,0 +1,35 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: say_hello
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types: []
+      body:
+        statements:
+          - Pass
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: do_nothing
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types: []
+      body:
+        statements:
+          - Pass

@@ -1,0 +1,168 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: precedence
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Let:
+              annotations: []
+              name: a
+              ty: ~
+              value:
+                BinaryOp:
+                  lhs:
+                    BinaryOp:
+                      lhs:
+                        IntegerLiteral:
+                          base: Decimal
+                          digits: "1"
+                          suffix: ~
+                      op: Add
+                      rhs:
+                        IntegerLiteral:
+                          base: Decimal
+                          digits: "2"
+                          suffix: ~
+                  op: Multiply
+                  rhs:
+                    IntegerLiteral:
+                      base: Decimal
+                      digits: "3"
+                      suffix: ~
+          - Let:
+              annotations: []
+              name: b
+              ty: ~
+              value:
+                BinaryOp:
+                  lhs:
+                    Parenthesized:
+                      BinaryOp:
+                        lhs:
+                          IntegerLiteral:
+                            base: Decimal
+                            digits: "1"
+                            suffix: ~
+                        op: Add
+                        rhs:
+                          IntegerLiteral:
+                            base: Decimal
+                            digits: "2"
+                            suffix: ~
+                  op: Multiply
+                  rhs:
+                    IntegerLiteral:
+                      base: Decimal
+                      digits: "3"
+                      suffix: ~
+          - Let:
+              annotations: []
+              name: c
+              ty: ~
+              value:
+                BinaryOp:
+                  lhs:
+                    IntegerLiteral:
+                      base: Decimal
+                      digits: "8"
+                      suffix: ~
+                  op: Divide
+                  rhs:
+                    BinaryOp:
+                      lhs:
+                        IntegerLiteral:
+                          base: Decimal
+                          digits: "2"
+                          suffix: ~
+                      op: Add
+                      rhs:
+                        IntegerLiteral:
+                          base: Decimal
+                          digits: "1"
+                          suffix: ~
+          - Let:
+              annotations: []
+              name: d
+              ty: ~
+              value:
+                BinaryOp:
+                  lhs:
+                    BinaryOp:
+                      lhs:
+                        BinaryOp:
+                          lhs:
+                            IntegerLiteral:
+                              base: Decimal
+                              digits: "1"
+                              suffix: ~
+                          op: Add
+                          rhs:
+                            IntegerLiteral:
+                              base: Decimal
+                              digits: "2"
+                              suffix: ~
+                      op: Multiply
+                      rhs:
+                        BinaryOp:
+                          lhs:
+                            IntegerLiteral:
+                              base: Decimal
+                              digits: "3"
+                              suffix: ~
+                          op: Subtract
+                          rhs:
+                            IntegerLiteral:
+                              base: Decimal
+                              digits: "4"
+                              suffix: ~
+                  op: Divide
+                  rhs:
+                    IntegerLiteral:
+                      base: Decimal
+                      digits: "2"
+                      suffix: ~
+          - Let:
+              annotations: []
+              name: e
+              ty: ~
+              value:
+                BinaryOp:
+                  lhs:
+                    BinaryOp:
+                      lhs:
+                        BooleanLiteral: true
+                      op: LogicalOr
+                      rhs:
+                        BooleanLiteral: false
+                  op: LogicalAnd
+                  rhs:
+                    BooleanLiteral: false
+          - Let:
+              annotations: []
+              name: f
+              ty: ~
+              value:
+                BinaryOp:
+                  lhs:
+                    UnaryOp:
+                      op: LogicalNot
+                      operand:
+                        BooleanLiteral: true
+                  op: LogicalOr
+                  rhs:
+                    BooleanLiteral: true
+          - Pass

@@ -2,11 +2,11 @@
 sidebar_position: 7
 ---
 
-# Nyx Casting / Type Conversion
+# Fig Casting / Type Conversion
 
-Nyx supports **explicit type conversion (casting)** using the familiar `(T)` syntax.
+Fig supports **explicit type conversion (casting)** using the familiar `(T)` syntax.
 
-```nyx
+```fig
 let x: i32 = 42
 let y: f64 = (f64)x
 
@@ -20,4 +20,4 @@ Notes:
 *   Valid casts include numeric types (`i*`, `u*`, `f*`) and pointers (`*T`, `*raw`).
 *   Unsafe casts are possible with pointers but require caution.
 
-This document summarizes Nyx's **casting and type conversion mechanisms**, providing syntax, examples, and usage notes for this feature.
+This document summarizes Fig's **casting and type conversion mechanisms**, providing syntax, examples, and usage notes for this feature.

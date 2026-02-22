@@ -1,0 +1,29 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Using:
+      visibility: Default
+      annotations: []
+      path:
+        segments:
+          - std
+          - io
+        generic_args: []
+  - Using:
+      visibility: Default
+      annotations: []
+      path:
+        segments:
+          - core
+          - memory
+        generic_args: []
+  - Using:
+      visibility: Default
+      annotations: []
+      path:
+        segments:
+          - core
+          - iter
+        generic_args: []

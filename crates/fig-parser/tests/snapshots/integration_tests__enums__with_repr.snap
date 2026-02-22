@@ -1,0 +1,80 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Enum:
+      visibility: Default
+      annotations: []
+      name: SmallEnum
+      representation: U8
+      generic_params: []
+      requires: []
+      variants:
+        - name: A
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "0"
+              suffix: ~
+        - name: B
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "127"
+              suffix: ~
+        - name: C
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "255"
+              suffix: ~
+  - Enum:
+      visibility: Default
+      annotations: []
+      name: MediumEnum
+      representation: U16
+      generic_params: []
+      requires: []
+      variants:
+        - name: FIRST
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "0"
+              suffix: ~
+        - name: LAST
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "65535"
+              suffix: ~
+  - Enum:
+      visibility: Default
+      annotations: []
+      name: SignedEnum
+      representation: I32
+      generic_params: []
+      requires: []
+      variants:
+        - name: NEG
+          value:
+            UnaryOp:
+              op: Negate
+              operand:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "1"
+                  suffix: ~
+        - name: ZERO
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "0"
+              suffix: ~
+        - name: POS
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "1"
+              suffix: ~

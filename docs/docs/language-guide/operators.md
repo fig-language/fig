@@ -1,6 +1,6 @@
-# Nyx Operators
+# Fig Operators
 
-Nyx provides a rich and intuitive set of operators, mirroring those found in many modern programming languages. A core design principle in Nyx is that operators are essentially **syntactic sugar** for calling methods defined on specific interfaces that the operands must implement. This elegant approach enables flexible, type-safe operator overloading, allowing users to define how operators behave for their custom types.
+Fig provides a rich and intuitive set of operators, mirroring those found in many modern programming languages. A core design principle in Fig is that operators are essentially **syntactic sugar** for calling methods defined on specific interfaces that the operands must implement. This elegant approach enables flexible, type-safe operator overloading, allowing users to define how operators behave for their custom types.
 
 ---
 
@@ -83,7 +83,7 @@ Assignment operators are used to assign values to variables. Compound assignment
 
 ## 6. Other Operators
 
-Nyx includes several other operators for common programming tasks.
+Fig includes several other operators for common programming tasks.
 
 | Operator  | Meaning                       | Example                   |
 | :-------- | :---------------------------- | :------------------------ |
@@ -97,18 +97,18 @@ Nyx includes several other operators for common programming tasks.
 
 ## 7. Ternary Conditional Operator
 
-Nyx offers a concise ternary conditional operator for expressing conditional logic within an expression.
+Fig offers a concise ternary conditional operator for expressing conditional logic within an expression.
 
-*   Nyx uses the syntax ``value_if_true if condition else value_if_false``.
+*   Fig uses the syntax ``value_if_true if condition else value_if_false``.
 *   For single-statement expressions, curly braces can be omitted:
 
-    ```nyx
+    ```fig
     let a = 10 if condition else 20
     ```
 
 *   Multi-statement blocks can be included using curly braces, with each branch needing to resolve to a value of the same type:
 
-    ```nyx
+    ```fig
     let result = action1() if condition {
         // ... some side effect or complex logic ...
         side_effect()
@@ -124,12 +124,12 @@ Nyx offers a concise ternary conditional operator for expressing conditional log
 
 ## 8. Notes on Operator Implementation
 
-The underlying mechanism for all operators in Nyx is a powerful feature:
+The underlying mechanism for all operators in Fig is a powerful feature:
 
-*   Every operator in Nyx is **syntactic sugar for calling a method defined by an interface** on the operand(s). This is what enables Nyx's flexible and type-safe approach to operator overloading.
+*   Every operator in Fig is **syntactic sugar for calling a method defined by an interface** on the operand(s). This is what enables Fig's flexible and type-safe approach to operator overloading.
 *   For example, the addition operator `+` for two values `a` and `b` conceptually translates to a method call `a.add(b)`. For this to be valid, the type of `a` must implement the `Add` interface, which defines the `add` method.
 
-    ```nyx
+    ```fig
     interface Add {
         fn add(self, other: Self) -> Self
     }

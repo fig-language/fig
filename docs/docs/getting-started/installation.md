@@ -1,6 +1,6 @@
 # Installation
 
-This guide will walk you through installing the Nyx compiler and tools.
+This guide will walk you through installing the Fig compiler and tools.
 
 ## Prerequisites
 

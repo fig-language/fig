@@ -1,6 +1,6 @@
 # Data Types
 
-This document provides an overview of all built-in data types available in the Nyx programming language as of its bootstrapping stage. Nyx offers a rich set of types, from fundamental primitives to powerful aggregate structures for complex data representation and robust error handling.
+This document provides an overview of all built-in data types available in the Fig programming language as of its bootstrapping stage. Fig offers a rich set of types, from fundamental primitives to powerful aggregate structures for complex data representation and robust error handling.
 
 ---
 
@@ -34,7 +34,7 @@ Aggregate types allow you to combine multiple values into a single, more complex
 
 ## Special Notes on ``union``
 
-Nyx's ``union`` type is a powerful feature for memory-efficient data representation where only one of several possible variants is active at any given time. The compiler enforces safe access to ensure type safety.
+Fig's ``union`` type is a powerful feature for memory-efficient data representation where only one of several possible variants is active at any given time. The compiler enforces safe access to ensure type safety.
 
 *   **Syntax**:
     ```text
@@ -47,7 +47,7 @@ Nyx's ``union`` type is a powerful feature for memory-efficient data representat
 *   **Memory Layout**: The memory occupied by a union is typically `max(sizeof(T), sizeof(U)) + hidden tag`. The "hidden tag" is managed by the compiler to track which variant is currently active.
 *   **Safe Access**: Accessing the active variant of a union is strictly enforced by the compiler to prevent undefined behavior. This is primarily done through:
     *   Pattern matching:
-        ```nyx
+        ```fig
         match x {
             a val => { /* handle T */ },
             b val => { /* handle U */ }
@@ -60,10 +60,10 @@ Nyx's ``union`` type is a powerful feature for memory-efficient data representat
 
 ## Special Notes on ``T ! E``
 
-The ``T ! E`` type is a fundamental built-in mechanism for robust error handling in Nyx, representing a result that is either a successful value of type ``T`` or an error of type ``E``. It is a compiler-managed two-variant tagged union.
+The ``T ! E`` type is a fundamental built-in mechanism for robust error handling in Fig, representing a result that is either a successful value of type ``T`` or an error of type ``E``. It is a compiler-managed two-variant tagged union.
 
 *   **Syntax**:
-    ```nyx
+    ```fig
     fn allocate(size: u32) -> *raw ! AllocError {
         // ... function implementation ...
     }
@@ -97,6 +97,6 @@ The ``T ! E`` type is a fundamental built-in mechanism for robust error handling
 
 **Important Notes:**
 
-*   All raw and typed pointers in Nyx are considered unsafe and require explicit memory management by the programmer.
+*   All raw and typed pointers in Fig are considered unsafe and require explicit memory management by the programmer.
 *   The ``union`` type and the ``T ! E`` built-in error handling type are the only compiler-managed tagged types available in the bootstrapped version of the language.
-*   Future iterations of Nyx may introduce more advanced features, such as multi-variant enums and a dedicated syntax for struct methods (e.g., ``impl`` blocks), further enhancing the language's expressiveness.
+*   Future iterations of Fig may introduce more advanced features, such as multi-variant enums and a dedicated syntax for struct methods (e.g., ``impl`` blocks), further enhancing the language's expressiveness.

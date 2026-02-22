@@ -1,0 +1,63 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: true
+      name: Bits8
+      generic_params: []
+      requires: []
+      fields:
+        - name: a
+          ty: U8
+        - name: b
+          ty: U8
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: true
+      name: Header
+      generic_params: []
+      requires: []
+      fields:
+        - name: magic
+          ty: U32
+        - name: version
+          ty: U16
+        - name: flags
+          ty: U8
+        - name: reserved
+          ty: U8
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: true
+      name: IPv4
+      generic_params: []
+      requires: []
+      fields:
+        - name: version
+          ty: U8
+        - name: ihl
+          ty: U8
+        - name: tos
+          ty: U8
+        - name: len
+          ty: U16
+        - name: id
+          ty: U16
+        - name: frag
+          ty: U16
+        - name: ttl
+          ty: U8
+        - name: proto
+          ty: U8
+        - name: checksum
+          ty: U16
+        - name: src
+          ty: U32
+        - name: dst
+          ty: U32

@@ -1,0 +1,57 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: mixed
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Let:
+              annotations: []
+              name: i
+              ty: ~
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "100"
+                  suffix: ~
+          - Let:
+              annotations: []
+              name: f
+              ty: ~
+              value:
+                FloatLiteral:
+                  digits: "3.14"
+                  exponent: ~
+                  suffix: ~
+          - Let:
+              annotations: []
+              name: b
+              ty: ~
+              value:
+                BooleanLiteral: true
+          - Let:
+              annotations: []
+              name: s
+              ty: ~
+              value:
+                StringLiteral: hello
+          - Let:
+              annotations: []
+              name: n
+              ty: ~
+              value:
+                BooleanLiteral: false
+          - Pass

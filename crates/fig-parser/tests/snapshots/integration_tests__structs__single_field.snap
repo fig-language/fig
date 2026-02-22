@@ -1,0 +1,15 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: Wrapper
+      generic_params: []
+      requires: []
+      fields:
+        - name: value
+          ty: I32

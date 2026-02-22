@@ -1,0 +1,50 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+expression: ast
+---
+items:
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: Point
+      generic_params: []
+      requires: []
+      fields:
+        - name: x
+          ty: I32
+        - name: y
+          ty: I32
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: show_point
+        generic_params: []
+        self_param: ~
+        params:
+          - name: p
+            ty:
+              Path:
+                segments:
+                  - Point
+                generic_args: []
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Let:
+              annotations: []
+              name: msg
+              ty: ~
+              value:
+                InterpolatedString:
+                  - Text: Point(
+                  - Text: "{p.x}"
+                  - Text: ", "
+                  - Text: "{p.y}"
+                  - Text: )
+          - Pass

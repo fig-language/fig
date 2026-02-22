@@ -1,0 +1,2144 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Using
+- Std
+- ColonColon
+- Ident: io
+- Newline
+- Using
+- Core
+- ColonColon
+- Ident: memory
+- Newline
+- Enum
+- LBracket
+- U8
+- RBracket
+- Ident: LogLevel
+- Newline
+- Indent
+- Ident: TRACE
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Ident: DEBUG
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Ident: INFO
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Ident: WARN
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "3"
+    suffix: ~
+- Newline
+- Ident: ERROR
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "4"
+    suffix: ~
+- Newline
+- Ident: FATAL
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "5"
+    suffix: ~
+- Newline
+- Dedent
+- Enum
+- Ident: OutputType
+- Newline
+- Indent
+- Ident: STDOUT
+- Newline
+- Ident: STDERR
+- Newline
+- Ident: FILE
+- Newline
+- Ident: BUFFER
+- Newline
+- Dedent
+- Struct
+- Ident: LogTarget
+- Newline
+- Indent
+- Ident: output_type
+- Colon
+- Ident: OutputType
+- Newline
+- Ident: file_path
+- Colon
+- Question
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: buffer
+- Colon
+- Question
+- Star
+- Mut
+- Ident: LogBuffer
+- Newline
+- Ident: min_level
+- Colon
+- Ident: LogLevel
+- Newline
+- Dedent
+- Struct
+- Ident: LogBuffer
+- Newline
+- Indent
+- Ident: data
+- Colon
+- Star
+- Mut
+- U8
+- Newline
+- Ident: size
+- Colon
+- USize
+- Newline
+- Ident: capacity
+- Colon
+- USize
+- Newline
+- Dedent
+- Struct
+- Ident: LogEntry
+- Newline
+- Indent
+- Ident: timestamp
+- Colon
+- U64
+- Newline
+- Ident: level
+- Colon
+- Ident: LogLevel
+- Newline
+- Ident: file
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: line
+- Colon
+- U32
+- Newline
+- Ident: function
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: message
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: thread_id
+- Colon
+- U64
+- Newline
+- Dedent
+- Export
+- Struct
+- Ident: Logger
+- Newline
+- Indent
+- Ident: targets
+- Colon
+- Star
+- Mut
+- Ident: LogTarget
+- Newline
+- Ident: target_count
+- Colon
+- USize
+- Newline
+- Ident: global_level
+- Colon
+- Ident: LogLevel
+- Newline
+- Ident: enabled
+- Colon
+- Bool
+- Newline
+- Ident: include_timestamps
+- Colon
+- Bool
+- Newline
+- Ident: include_location
+- Colon
+- Bool
+- Newline
+- Ident: color_enabled
+- Colon
+- Bool
+- Newline
+- Dedent
+- Const
+- Ident: GLOBAL_LOGGER
+- Colon
+- Question
+- Star
+- Mut
+- Ident: Logger
+- Eq
+- "Null"
+- Newline
+- Export
+- Func
+- Bang
+- Ident: init_logger
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: logger
+- Eq
+- Ident: Logger
+- ColonColon
+- Ident: new
+- LParen
+- RParen
+- Newline
+- Ident: GLOBAL_LOGGER
+- Eq
+- And
+- Ident: logger
+- Newline
+- Pass
+- Newline
+- Dedent
+- Export
+- Func
+- Bang
+- Ident: get_logger
+- LParen
+- RParen
+- Arrow
+- Star
+- Mut
+- Ident: Logger
+- Newline
+- Indent
+- If
+- Ident: GLOBAL_LOGGER
+- EqEq
+- "Null"
+- Newline
+- Indent
+- Ident: init_logger
+- LParen
+- RParen
+- Newline
+- Dedent
+- Return
+- Ident: GLOBAL_LOGGER
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Logger
+- ColonColon
+- Ident: new
+- LParen
+- RParen
+- Arrow
+- Ident: Logger
+- Newline
+- Indent
+- Return
+- Ident: Logger
+- LParen
+- Newline
+- Indent
+- Ident: targets
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: target_count
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Newline
+- Ident: global_level
+- Colon
+- Ident: LogLevel
+- ColonColon
+- Ident: INFO
+- Comma
+- Newline
+- Ident: enabled
+- Colon
+- "True"
+- Comma
+- Newline
+- Ident: include_timestamps
+- Colon
+- "True"
+- Comma
+- Newline
+- Ident: include_location
+- Colon
+- "True"
+- Comma
+- Newline
+- Ident: color_enabled
+- Colon
+- "True"
+- Newline
+- Dedent
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Logger
+- ColonColon
+- Ident: add_target
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: target
+- Colon
+- Ident: LogTarget
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Logger
+- ColonColon
+- Ident: add_stdout
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: min_level
+- Colon
+- Ident: LogLevel
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: target
+- Eq
+- Ident: LogTarget
+- LParen
+- Newline
+- Indent
+- Ident: output_type
+- Colon
+- Ident: OutputType
+- ColonColon
+- Ident: STDOUT
+- Comma
+- Newline
+- Ident: file_path
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: buffer
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: min_level
+- Colon
+- Ident: min_level
+- Newline
+- Dedent
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: add_target
+- LParen
+- Ident: target
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Logger
+- ColonColon
+- Ident: add_stderr
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: min_level
+- Colon
+- Ident: LogLevel
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: target
+- Eq
+- Ident: LogTarget
+- LParen
+- Newline
+- Indent
+- Ident: output_type
+- Colon
+- Ident: OutputType
+- ColonColon
+- Ident: STDERR
+- Comma
+- Newline
+- Ident: file_path
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: buffer
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: min_level
+- Colon
+- Ident: min_level
+- Newline
+- Dedent
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: add_target
+- LParen
+- Ident: target
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Logger
+- ColonColon
+- Ident: add_file
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: path
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: min_level
+- Colon
+- Ident: LogLevel
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: target
+- Eq
+- Ident: LogTarget
+- LParen
+- Newline
+- Indent
+- Ident: output_type
+- Colon
+- Ident: OutputType
+- ColonColon
+- Ident: FILE
+- Comma
+- Newline
+- Ident: file_path
+- Colon
+- Ident: path
+- Comma
+- Newline
+- Ident: buffer
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: min_level
+- Colon
+- Ident: min_level
+- Newline
+- Dedent
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: add_target
+- LParen
+- Ident: target
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Logger
+- ColonColon
+- Ident: add_buffer
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: buffer
+- Colon
+- Star
+- Mut
+- Ident: LogBuffer
+- Comma
+- Ident: min_level
+- Colon
+- Ident: LogLevel
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: target
+- Eq
+- Ident: LogTarget
+- LParen
+- Newline
+- Indent
+- Ident: output_type
+- Colon
+- Ident: OutputType
+- ColonColon
+- Ident: BUFFER
+- Comma
+- Newline
+- Ident: file_path
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: buffer
+- Colon
+- Ident: buffer
+- Comma
+- Newline
+- Ident: min_level
+- Colon
+- Ident: min_level
+- Newline
+- Dedent
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: add_target
+- LParen
+- Ident: target
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Logger
+- ColonColon
+- Ident: set_level
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: level
+- Colon
+- Ident: LogLevel
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: global_level
+- Eq
+- Ident: level
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Logger
+- ColonColon
+- Ident: enable
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: enabled
+- Eq
+- "True"
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Logger
+- ColonColon
+- Ident: disable
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: enabled
+- Eq
+- "False"
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Logger
+- ColonColon
+- Ident: log
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: entry
+- Colon
+- Star
+- Ident: LogEntry
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- If
+- Bang
+- SelfLower
+- Dot
+- Ident: enabled
+- Newline
+- Indent
+- Return
+- OkLiteral
+- Newline
+- Dedent
+- If
+- Ident: entry
+- Dot
+- Ident: level
+- Lt
+- SelfLower
+- Dot
+- Ident: global_level
+- Newline
+- Indent
+- Return
+- OkLiteral
+- Newline
+- Dedent
+- Let
+- Ident: formatted
+- Eq
+- SelfLower
+- Dot
+- Ident: format_entry
+- LParen
+- Ident: entry
+- RParen
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: target_count
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: target
+- Eq
+- And
+- SelfLower
+- Dot
+- Ident: targets
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- If
+- Ident: entry
+- Dot
+- Ident: level
+- Ge
+- Ident: target
+- Dot
+- Ident: min_level
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: write_to_target
+- LParen
+- Ident: target
+- Comma
+- Ident: formatted
+- RParen
+- Newline
+- Dedent
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Logger
+- ColonColon
+- Ident: write_to_target
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: target
+- Colon
+- Star
+- Ident: LogTarget
+- Comma
+- Ident: message
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- If
+- Ident: target
+- Dot
+- Ident: output_type
+- EqEq
+- Ident: OutputType
+- ColonColon
+- Ident: STDOUT
+- Newline
+- Indent
+- Ident: stdout_write
+- LParen
+- Ident: message
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: target
+- Dot
+- Ident: output_type
+- EqEq
+- Ident: OutputType
+- ColonColon
+- Ident: STDERR
+- Newline
+- Indent
+- Ident: stderr_write
+- LParen
+- Ident: message
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: target
+- Dot
+- Ident: output_type
+- EqEq
+- Ident: OutputType
+- ColonColon
+- Ident: FILE
+- Newline
+- Indent
+- Ident: file_append
+- LParen
+- Ident: target
+- Dot
+- Ident: file_path
+- Comma
+- Ident: message
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: target
+- Dot
+- Ident: output_type
+- EqEq
+- Ident: OutputType
+- ColonColon
+- Ident: BUFFER
+- Newline
+- Indent
+- Ident: buffer_append
+- LParen
+- Ident: target
+- Dot
+- Ident: buffer
+- Comma
+- Ident: message
+- RParen
+- Newline
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Logger
+- ColonColon
+- Ident: format_entry
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: entry
+- Colon
+- Star
+- Ident: LogEntry
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Mut
+- Ident: buffer
+- Colon
+- LBracket
+- U8
+- RBracket
+- Eq
+- LBracket
+- RBracket
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: include_timestamps
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: append_timestamp
+- LParen
+- And
+- Ident: buffer
+- Comma
+- Ident: entry
+- Dot
+- Ident: timestamp
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: append_str
+- LParen
+- And
+- Ident: buffer
+- Comma
+- StringLiteral: " "
+- RParen
+- Newline
+- Dedent
+- If
+- SelfLower
+- Dot
+- Ident: color_enabled
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: append_str
+- LParen
+- And
+- Ident: buffer
+- Comma
+- SelfLower
+- Dot
+- Ident: level_color
+- LParen
+- Ident: entry
+- Dot
+- Ident: level
+- RParen
+- RParen
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: append_str
+- LParen
+- And
+- Ident: buffer
+- Comma
+- SelfLower
+- Dot
+- Ident: level_string
+- LParen
+- Ident: entry
+- Dot
+- Ident: level
+- RParen
+- RParen
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: color_enabled
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: append_str
+- LParen
+- And
+- Ident: buffer
+- Comma
+- StringLiteral: "\u001b[0m"
+- RParen
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: append_str
+- LParen
+- And
+- Ident: buffer
+- Comma
+- StringLiteral: " "
+- RParen
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: include_location
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: append_str
+- LParen
+- And
+- Ident: buffer
+- Comma
+- StringLiteral: "["
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: append_str
+- LParen
+- And
+- Ident: buffer
+- Comma
+- Ident: entry
+- Dot
+- Ident: file
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: append_str
+- LParen
+- And
+- Ident: buffer
+- Comma
+- StringLiteral: ":"
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: append_uint
+- LParen
+- And
+- Ident: buffer
+- Comma
+- Ident: entry
+- Dot
+- Ident: line
+- As
+- U64
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: append_str
+- LParen
+- And
+- Ident: buffer
+- Comma
+- StringLiteral: "] "
+- RParen
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: append_str
+- LParen
+- And
+- Ident: buffer
+- Comma
+- Ident: entry
+- Dot
+- Ident: message
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: append_str
+- LParen
+- And
+- Ident: buffer
+- Comma
+- StringLiteral: "\n"
+- RParen
+- Newline
+- Return
+- Ident: buffer
+- Newline
+- Dedent
+- Func
+- Ident: Logger
+- ColonColon
+- Ident: level_string
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: level
+- Colon
+- Ident: LogLevel
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- If
+- Ident: level
+- EqEq
+- Ident: LogLevel
+- ColonColon
+- Ident: TRACE
+- Newline
+- Indent
+- Return
+- StringLiteral: TRACE
+- Newline
+- Dedent
+- Elif
+- Ident: level
+- EqEq
+- Ident: LogLevel
+- ColonColon
+- Ident: DEBUG
+- Newline
+- Indent
+- Return
+- StringLiteral: DEBUG
+- Newline
+- Dedent
+- Elif
+- Ident: level
+- EqEq
+- Ident: LogLevel
+- ColonColon
+- Ident: INFO
+- Newline
+- Indent
+- Return
+- StringLiteral: INFO
+- Newline
+- Dedent
+- Elif
+- Ident: level
+- EqEq
+- Ident: LogLevel
+- ColonColon
+- Ident: WARN
+- Newline
+- Indent
+- Return
+- StringLiteral: WARN
+- Newline
+- Dedent
+- Elif
+- Ident: level
+- EqEq
+- Ident: LogLevel
+- ColonColon
+- Ident: ERROR
+- Newline
+- Indent
+- Return
+- StringLiteral: ERROR
+- Newline
+- Dedent
+- Elif
+- Ident: level
+- EqEq
+- Ident: LogLevel
+- ColonColon
+- Ident: FATAL
+- Newline
+- Indent
+- Return
+- StringLiteral: FATAL
+- Newline
+- Dedent
+- Return
+- StringLiteral: UNKNOWN
+- Newline
+- Dedent
+- Func
+- Ident: Logger
+- ColonColon
+- Ident: level_color
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: level
+- Colon
+- Ident: LogLevel
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- If
+- Ident: level
+- EqEq
+- Ident: LogLevel
+- ColonColon
+- Ident: TRACE
+- Newline
+- Indent
+- Return
+- StringLiteral: "\u001b[37m"
+- Newline
+- Dedent
+- Elif
+- Ident: level
+- EqEq
+- Ident: LogLevel
+- ColonColon
+- Ident: DEBUG
+- Newline
+- Indent
+- Return
+- StringLiteral: "\u001b[36m"
+- Newline
+- Dedent
+- Elif
+- Ident: level
+- EqEq
+- Ident: LogLevel
+- ColonColon
+- Ident: INFO
+- Newline
+- Indent
+- Return
+- StringLiteral: "\u001b[32m"
+- Newline
+- Dedent
+- Elif
+- Ident: level
+- EqEq
+- Ident: LogLevel
+- ColonColon
+- Ident: WARN
+- Newline
+- Indent
+- Return
+- StringLiteral: "\u001b[33m"
+- Newline
+- Dedent
+- Elif
+- Ident: level
+- EqEq
+- Ident: LogLevel
+- ColonColon
+- Ident: ERROR
+- Newline
+- Indent
+- Return
+- StringLiteral: "\u001b[31m"
+- Newline
+- Dedent
+- Elif
+- Ident: level
+- EqEq
+- Ident: LogLevel
+- ColonColon
+- Ident: FATAL
+- Newline
+- Indent
+- Return
+- StringLiteral: "\u001b[35m"
+- Newline
+- Dedent
+- Return
+- StringLiteral: "\u001b[0m"
+- Newline
+- Dedent
+- Func
+- Ident: Logger
+- ColonColon
+- Ident: append_str
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: buffer
+- Colon
+- Star
+- Mut
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Logger
+- ColonColon
+- Ident: append_uint
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: buffer
+- Colon
+- Star
+- Mut
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: n
+- Colon
+- U64
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Logger
+- ColonColon
+- Ident: append_timestamp
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: buffer
+- Colon
+- Star
+- Mut
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: ts
+- Colon
+- U64
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Export
+- Func
+- Bang
+- Ident: log_trace
+- LParen
+- Ident: file
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: line
+- Colon
+- U32
+- Comma
+- Func
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: msg
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: logger
+- Eq
+- Ident: get_logger
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: entry
+- Eq
+- Ident: LogEntry
+- LParen
+- Newline
+- Indent
+- Ident: timestamp
+- Colon
+- Ident: get_timestamp
+- LParen
+- RParen
+- Comma
+- Newline
+- Ident: level
+- Colon
+- Ident: LogLevel
+- ColonColon
+- Ident: TRACE
+- Comma
+- Newline
+- Ident: file
+- Colon
+- Ident: file
+- Comma
+- Newline
+- Ident: line
+- Colon
+- Ident: line
+- Comma
+- Newline
+- Ident: function
+- Colon
+- Func
+- Comma
+- Newline
+- Ident: message
+- Colon
+- Ident: msg
+- Comma
+- Newline
+- Ident: thread_id
+- Colon
+- Ident: get_thread_id
+- LParen
+- RParen
+- Newline
+- Dedent
+- RParen
+- Newline
+- Ident: logger
+- Dot
+- Ident: log
+- LParen
+- And
+- Ident: entry
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Export
+- Func
+- Bang
+- Ident: log_debug
+- LParen
+- Ident: file
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: line
+- Colon
+- U32
+- Comma
+- Func
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: msg
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: logger
+- Eq
+- Ident: get_logger
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: entry
+- Eq
+- Ident: LogEntry
+- LParen
+- Newline
+- Indent
+- Ident: timestamp
+- Colon
+- Ident: get_timestamp
+- LParen
+- RParen
+- Comma
+- Newline
+- Ident: level
+- Colon
+- Ident: LogLevel
+- ColonColon
+- Ident: DEBUG
+- Comma
+- Newline
+- Ident: file
+- Colon
+- Ident: file
+- Comma
+- Newline
+- Ident: line
+- Colon
+- Ident: line
+- Comma
+- Newline
+- Ident: function
+- Colon
+- Func
+- Comma
+- Newline
+- Ident: message
+- Colon
+- Ident: msg
+- Comma
+- Newline
+- Ident: thread_id
+- Colon
+- Ident: get_thread_id
+- LParen
+- RParen
+- Newline
+- Dedent
+- RParen
+- Newline
+- Ident: logger
+- Dot
+- Ident: log
+- LParen
+- And
+- Ident: entry
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Export
+- Func
+- Bang
+- Ident: log_info
+- LParen
+- Ident: file
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: line
+- Colon
+- U32
+- Comma
+- Func
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: msg
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: logger
+- Eq
+- Ident: get_logger
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: entry
+- Eq
+- Ident: LogEntry
+- LParen
+- Newline
+- Indent
+- Ident: timestamp
+- Colon
+- Ident: get_timestamp
+- LParen
+- RParen
+- Comma
+- Newline
+- Ident: level
+- Colon
+- Ident: LogLevel
+- ColonColon
+- Ident: INFO
+- Comma
+- Newline
+- Ident: file
+- Colon
+- Ident: file
+- Comma
+- Newline
+- Ident: line
+- Colon
+- Ident: line
+- Comma
+- Newline
+- Ident: function
+- Colon
+- Func
+- Comma
+- Newline
+- Ident: message
+- Colon
+- Ident: msg
+- Comma
+- Newline
+- Ident: thread_id
+- Colon
+- Ident: get_thread_id
+- LParen
+- RParen
+- Newline
+- Dedent
+- RParen
+- Newline
+- Ident: logger
+- Dot
+- Ident: log
+- LParen
+- And
+- Ident: entry
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Export
+- Func
+- Bang
+- Ident: log_warn
+- LParen
+- Ident: file
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: line
+- Colon
+- U32
+- Comma
+- Func
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: msg
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: logger
+- Eq
+- Ident: get_logger
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: entry
+- Eq
+- Ident: LogEntry
+- LParen
+- Newline
+- Indent
+- Ident: timestamp
+- Colon
+- Ident: get_timestamp
+- LParen
+- RParen
+- Comma
+- Newline
+- Ident: level
+- Colon
+- Ident: LogLevel
+- ColonColon
+- Ident: WARN
+- Comma
+- Newline
+- Ident: file
+- Colon
+- Ident: file
+- Comma
+- Newline
+- Ident: line
+- Colon
+- Ident: line
+- Comma
+- Newline
+- Ident: function
+- Colon
+- Func
+- Comma
+- Newline
+- Ident: message
+- Colon
+- Ident: msg
+- Comma
+- Newline
+- Ident: thread_id
+- Colon
+- Ident: get_thread_id
+- LParen
+- RParen
+- Newline
+- Dedent
+- RParen
+- Newline
+- Ident: logger
+- Dot
+- Ident: log
+- LParen
+- And
+- Ident: entry
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Export
+- Func
+- Bang
+- Ident: log_error
+- LParen
+- Ident: file
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: line
+- Colon
+- U32
+- Comma
+- Func
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: msg
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: logger
+- Eq
+- Ident: get_logger
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: entry
+- Eq
+- Ident: LogEntry
+- LParen
+- Newline
+- Indent
+- Ident: timestamp
+- Colon
+- Ident: get_timestamp
+- LParen
+- RParen
+- Comma
+- Newline
+- Ident: level
+- Colon
+- Ident: LogLevel
+- ColonColon
+- Ident: ERROR
+- Comma
+- Newline
+- Ident: file
+- Colon
+- Ident: file
+- Comma
+- Newline
+- Ident: line
+- Colon
+- Ident: line
+- Comma
+- Newline
+- Ident: function
+- Colon
+- Func
+- Comma
+- Newline
+- Ident: message
+- Colon
+- Ident: msg
+- Comma
+- Newline
+- Ident: thread_id
+- Colon
+- Ident: get_thread_id
+- LParen
+- RParen
+- Newline
+- Dedent
+- RParen
+- Newline
+- Ident: logger
+- Dot
+- Ident: log
+- LParen
+- And
+- Ident: entry
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Export
+- Func
+- Bang
+- Ident: log_fatal
+- LParen
+- Ident: file
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: line
+- Colon
+- U32
+- Comma
+- Func
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: msg
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: logger
+- Eq
+- Ident: get_logger
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: entry
+- Eq
+- Ident: LogEntry
+- LParen
+- Newline
+- Indent
+- Ident: timestamp
+- Colon
+- Ident: get_timestamp
+- LParen
+- RParen
+- Comma
+- Newline
+- Ident: level
+- Colon
+- Ident: LogLevel
+- ColonColon
+- Ident: FATAL
+- Comma
+- Newline
+- Ident: file
+- Colon
+- Ident: file
+- Comma
+- Newline
+- Ident: line
+- Colon
+- Ident: line
+- Comma
+- Newline
+- Ident: function
+- Colon
+- Func
+- Comma
+- Newline
+- Ident: message
+- Colon
+- Ident: msg
+- Comma
+- Newline
+- Ident: thread_id
+- Colon
+- Ident: get_thread_id
+- LParen
+- RParen
+- Newline
+- Dedent
+- RParen
+- Newline
+- Ident: logger
+- Dot
+- Ident: log
+- LParen
+- And
+- Ident: entry
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: LogBuffer
+- ColonColon
+- Ident: new
+- LParen
+- Ident: capacity
+- Colon
+- USize
+- RParen
+- Arrow
+- Ident: LogBuffer
+- Newline
+- Indent
+- Return
+- Ident: LogBuffer
+- LParen
+- Newline
+- Indent
+- Ident: data
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: size
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Newline
+- Ident: capacity
+- Colon
+- Ident: capacity
+- Newline
+- Dedent
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: LogBuffer
+- ColonColon
+- Ident: clear
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: size
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: LogBuffer
+- ColonColon
+- Ident: to_string
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: buffer_append
+- LParen
+- Ident: buffer
+- Colon
+- Star
+- Mut
+- Ident: LogBuffer
+- Comma
+- Ident: data
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: get_timestamp
+- LParen
+- RParen
+- Arrow
+- U64
+- Newline
+- Indent
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: get_thread_id
+- LParen
+- RParen
+- Arrow
+- U64
+- Newline
+- Indent
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: stdout_write
+- LParen
+- Ident: data
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: stderr_write
+- LParen
+- Ident: data
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: file_append
+- LParen
+- Ident: path
+- Colon
+- Question
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: data
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

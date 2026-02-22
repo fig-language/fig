@@ -1,5 +1,6 @@
 use crate::LexicalError;
 use crate::ast::*;
+use crate::parse_interp_parts;
 use fig_lexer::{Token, FloatLiteral, IntegerLiteral};
 
 grammar;
@@ -252,6 +253,7 @@ Atom: Expression = {
     "false"         => Expression::BooleanLiteral(false),
     <lit: "char">   => Expression::CharLiteral(lit),
     <lit: "string"> => Expression::StringLiteral(lit),
+    <raw: "interpstring"> => Expression::InterpolatedString(parse_interp_parts(raw)),
     "null"          => Expression::NullLiteral,
     "ok"            => Expression::OkLiteral,
     "self"          => Expression::SelfValue,
@@ -883,11 +885,12 @@ extern {
         "," => Token::Comma,
         "." => Token::Dot,
         "_" => Token::Underscore,
-        "ident"  => Token::Ident(<String>),
-        "float"  => Token::FloatLiteral(<FloatLiteral>),
-        "int"    => Token::IntegerLiteral(<IntegerLiteral>),
-        "string" => Token::StringLiteral(<String>),
-        "char"   => Token::CharLiteral(<String>),
+        "ident"       => Token::Ident(<String>),
+        "float"       => Token::FloatLiteral(<FloatLiteral>),
+        "int"         => Token::IntegerLiteral(<IntegerLiteral>),
+        "string"      => Token::StringLiteral(<String>),
+        "char"        => Token::CharLiteral(<String>),
+        "interpstring" => Token::InterpolatedStringLiteral(<String>),
         "#" => Token::Hash,
     }
 }

@@ -281,7 +281,13 @@ pub enum Token {
     )]
     IntegerLiteral(IntegerLiteral), // unsuffixed integers
 
-    // String literal with basic escape sequences
+    // Interpolated string literal: $"text {expr} text"
+    // The raw content (between $" and the closing ") is stored as-is; the parser
+    // splits it into Text/Expression parts via parse_interp_parts.
+    #[regex(r#"\$"(?:[^"\\]|\\.)*""#, lex_interp_string)]
+    InterpolatedStringLiteral(String),
+
+    // String literal with escape sequences (including \xNN hex escapes)
     #[regex(r#""(?:[^"\\]|\\.)*""#, unescape_literal)]
     // This regex will NOT match unclosed strings, so Logos will emit an error for them
     StringLiteral(String),
@@ -323,6 +329,29 @@ fn unescape_literal(lex: &mut logos::Lexer<Token>) -> Result<String, LexicalErro
                     '0' => unescaped.push('\0'),
                     '\'' => unescaped.push('\''),
                     '"' => unescaped.push('"'),
+                    // \xNN — two-digit hex escape (e.g. \x1b for ESC)
+                    'x' => {
+                        let h1 = chars.next().ok_or_else(|| LexicalError::InvalidEscapeSequence {
+                            span: span.clone(),
+                            sequence: "\\x".to_string(),
+                        })?;
+                        let h2 = chars.next().ok_or_else(|| LexicalError::InvalidEscapeSequence {
+                            span: span.clone(),
+                            sequence: format!("\\x{}", h1),
+                        })?;
+                        let hex_str = format!("{}{}", h1, h2);
+                        let code = u32::from_str_radix(&hex_str, 16).map_err(|_| {
+                            LexicalError::InvalidEscapeSequence {
+                                span: span.clone(),
+                                sequence: format!("\\x{}", hex_str),
+                            }
+                        })?;
+                        let ch = char::from_u32(code).ok_or_else(|| LexicalError::InvalidEscapeSequence {
+                            span: span.clone(),
+                            sequence: format!("\\x{}", hex_str),
+                        })?;
+                        unescaped.push(ch);
+                    }
                     _ => {
                         // Invalid escape sequence
                         return Err(LexicalError::InvalidEscapeSequence {
@@ -343,6 +372,16 @@ fn unescape_literal(lex: &mut logos::Lexer<Token>) -> Result<String, LexicalErro
         }
     }
     Ok(unescaped)
+}
+
+/// Captures the raw content of an interpolated string (between `$"` and the closing `"`)
+/// without processing escape sequences or `{...}` expression spans.
+/// Those are handled later by the parser's `parse_interp_parts` helper.
+fn lex_interp_string(lex: &mut logos::Lexer<Token>) -> String {
+    let slice = lex.slice();
+    // slice looks like:  $"Point({p.x}, {p.y})"
+    // strip leading  $"  (2 bytes) and trailing  "  (1 byte)
+    slice[2..slice.len() - 1].to_string()
 }
 
 /// Wrapper around Logos lexer that handles indentation-based block structure.

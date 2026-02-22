@@ -1,0 +1,36 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Struct
+- Ident: Point
+- Newline
+- Indent
+- Ident: x
+- Colon
+- I32
+- Newline
+- Ident: y
+- Colon
+- I32
+- Newline
+- Dedent
+- Func
+- Ident: show_point
+- LParen
+- Ident: p
+- Colon
+- Ident: Point
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: msg
+- Eq
+- InterpolatedStringLiteral: "Point({p.x}, {p.y})"
+- Newline
+- Pass
+- Newline
+- Dedent

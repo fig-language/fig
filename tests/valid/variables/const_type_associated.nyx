@@ -1,3 +1,3 @@
-// const on a namespaced type (associated constant)
+// Associated constants on a generic type (receiver :: name syntax)
 const Seq[T]::DEFAULT_CAPACITY: usize = 4
 const Seq[T]::GROW_FACTOR: usize = 2

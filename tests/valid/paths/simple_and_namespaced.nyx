@@ -1,12 +1,10 @@
-// Simple identifier path
-let x = foo
-
-// Multi-segment path (namespace-qualified)
-let y = std::io::stdin
-let z = core::math::PI
-
-// Identifier used as expression
+// Simple and namespaced paths
 func use_paths() -> ok
+    // Simple identifier path
+    let x = foo
+    // Multi-segment path (namespace-qualified)
+    let y = std::io::stdin
+    let z = core::math::PI
     let a = some_value
     let b = some_module::some_value
     let c = a::b::c

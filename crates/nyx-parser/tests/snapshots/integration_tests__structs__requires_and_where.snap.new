@@ -1,0 +1,47 @@
+---
+source: crates/nyx-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: Vector
+      generic_params:
+        - Type:
+            name: T
+            bounds:
+              - Path:
+                  segments:
+                    - Numeric
+                  generic_args: []
+              - Path:
+                  segments:
+                    - Sized
+                  generic_args: []
+            default_type: ~
+      requires:
+        - Path:
+            segments:
+              - Display
+            generic_args: []
+        - Path:
+            segments:
+              - Debug
+            generic_args: []
+      fields:
+        - name: data
+          ty:
+            Array:
+              element_type:
+                Path:
+                  segments:
+                    - T
+                  generic_args: []
+              size: ~
+        - name: len
+          ty: USize
+        - name: cap
+          ty: USize

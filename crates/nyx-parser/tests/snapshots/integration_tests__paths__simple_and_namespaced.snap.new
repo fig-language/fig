@@ -1,0 +1,97 @@
+---
+source: crates/nyx-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: use_paths
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Let:
+              annotations: []
+              name: x
+              ty: ~
+              value:
+                Path:
+                  segments:
+                    - foo
+                  generic_args: []
+          - Let:
+              annotations: []
+              name: y
+              ty: ~
+              value:
+                TypeAccess:
+                  object:
+                    TypeAccess:
+                      object:
+                        Path:
+                          segments:
+                            - std
+                          generic_args: []
+                      member: io
+                  member: stdin
+          - Let:
+              annotations: []
+              name: z
+              ty: ~
+              value:
+                TypeAccess:
+                  object:
+                    TypeAccess:
+                      object:
+                        Path:
+                          segments:
+                            - core
+                          generic_args: []
+                      member: math
+                  member: PI
+          - Let:
+              annotations: []
+              name: a
+              ty: ~
+              value:
+                Path:
+                  segments:
+                    - some_value
+                  generic_args: []
+          - Let:
+              annotations: []
+              name: b
+              ty: ~
+              value:
+                TypeAccess:
+                  object:
+                    Path:
+                      segments:
+                        - some_module
+                      generic_args: []
+                  member: some_value
+          - Let:
+              annotations: []
+              name: c
+              ty: ~
+              value:
+                TypeAccess:
+                  object:
+                    TypeAccess:
+                      object:
+                        Path:
+                          segments:
+                            - a
+                          generic_args: []
+                      member: b
+                  member: c
+          - Pass

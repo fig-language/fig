@@ -1,6 +1,8 @@
 // mut with explicit type annotation
-mut a: i32 = 0
-mut b: f32 = 0.0
-mut c: bool = false
-mut d: u8 = 0
-mut counter: usize = 0
+func mut_typed() -> ok
+    mut a: i32 = 0
+    mut b: f32 = 0.0
+    mut c: bool = false
+    mut d: u8 = 0
+    mut counter: usize = 0
+    pass

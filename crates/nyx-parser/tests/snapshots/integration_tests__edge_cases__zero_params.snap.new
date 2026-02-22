@@ -1,0 +1,37 @@
+---
+source: crates/nyx-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: no_params
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Pass
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: no_params_no_return
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types: []
+      body:
+        statements:
+          - Pass

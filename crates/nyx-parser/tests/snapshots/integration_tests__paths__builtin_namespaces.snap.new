@@ -1,0 +1,90 @@
+---
+source: crates/nyx-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Using:
+      visibility: Default
+      annotations: []
+      path:
+        segments:
+          - std
+          - io
+        generic_args: []
+  - Using:
+      visibility: Default
+      annotations: []
+      path:
+        segments:
+          - core
+          - mem
+        generic_args: []
+  - Using:
+      visibility: Default
+      annotations: []
+      path:
+        segments:
+          - alloc
+          - global
+        generic_args: []
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: builtin_ns
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Let:
+              annotations: []
+              name: x
+              ty: ~
+              value:
+                TypeAccess:
+                  object:
+                    Path:
+                      segments:
+                        - std
+                      generic_args: []
+                  member: VERSION
+          - Let:
+              annotations: []
+              name: y
+              ty: ~
+              value:
+                TypeAccess:
+                  object:
+                    Path:
+                      segments:
+                        - core
+                      generic_args: []
+                  member: ARCH
+          - Let:
+              annotations: []
+              name: ptr
+              ty: ~
+              value:
+                Call:
+                  callee:
+                    TypeAccess:
+                      object:
+                        Path:
+                          segments:
+                            - alloc
+                          generic_args: []
+                      member: allocate
+                  args:
+                    - IntegerLiteral:
+                        base: Decimal
+                        digits: "64"
+                        suffix: ~
+                  is_propagating: false
+          - Pass

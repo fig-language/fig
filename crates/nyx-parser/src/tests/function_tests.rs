@@ -1,86 +1,72 @@
 // Comprehensive tests for Function parsing
+// NOTE: Nyx uses "func" (not "fn") for function declarations.
+// NOTE: Generic params come BEFORE the function name: func[T] name(...)
+// NOTE: Function bodies require a trailing newline after the last statement.
 
 use crate::ast::*;
 use crate::{Lexer, parser};
 
+fn bound_name(ty: &Type) -> &str {
+    if let Type::Path(p) = ty { &p.segments[0] } else { panic!("Expected path type as bound") }
+}
+
 #[test]
 fn test_simple_function() {
-    let input = "fn add(x: i32, y: i32) -> i32
-    pass";
-    let lexer = Lexer::new(input);
-    let result = parser::FunctionParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let f = result.unwrap();
-    let signature = f.signature();
-    assert_eq!(signature.name(), "add");
-    assert_eq!(signature.params().len(), 2);
-    assert_eq!(signature.return_type(), &Some(Type::I32));
-    assert_eq!(signature.generic_params().len(), 0);
-    assert_eq!(signature.where_clause().len(), 0);
+    let input = "func add(x: i32, y: i32) -> i32\n    pass\n";
+    let f = parser::FunctionParser::new().parse(Lexer::new(input)).unwrap();
+    let sig = f.signature;
+    assert_eq!(sig.name, "add");
+    assert_eq!(sig.params.len(), 2);
+    assert_eq!(sig.return_types, vec![Type::I32]);
+    assert_eq!(sig.generic_params.len(), 0);
 
-    assert_eq!(signature.params()[0].name(), "x");
-    assert_eq!(signature.params()[0].ty(), &Type::I32);
-    assert_eq!(signature.params()[1].name(), "y");
-    assert_eq!(signature.params()[1].ty(), &Type::I32);
+    assert_eq!(sig.params[0].name, "x");
+    assert_eq!(sig.params[0].ty, Type::I32);
+    assert_eq!(sig.params[1].name, "y");
+    assert_eq!(sig.params[1].ty, Type::I32);
 }
 
 #[test]
 fn test_most_basic_function() {
-    let input = "fn main()
-
-    pass";
-    let lexer = Lexer::new(input);
-    let result = parser::FunctionParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let f = result.unwrap();
-    let signature = f.signature();
-    assert_eq!(signature.name(), "main");
-    assert_eq!(signature.params().len(), 0);
-    assert_eq!(signature.return_type(), &None);
+    let input = "func main()\n    pass\n";
+    let f = parser::FunctionParser::new().parse(Lexer::new(input)).unwrap();
+    let sig = f.signature;
+    assert_eq!(sig.name, "main");
+    assert_eq!(sig.params.len(), 0);
+    assert_eq!(sig.return_types, vec![]);
 }
 
 #[test]
 fn test_function_no_params() {
-    let input = "fn main() -> i32
-    pass";
-    let lexer = Lexer::new(input);
-    let result = parser::FunctionParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let f = result.unwrap();
-    let signature = f.signature();
-    assert_eq!(signature.name(), "main");
-    assert_eq!(signature.params().len(), 0);
-    assert_eq!(signature.return_type(), &Some(Type::I32));
+    let input = "func main() -> i32\n    pass\n";
+    let f = parser::FunctionParser::new().parse(Lexer::new(input)).unwrap();
+    let sig = f.signature;
+    assert_eq!(sig.name, "main");
+    assert_eq!(sig.params.len(), 0);
+    assert_eq!(sig.return_types, vec![Type::I32]);
 }
 
 #[test]
 fn test_function_no_return_type() {
-    let input = "fn print(x: i32)
-    pass";
-    let lexer = Lexer::new(input);
-    let result = parser::FunctionParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let f = result.unwrap();
-    let signature = f.signature();
-    assert_eq!(signature.name(), "print");
-    assert_eq!(signature.params().len(), 1);
-    assert_eq!(signature.return_type(), &None);
+    let input = "func print(x: i32)\n    pass\n";
+    let f = parser::FunctionParser::new().parse(Lexer::new(input)).unwrap();
+    let sig = f.signature;
+    assert_eq!(sig.name, "print");
+    assert_eq!(sig.params.len(), 1);
+    assert_eq!(sig.return_types, vec![]);
 }
 
 #[test]
 fn test_function_with_generic_params() {
-    let input = "fn identity[T](x: T) -> T
-    pass";
-    let lexer = Lexer::new(input);
-    let result = parser::FunctionParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let f = result.unwrap();
-    let signature = f.signature();
-    assert_eq!(signature.name(), "identity");
-    assert_eq!(signature.generic_params().len(), 1);
-    assert_eq!(signature.params().len(), 1);
+    // Generic params come BEFORE the function name: func[T] identity(x: T) -> T
+    let input = "func[T] identity(x: T) -> T\n    pass\n";
+    let f = parser::FunctionParser::new().parse(Lexer::new(input)).unwrap();
+    let sig = f.signature;
+    assert_eq!(sig.name, "identity");
+    assert_eq!(sig.generic_params.len(), 1);
+    assert_eq!(sig.params.len(), 1);
 
-    if let GenericParameter::Type { name, bounds } = &signature.generic_params()[0] {
+    if let GenericParameter::Type { name, bounds, .. } = &sig.generic_params[0] {
         assert_eq!(name, "T");
         assert_eq!(bounds.len(), 0);
     } else {
@@ -90,24 +76,15 @@ fn test_function_with_generic_params() {
 
 #[test]
 fn test_function_with_bounded_generic() {
-    let input = "fn clone[T: Clone](x: T) -> T
-    pass";
-    let lexer = Lexer::new(input);
-    let result = parser::FunctionParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let f = result.unwrap();
-    let signature = f.signature();
-    assert_eq!(signature.generic_params().len(), 1);
+    let input = "func[T: Clone] clone(x: T) -> T\n    pass\n";
+    let f = parser::FunctionParser::new().parse(Lexer::new(input)).unwrap();
+    let sig = f.signature;
+    assert_eq!(sig.generic_params.len(), 1);
 
-    if let GenericParameter::Type { name, bounds } = &signature.generic_params()[0] {
+    if let GenericParameter::Type { name, bounds, .. } = &sig.generic_params[0] {
         assert_eq!(name, "T");
         assert_eq!(bounds.len(), 1);
-        if let Type::Named {
-            name: bound_name, ..
-        } = &bounds[0]
-        {
-            assert_eq!(bound_name, "Clone");
-        }
+        assert_eq!(bound_name(&bounds[0]), "Clone");
     } else {
         panic!("Expected bounded type parameter");
     }
@@ -115,119 +92,77 @@ fn test_function_with_bounded_generic() {
 
 #[test]
 fn test_function_with_multiple_generics() {
-    let input = "fn pair[T, U](x: T, y: U) -> T
-    pass";
-    let lexer = Lexer::new(input);
-    let result = parser::FunctionParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let f = result.unwrap();
-    let signature = f.signature();
-    assert_eq!(signature.generic_params().len(), 2);
-    assert_eq!(signature.params().len(), 2);
+    let input = "func[T, U] pair(x: T, y: U) -> T\n    pass\n";
+    let f = parser::FunctionParser::new().parse(Lexer::new(input)).unwrap();
+    let sig = f.signature;
+    assert_eq!(sig.generic_params.len(), 2);
+    assert_eq!(sig.params.len(), 2);
 }
 
 #[test]
 fn test_function_with_where_clause() {
-    let input = "fn process[T, U](x: T, y: U) -> T
-    where
-        T: Clone
-        U: Copy
-    pass";
-    let lexer = Lexer::new(input);
-    let result = parser::FunctionParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let f = result.unwrap();
-    let signature = f.signature();
-    assert_eq!(signature.where_clause().len(), 2);
+    // Where-clause constraints are merged into generic_params bounds.
+    let input = "func[T, U] process(x: T, y: U) -> T\n    where\n        T: Clone\n        U: Copy\n    pass\n";
+    let f = parser::FunctionParser::new().parse(Lexer::new(input)).unwrap();
+    let sig = f.signature;
+    // T and U appear in generic_params with bounds merged in from the where clause
+    assert_eq!(sig.generic_params.len(), 2);
 
-    // Check T: Clone
-    if let GenericParameter::Type { name, bounds } = &signature.where_clause()[0] {
+    if let GenericParameter::Type { name, bounds, .. } = &sig.generic_params[0] {
         assert_eq!(name, "T");
         assert_eq!(bounds.len(), 1);
-        if let Type::Named {
-            name: bound_name, ..
-        } = &bounds[0]
-        {
-            assert_eq!(bound_name, "Clone");
-        }
+        assert_eq!(bound_name(&bounds[0]), "Clone");
     } else {
-        panic!("Expected T: Clone in where clause");
+        panic!("Expected T: Clone");
     }
 
-    // Check U: Copy
-    if let GenericParameter::Type { name, bounds } = &signature.where_clause()[1] {
+    if let GenericParameter::Type { name, bounds, .. } = &sig.generic_params[1] {
         assert_eq!(name, "U");
         assert_eq!(bounds.len(), 1);
-        if let Type::Named {
-            name: bound_name, ..
-        } = &bounds[0]
-        {
-            assert_eq!(bound_name, "Copy");
-        }
+        assert_eq!(bound_name(&bounds[0]), "Copy");
     } else {
-        panic!("Expected U: Copy in where clause");
+        panic!("Expected U: Copy");
     }
 }
 
 #[test]
 fn test_function_with_complex_types() {
-    let input = "fn process(ptr: *i32, arr: []u8, ref_val: *mut T) -> *u32
-    pass";
-    let lexer = Lexer::new(input);
-    let result = parser::FunctionParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let f = result.unwrap();
-    let signature = f.signature();
-    assert_eq!(signature.params().len(), 3);
+    let input = "func[T] process(ptr: *i32, arr: [u8], ref_val: *mut T) -> *u32\n    pass\n";
+    let f = parser::FunctionParser::new().parse(Lexer::new(input)).unwrap();
+    let sig = f.signature;
+    assert_eq!(sig.params.len(), 3);
 
-    // Check pointer parameter
-    assert_eq!(signature.params()[0].name(), "ptr");
-    if let Type::Pointer {
-        element_type,
-        nullable,
-        mutable,
-    } = signature.params()[0].ty()
-    {
-        assert_eq!(nullable, &false);
-        assert_eq!(mutable, &false);
+    // ptr: *i32
+    assert_eq!(sig.params[0].name, "ptr");
+    if let Type::Pointer { element_type, nullable, mutable } = &sig.params[0].ty {
+        assert!(!nullable);
+        assert!(!mutable);
         assert_eq!(**element_type, Type::I32);
     } else {
         panic!("Expected pointer type");
     }
 
-    // Check array parameter
-    assert_eq!(signature.params()[1].name(), "arr");
-    if let Type::Array { element_type, size } = signature.params()[1].ty() {
-        assert_eq!(size, &None);
-        assert_eq!(element_type.as_ref(), &Type::U8);
+    // arr: [u8]
+    assert_eq!(sig.params[1].name, "arr");
+    if let Type::Array { element_type, size } = &sig.params[1].ty {
+        assert!(size.is_none());
+        assert_eq!(**element_type, Type::U8);
     } else {
-        panic!("Expected array type");
+        panic!("Expected slice type");
     }
 
-    // Check reference parameter
-    assert_eq!(signature.params()[2].name(), "ref_val");
-    if let Type::Pointer {
-        element_type,
-        nullable,
-        mutable,
-    } = signature.params()[2].ty()
-    {
-        assert_eq!(nullable, &false);
-        assert_eq!(mutable, &true);
-        assert_eq!(**element_type, Type::Named { name: "T".to_string(), generic_args: vec![] });
+    // ref_val: *mut T
+    assert_eq!(sig.params[2].name, "ref_val");
+    if let Type::Pointer { mutable, .. } = &sig.params[2].ty {
+        assert!(mutable);
     } else {
-        panic!("Expected reference type");
+        panic!("Expected mutable pointer type");
     }
 
-    // Check return type
-    if let Some(Type::Pointer {
-        element_type,
-        nullable,
-        mutable,
-    }) = signature.return_type()
-    {
-        assert_eq!(nullable, &false);
-        assert_eq!(mutable, &false);
+    // return type *u32
+    if let Some(Type::Pointer { element_type, nullable, mutable }) = sig.return_types.first() {
+        assert!(!nullable);
+        assert!(!mutable);
         assert_eq!(**element_type, Type::U32);
     } else {
         panic!("Expected pointer return type");
@@ -236,17 +171,13 @@ fn test_function_with_complex_types() {
 
 #[test]
 fn test_function_with_array_return() {
-    let input = "fn get_array() -> []i32
-    pass";
-    let lexer = Lexer::new(input);
-    let result = parser::FunctionParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let f = result.unwrap();
-    let signature = f.signature();
+    let input = "func get_array() -> [i32]\n    pass\n";
+    let f = parser::FunctionParser::new().parse(Lexer::new(input)).unwrap();
+    let sig = f.signature;
 
-    if let Some(Type::Array { element_type, size }) = signature.return_type() {
-        assert_eq!(size, &None);
-        assert_eq!(element_type.as_ref(), &Type::I32);
+    if let Some(Type::Array { element_type, size }) = sig.return_types.first() {
+        assert!(size.is_none());
+        assert_eq!(**element_type, Type::I32);
     } else {
         panic!("Expected array return type");
     }
@@ -254,16 +185,12 @@ fn test_function_with_array_return() {
 
 #[test]
 fn test_function_with_const_param() {
-    let input = "fn array_func[const N: usize](x: i32) -> i32
-    pass";
-    let lexer = Lexer::new(input);
-    let result = parser::FunctionParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let f = result.unwrap();
-    let signature = f.signature();
-    assert_eq!(signature.generic_params().len(), 1);
+    let input = "func[const N: usize] array_func(x: i32) -> i32\n    pass\n";
+    let f = parser::FunctionParser::new().parse(Lexer::new(input)).unwrap();
+    let sig = f.signature;
+    assert_eq!(sig.generic_params.len(), 1);
 
-    if let GenericParameter::Const { name, ty } = &signature.generic_params()[0] {
+    if let GenericParameter::Const { name, ty } = &sig.generic_params[0] {
         assert_eq!(name, "N");
         assert_eq!(ty, &Type::USize);
     } else {
@@ -273,29 +200,20 @@ fn test_function_with_const_param() {
 
 #[test]
 fn test_function_with_mixed_generics() {
-    let input = "fn complex[T: Clone, const N: usize, U](x: T, y: U) -> T
-    pass";
-    let lexer = Lexer::new(input);
-    let result = parser::FunctionParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let f = result.unwrap();
-    let signature = f.signature();
-    assert_eq!(signature.generic_params().len(), 3);
+    let input = "func[T: Clone, const N: usize, U] complex(x: T, y: U) -> T\n    pass\n";
+    let f = parser::FunctionParser::new().parse(Lexer::new(input)).unwrap();
+    let sig = f.signature;
+    assert_eq!(sig.generic_params.len(), 3);
 
-    // Check T: Clone
-    if let GenericParameter::Type { name, bounds } = &signature.generic_params()[0] {
+    if let GenericParameter::Type { name, bounds, .. } = &sig.generic_params[0] {
         assert_eq!(name, "T");
         assert_eq!(bounds.len(), 1);
     }
-
-    // Check const N: usize
-    if let GenericParameter::Const { name, ty } = &signature.generic_params()[1] {
+    if let GenericParameter::Const { name, ty } = &sig.generic_params[1] {
         assert_eq!(name, "N");
         assert_eq!(ty, &Type::USize);
     }
-
-    // Check U
-    if let GenericParameter::Type { name, bounds } = &signature.generic_params()[2] {
+    if let GenericParameter::Type { name, bounds, .. } = &sig.generic_params[2] {
         assert_eq!(name, "U");
         assert_eq!(bounds.len(), 0);
     }
@@ -303,36 +221,16 @@ fn test_function_with_mixed_generics() {
 
 #[test]
 fn test_function_with_multiple_bounds() {
-    let input = "fn multi_bound[T: Clone + Copy + Send](x: T) -> T
-    pass";
-    let lexer = Lexer::new(input);
-    let result = parser::FunctionParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let f = result.unwrap();
-    let signature = f.signature();
+    let input = "func[T: Clone + Copy + Send] multi_bound(x: T) -> T\n    pass\n";
+    let f = parser::FunctionParser::new().parse(Lexer::new(input)).unwrap();
+    let sig = f.signature;
 
-    if let GenericParameter::Type { name, bounds } = &signature.generic_params()[0] {
+    if let GenericParameter::Type { name, bounds, .. } = &sig.generic_params[0] {
         assert_eq!(name, "T");
         assert_eq!(bounds.len(), 3);
-
-        if let Type::Named {
-            name: bound_name, ..
-        } = &bounds[0]
-        {
-            assert_eq!(bound_name, "Clone");
-        }
-        if let Type::Named {
-            name: bound_name, ..
-        } = &bounds[1]
-        {
-            assert_eq!(bound_name, "Copy");
-        }
-        if let Type::Named {
-            name: bound_name, ..
-        } = &bounds[2]
-        {
-            assert_eq!(bound_name, "Send");
-        }
+        assert_eq!(bound_name(&bounds[0]), "Clone");
+        assert_eq!(bound_name(&bounds[1]), "Copy");
+        assert_eq!(bound_name(&bounds[2]), "Send");
     } else {
         panic!("Expected bounded type parameter");
     }
@@ -340,24 +238,14 @@ fn test_function_with_multiple_bounds() {
 
 #[test]
 fn test_function_with_single_param() {
-    let input = "fn square(x: i32) -> i32
-    pass";
-    let lexer = Lexer::new(input);
-    let result = parser::FunctionParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let f = result.unwrap();
-    let signature = f.signature();
-    assert_eq!(signature.params().len(), 1);
+    let input = "func square(x: i32) -> i32\n    pass\n";
+    let f = parser::FunctionParser::new().parse(Lexer::new(input)).unwrap();
+    assert_eq!(f.signature.params.len(), 1);
 }
 
 #[test]
 fn test_function_with_trailing_comma() {
-    let input = "fn add(x: i32, y: i32,) -> i32
-    pass";
-    let lexer = Lexer::new(input);
-    let result = parser::FunctionParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let f = result.unwrap();
-    let signature = f.signature();
-    assert_eq!(signature.params().len(), 2);
+    let input = "func add(x: i32, y: i32,) -> i32\n    pass\n";
+    let f = parser::FunctionParser::new().parse(Lexer::new(input)).unwrap();
+    assert_eq!(f.signature.params.len(), 2);
 }

@@ -1,0 +1,27 @@
+---
+source: crates/nyx-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - NamespaceDeclaration:
+      visibility: Default
+      annotations: []
+      name:
+        segments:
+          - core
+        generic_args: []
+  - NamespaceDeclaration:
+      visibility: Default
+      annotations: []
+      name:
+        segments:
+          - std
+        generic_args: []
+  - NamespaceDeclaration:
+      visibility: Default
+      annotations: []
+      name:
+        segments:
+          - math
+        generic_args: []

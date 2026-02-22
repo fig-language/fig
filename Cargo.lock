@@ -639,9 +639,6 @@ name = "nyx-parser"
 version = "0.1.0"
 dependencies = [
  "datatest-stable",
- "derive-new",
- "derive_builder",
- "getset",
  "insta",
  "lalrpop",
  "lalrpop-util",

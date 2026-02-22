@@ -3,8 +3,7 @@
 // Token snapshots are stored in .snap.yml files using insta
 
 use datatest_stable::Utf8Path;
-use nyx_lexer::{IndentLexer, LexicalError, Token};
-use std::path::PathBuf;
+use nyx_lexer::{IndentLexer, LexicalError};
 
 fn lexer_test(path: &Utf8Path, contents: String) -> datatest_stable::Result<()> {
     // Tokenize the entire file

@@ -1,9 +1,11 @@
 // let with explicit type annotations
-let a: i32 = 10
-let b: u64 = 9999999999
-let c: f64 = 2.71828
-let d: bool = false
-let e: u8 = 255
-let f: i64 = -1
-let g: usize = 0
-let h: isize = 100
+func let_typed() -> ok
+    let a: i32 = 10
+    let b: u64 = 9999999999
+    let c: f64 = 2.71828
+    let d: bool = false
+    let e: u8 = 255
+    let f: i64 = -1
+    let g: usize = 0
+    let h: isize = 100
+    pass

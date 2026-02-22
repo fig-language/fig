@@ -1,0 +1,118 @@
+---
+source: crates/nyx-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: Pair
+      generic_params:
+        - Type:
+            name: A
+            bounds: []
+            default_type: ~
+        - Type:
+            name: B
+            bounds: []
+            default_type: ~
+      requires: []
+      fields:
+        - name: first
+          ty:
+            Path:
+              segments:
+                - A
+              generic_args: []
+        - name: second
+          ty:
+            Path:
+              segments:
+                - B
+              generic_args: []
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: Triple
+      generic_params:
+        - Type:
+            name: A
+            bounds: []
+            default_type: ~
+        - Type:
+            name: B
+            bounds: []
+            default_type: ~
+        - Type:
+            name: C
+            bounds: []
+            default_type: ~
+      requires: []
+      fields:
+        - name: a
+          ty:
+            Path:
+              segments:
+                - A
+              generic_args: []
+        - name: b
+          ty:
+            Path:
+              segments:
+                - B
+              generic_args: []
+        - name: c
+          ty:
+            Path:
+              segments:
+                - C
+              generic_args: []
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: Map
+      generic_params:
+        - Type:
+            name: K
+            bounds: []
+            default_type: ~
+        - Type:
+            name: V
+            bounds: []
+            default_type: ~
+      requires: []
+      fields:
+        - name: key
+          ty:
+            Path:
+              segments:
+                - K
+              generic_args: []
+        - name: value
+          ty:
+            Path:
+              segments:
+                - V
+              generic_args: []
+        - name: next
+          ty:
+            Pointer:
+              nullable: true
+              mutable: false
+              element_type:
+                Path:
+                  segments:
+                    - Map
+                  generic_args:
+                    - Path:
+                        segments:
+                          - K
+                        generic_args: []
+                    - Path:
+                        segments:
+                          - V
+                        generic_args: []

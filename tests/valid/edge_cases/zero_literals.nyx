@@ -1,6 +1,8 @@
 // Edge case: integer zero and float zero literals
-let iz = 0
-let fz = 0.0
-let one = 1
-let neg_in_expr = 0 - 1
-let fone = 1.0
+func zeros() -> ok
+    let iz = 0
+    let fz = 0.0
+    let one = 1
+    let neg_in_expr = 0 - 1
+    let fone = 1.0
+    pass

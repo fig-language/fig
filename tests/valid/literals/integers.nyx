@@ -1,8 +1,10 @@
 // Integer literals
-let a = 0
-let b = 1
-let c = 42
-let d = 255
-let e = 65535
-let f = 4294967295
-let g = 9999999999
+func integers() -> ok
+    let a = 0
+    let b = 1
+    let c = 42
+    let d = 255
+    let e = 65535
+    let f = 4294967295
+    let g = 9999999999
+    pass

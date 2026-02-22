@@ -1,0 +1,61 @@
+---
+source: crates/nyx-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: type_access_exprs
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Let:
+              annotations: []
+              name: x
+              ty: ~
+              value:
+                TypeAccess:
+                  object:
+                    Path:
+                      segments:
+                        - Foo
+                      generic_args: []
+                  member: BAR
+          - Let:
+              annotations: []
+              name: y
+              ty: ~
+              value:
+                TypeAccess:
+                  object:
+                    TypeAccess:
+                      object:
+                        Path:
+                          segments:
+                            - std
+                          generic_args: []
+                      member: io
+                  member: STDIN
+          - Let:
+              annotations: []
+              name: z
+              ty: ~
+              value:
+                TypeAccess:
+                  object:
+                    Path:
+                      segments:
+                        - Color
+                      generic_args: []
+                  member: RED
+          - Pass

@@ -233,6 +233,8 @@ pub enum Token {
     LBracket,
     #[token("]")]
     RBracket,
+    #[token("::")]
+    ColonColon,
     #[token(":")]
     Colon,
     #[token(";")]
@@ -363,7 +365,7 @@ impl<'source> IndentLexer<'source> {
             indent_stack: vec![0], // Start with 0 indentation
             pending_tokens: Vec::new(),
             at_line_start: true,
-            last_was_newline: false,
+            last_was_newline: true,
         }
     }
 
@@ -458,6 +460,10 @@ impl<'source> Iterator for IndentLexer<'source> {
         // Get next token from underlying lexer
         match self.lexer.next() {
             Some(Ok(Token::Newline)) => {
+                if self.last_was_newline {
+                    // Collapse consecutive blank lines into a single Newline
+                    return self.next();
+                }
                 self.last_was_newline = true;
                 self.at_line_start = true;
                 Some(Ok(Token::Newline))

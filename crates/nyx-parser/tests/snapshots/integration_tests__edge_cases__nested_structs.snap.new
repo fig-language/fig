@@ -1,0 +1,44 @@
+---
+source: crates/nyx-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: Inner
+      generic_params: []
+      requires: []
+      fields:
+        - name: x
+          ty: I32
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: Outer
+      generic_params: []
+      requires: []
+      fields:
+        - name: inner
+          ty:
+            Path:
+              segments:
+                - Inner
+              generic_args: []
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: DeepNest
+      generic_params: []
+      requires: []
+      fields:
+        - name: outer
+          ty:
+            Path:
+              segments:
+                - Outer
+              generic_args: []

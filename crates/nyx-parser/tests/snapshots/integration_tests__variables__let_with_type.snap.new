@@ -1,0 +1,94 @@
+---
+source: crates/nyx-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: let_typed
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Let:
+              annotations: []
+              name: a
+              ty: I32
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "10"
+                  suffix: ~
+          - Let:
+              annotations: []
+              name: b
+              ty: U64
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "9999999999"
+                  suffix: ~
+          - Let:
+              annotations: []
+              name: c
+              ty: F64
+              value:
+                FloatLiteral:
+                  digits: "2.71828"
+                  exponent: ~
+                  suffix: ~
+          - Let:
+              annotations: []
+              name: d
+              ty: Bool
+              value:
+                BooleanLiteral: false
+          - Let:
+              annotations: []
+              name: e
+              ty: U8
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "255"
+                  suffix: ~
+          - Let:
+              annotations: []
+              name: f
+              ty: I64
+              value:
+                UnaryOp:
+                  op: Negate
+                  operand:
+                    IntegerLiteral:
+                      base: Decimal
+                      digits: "1"
+                      suffix: ~
+          - Let:
+              annotations: []
+              name: g
+              ty: USize
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "0"
+                  suffix: ~
+          - Let:
+              annotations: []
+              name: h
+              ty: ISize
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "100"
+                  suffix: ~
+          - Pass

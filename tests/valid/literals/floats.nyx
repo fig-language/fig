@@ -1,8 +1,10 @@
 // Float literals
-let a = 0.0
-let b = 1.0
-let c = 3.14
-let d = 2.71828
-let e = 100.001
-let f = 0.5
-let g = 999.999
+func floats() -> ok
+    let a = 0.0
+    let b = 1.0
+    let c = 3.14
+    let d = 2.71828
+    let e = 100.001
+    let f = 0.5
+    let g = 999.999
+    pass

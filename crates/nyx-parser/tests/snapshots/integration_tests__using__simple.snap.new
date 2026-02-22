@@ -1,0 +1,30 @@
+---
+source: crates/nyx-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Using:
+      visibility: Default
+      annotations: []
+      path:
+        segments:
+          - std
+          - io
+        generic_args: []
+  - Using:
+      visibility: Default
+      annotations: []
+      path:
+        segments:
+          - core
+          - memory
+        generic_args: []
+  - Using:
+      visibility: Default
+      annotations: []
+      path:
+        segments:
+          - core
+          - iter
+        generic_args: []

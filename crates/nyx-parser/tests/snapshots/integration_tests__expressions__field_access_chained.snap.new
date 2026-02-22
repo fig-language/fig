@@ -1,0 +1,69 @@
+---
+source: crates/nyx-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: Inner
+      generic_params: []
+      requires: []
+      fields:
+        - name: value
+          ty: I32
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: Outer
+      generic_params: []
+      requires: []
+      fields:
+        - name: inner
+          ty:
+            Path:
+              segments:
+                - Inner
+              generic_args: []
+        - name: label
+          ty:
+            Array:
+              element_type: U8
+              size: ~
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: deep_field
+        generic_params: []
+        self_param: ~
+        params:
+          - name: o
+            ty:
+              Path:
+                segments:
+                  - Outer
+                generic_args: []
+        return_types:
+          - I32
+      body:
+        statements:
+          - Return:
+              FieldAccess:
+                object:
+                  FieldAccess:
+                    object:
+                      Path:
+                        segments:
+                          - o
+                        generic_args: []
+                    field: inner
+                    is_propagating: false
+                field: value
+                is_propagating: false

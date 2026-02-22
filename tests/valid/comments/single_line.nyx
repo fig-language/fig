@@ -1,2 +1,4 @@
 // This is a single-line comment
-let x = 42
+func main() -> ok
+    let x = 42
+    pass

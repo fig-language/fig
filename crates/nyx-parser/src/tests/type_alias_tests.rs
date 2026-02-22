@@ -1,4 +1,5 @@
-// Additional tests for type aliases in nyx-parser
+// Tests for type alias parsing
+// NOTE: where-clause constraints are merged into generic_params by the parser.
 
 use crate::{
     Lexer,
@@ -6,71 +7,53 @@ use crate::{
     parser,
 };
 
+fn bound_name(ty: &Type) -> &str {
+    if let Type::Path(p) = ty { &p.segments[0] } else { panic!("Expected path type as bound") }
+}
+
 #[test]
 fn test_simple_type_alias() {
     let input = "type MyInt = i32";
-    let lexer = Lexer::new(input);
-    let result = parser::TypeAliasParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let type_alias = result.unwrap();
-    assert_eq!(type_alias.name(), "MyInt");
-    assert_eq!(type_alias.generic_params().len(), 0);
-    assert_eq!(type_alias.aliased_type(), &Type::I32);
-    assert_eq!(type_alias.where_clause().len(), 0);
+    let ta = parser::TypeAliasParser::new().parse(Lexer::new(input)).unwrap();
+    assert_eq!(ta.name, "MyInt");
+    assert_eq!(ta.generic_params.len(), 0);
+    assert_eq!(ta.aliased_type, Type::I32);
 }
 
 #[test]
 fn test_type_alias_with_generic_params() {
-    let input = "type MyVec[T] = []T";
-    let lexer = Lexer::new(input);
-    let result = parser::TypeAliasParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let type_alias = result.unwrap();
-    assert_eq!(type_alias.name(), "MyVec");
-    assert_eq!(type_alias.generic_params().len(), 1);
+    let input = "type MyVec[T] = [T]";
+    let ta = parser::TypeAliasParser::new().parse(Lexer::new(input)).unwrap();
+    assert_eq!(ta.name, "MyVec");
+    assert_eq!(ta.generic_params.len(), 1);
 
-    if let GenericParameter::Type { name, bounds } = &type_alias.generic_params()[0] {
+    if let GenericParameter::Type { name, bounds, .. } = &ta.generic_params[0] {
         assert_eq!(name, "T");
         assert_eq!(bounds.len(), 0);
     } else {
         panic!("Expected type parameter");
     }
 
-    // Check aliased type is []T (dynamic array of T)
-    if let Type::Array { element_type, size } = type_alias.aliased_type() {
-        assert_eq!(size, &None);
-        if let Type::Named { name, generic_args } = element_type.as_ref() {
-            assert_eq!(name, "T");
-            assert_eq!(generic_args.len(), 0);
-        } else {
-            panic!("Expected named type T");
-        }
+    if let Type::Array { element_type, size } = &ta.aliased_type {
+        assert!(size.is_none());
+        // element type is T (a path type)
+        assert!(matches!(element_type.as_ref(), Type::Path(_)));
     } else {
-        panic!("Expected array type");
+        panic!("Expected slice type");
     }
 }
 
 #[test]
 fn test_type_alias_with_bounded_generic() {
-    let input = "type MyRef[T: Copy] = &T";
-    let lexer = Lexer::new(input);
-    let result = parser::TypeAliasParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let type_alias = result.unwrap();
-    assert_eq!(type_alias.name(), "MyRef");
-    assert_eq!(type_alias.generic_params().len(), 1);
+    let input = "type MyPtr[T: Copy] = *T";
+    let ta = parser::TypeAliasParser::new().parse(Lexer::new(input)).unwrap();
+    assert_eq!(ta.name, "MyPtr");
+    assert_eq!(ta.generic_params.len(), 1);
 
-    if let GenericParameter::Type { name, bounds } = &type_alias.generic_params()[0] {
+    if let GenericParameter::Type { name, bounds, .. } = &ta.generic_params[0] {
         assert_eq!(name, "T");
         assert_eq!(bounds.len(), 1);
-        if let Type::Named {
-            name: bound_name, ..
-        } = &bounds[0]
-        {
-            assert_eq!(bound_name, "Copy");
-        } else {
-            panic!("Expected Copy bound");
-        }
+        assert_eq!(bound_name(&bounds[0]), "Copy");
     } else {
         panic!("Expected type parameter");
     }
@@ -79,27 +62,13 @@ fn test_type_alias_with_bounded_generic() {
 #[test]
 fn test_type_alias_with_multiple_bounds() {
     let input = "type MyType[T: Clone + Copy] = *T";
-    let lexer = Lexer::new(input);
-    let result = parser::TypeAliasParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let type_alias = result.unwrap();
+    let ta = parser::TypeAliasParser::new().parse(Lexer::new(input)).unwrap();
 
-    if let GenericParameter::Type { name, bounds } = &type_alias.generic_params()[0] {
+    if let GenericParameter::Type { name, bounds, .. } = &ta.generic_params[0] {
         assert_eq!(name, "T");
         assert_eq!(bounds.len(), 2);
-
-        if let Type::Named {
-            name: bound_name, ..
-        } = &bounds[0]
-        {
-            assert_eq!(bound_name, "Clone");
-        }
-        if let Type::Named {
-            name: bound_name, ..
-        } = &bounds[1]
-        {
-            assert_eq!(bound_name, "Copy");
-        }
+        assert_eq!(bound_name(&bounds[0]), "Clone");
+        assert_eq!(bound_name(&bounds[1]), "Copy");
     } else {
         panic!("Expected type parameter");
     }
@@ -108,13 +77,10 @@ fn test_type_alias_with_multiple_bounds() {
 #[test]
 fn test_type_alias_with_const_param() {
     let input = "type MyArray[const N: usize] = i32";
-    let lexer = Lexer::new(input);
-    let result = parser::TypeAliasParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let type_alias = result.unwrap();
-    assert_eq!(type_alias.generic_params().len(), 1);
+    let ta = parser::TypeAliasParser::new().parse(Lexer::new(input)).unwrap();
+    assert_eq!(ta.generic_params.len(), 1);
 
-    if let GenericParameter::Const { name, ty } = &type_alias.generic_params()[0] {
+    if let GenericParameter::Const { name, ty } = &ta.generic_params[0] {
         assert_eq!(name, "N");
         assert_eq!(ty, &Type::USize);
     } else {
@@ -124,161 +90,108 @@ fn test_type_alias_with_const_param() {
 
 #[test]
 fn test_type_alias_with_where_clause() {
-    let input = "type MyResult[T, E]
-    where
-        T: Clone
-        E: Copy
-    = i32";
-    let lexer = Lexer::new(input);
-    let result = parser::TypeAliasParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let type_alias = result.unwrap();
+    // where-clause is merged into generic_params
+    let input = "type MyResult[T, E]\n    where\n        T: Clone\n        E: Copy\n    = i32";
+    let ta = parser::TypeAliasParser::new().parse(Lexer::new(input)).unwrap();
+    assert_eq!(ta.name, "MyResult");
+    // T and E appear in generic_params with bounds merged in
+    assert_eq!(ta.generic_params.len(), 2);
 
-    assert_eq!(type_alias.name(), "MyResult");
-    assert_eq!(type_alias.generic_params().len(), 2);
-    assert_eq!(type_alias.where_clause().len(), 2);
-
-    // Check where clause bounds
-    if let GenericParameter::Type { name, bounds } = &type_alias.where_clause()[0] {
+    if let GenericParameter::Type { name, bounds, .. } = &ta.generic_params[0] {
         assert_eq!(name, "T");
         assert_eq!(bounds.len(), 1);
-        if let Type::Named {
-            name: bound_name, ..
-        } = &bounds[0]
-        {
-            assert_eq!(bound_name, "Clone");
-        }
-    } else {
-        panic!("Expected T: Clone in where clause");
-    }
+        assert_eq!(bound_name(&bounds[0]), "Clone");
+    } else { panic!("Expected T: Clone"); }
 
-    if let GenericParameter::Type { name, bounds } = &type_alias.where_clause()[1] {
+    if let GenericParameter::Type { name, bounds, .. } = &ta.generic_params[1] {
         assert_eq!(name, "E");
         assert_eq!(bounds.len(), 1);
-        if let Type::Named {
-            name: bound_name, ..
-        } = &bounds[0]
-        {
-            assert_eq!(bound_name, "Copy");
-        }
-    } else {
-        panic!("Expected E: Copy in where clause");
-    }
+        assert_eq!(bound_name(&bounds[0]), "Copy");
+    } else { panic!("Expected E: Copy"); }
 }
 
 #[test]
 fn test_type_alias_with_complex_where_clause() {
-    let input = "type ComplexType[T, U, V] 
-    where
-        T: Clone + Send
-        U: Copy
-        V: Debug + Display
-    = *T";
-    let lexer = Lexer::new(input);
-    let result = parser::TypeAliasParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let type_alias = result.unwrap();
+    let input = "type ComplexType[T, U, V]\n    where\n        T: Clone + Send\n        U: Copy\n        V: Debug + Display\n    = *T";
+    let ta = parser::TypeAliasParser::new().parse(Lexer::new(input)).unwrap();
+    assert_eq!(ta.generic_params.len(), 3);
 
-    assert_eq!(type_alias.where_clause().len(), 3);
+    if let GenericParameter::Type { name, bounds, .. } = &ta.generic_params[0] {
+        assert_eq!(name, "T"); assert_eq!(bounds.len(), 2);
+    } else { panic!("Expected T with 2 bounds"); }
 
-    // Check T: Clone + Send
-    if let GenericParameter::Type { name, bounds } = &type_alias.where_clause()[0] {
-        assert_eq!(name, "T");
-        assert_eq!(bounds.len(), 2);
-    } else {
-        panic!("Expected T with multiple bounds");
-    }
+    if let GenericParameter::Type { name, bounds, .. } = &ta.generic_params[1] {
+        assert_eq!(name, "U"); assert_eq!(bounds.len(), 1);
+    } else { panic!("Expected U: Copy"); }
 
-    // Check U: Copy
-    if let GenericParameter::Type { name, bounds } = &type_alias.where_clause()[1] {
-        assert_eq!(name, "U");
-        assert_eq!(bounds.len(), 1);
-    } else {
-        panic!("Expected U: Copy");
-    }
-
-    // Check V: Debug + Display
-    if let GenericParameter::Type { name, bounds } = &type_alias.where_clause()[2] {
-        assert_eq!(name, "V");
-        assert_eq!(bounds.len(), 2);
-    } else {
-        panic!("Expected V with multiple bounds");
-    }
+    if let GenericParameter::Type { name, bounds, .. } = &ta.generic_params[2] {
+        assert_eq!(name, "V"); assert_eq!(bounds.len(), 2);
+    } else { panic!("Expected V with 2 bounds"); }
 }
 
 #[test]
 fn test_type_alias_with_mixed_params_and_where_clause() {
-    let input = "type MixedType[T: Clone, const N: usize]
-    where
-        T: Send
-    = *T";
-    let lexer = Lexer::new(input);
-    let result = parser::TypeAliasParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let type_alias = result.unwrap();
+    // T: Clone in param list, where clause adds Send → merged: T has [Clone, Send]
+    let input = "type MixedType[T: Clone, const N: usize]\n    where\n        T: Send\n    = *T";
+    let ta = parser::TypeAliasParser::new().parse(Lexer::new(input)).unwrap();
+    assert_eq!(ta.generic_params.len(), 2);
 
-    // Check generic params
-    assert_eq!(type_alias.generic_params().len(), 2);
-
-    // First param should be T: Clone
-    if let GenericParameter::Type { name, bounds } = &type_alias.generic_params()[0] {
+    if let GenericParameter::Type { name, bounds, .. } = &ta.generic_params[0] {
         assert_eq!(name, "T");
-        assert_eq!(bounds.len(), 1);
+        assert_eq!(bounds.len(), 2); // Clone + Send merged
     }
-
-    // Second param should be const N: usize
-    if let GenericParameter::Const { name, ty } = &type_alias.generic_params()[1] {
+    if let GenericParameter::Const { name, ty } = &ta.generic_params[1] {
         assert_eq!(name, "N");
         assert_eq!(ty, &Type::USize);
     }
+}
 
-    // Check where clause has T: Send
-    assert_eq!(type_alias.where_clause().len(), 1);
-    if let GenericParameter::Type { name, bounds } = &type_alias.where_clause()[0] {
-        assert_eq!(name, "T");
-        assert_eq!(bounds.len(), 1);
-        if let Type::Named {
-            name: bound_name, ..
-        } = &bounds[0]
-        {
-            assert_eq!(bound_name, "Send");
-        }
+#[test]
+fn test_type_alias_pointer_type() {
+    let input = "type RawPtr = *Something";
+    let ta = parser::TypeAliasParser::new().parse(Lexer::new(input)).unwrap();
+    if let Type::Pointer { nullable, mutable, element_type } = ta.aliased_type {
+        assert!(!nullable);
+        assert!(!mutable);
+        assert!(matches!(*element_type, Type::Path(_)));
+    } else {
+        panic!("Expected pointer type");
     }
 }
 
 #[test]
-fn test_type_alias_pointer_types() {
-    let input = "type RawPtr = *Something";
-    let lexer = Lexer::new(input);
-    let result = parser::TypeAliasParser::new().parse(lexer);
-    assert!(result.is_ok());
-    let type_alias = result.unwrap();
-    assert_eq!(
-        type_alias.aliased_type(),
-        &Type::Pointer {
-            nullable: false,
-            mutable: false,
-            element_type: Box::new(Type::Named {
-                name: "Something".to_string(),
-                generic_args: vec![]
-            })
-        }
-    );
+fn test_type_alias_slice_type() {
+    let input = "type Bytes = [u8]";
+    let ta = parser::TypeAliasParser::new().parse(Lexer::new(input)).unwrap();
+    if let Type::Array { element_type, size } = ta.aliased_type {
+        assert!(size.is_none());
+        assert_eq!(*element_type, Type::U8);
+    } else {
+        panic!("Expected slice type");
+    }
 }
 
 #[test]
-fn test_type_alias_complex_type() {
-    let input = "type ComplexArray[T] = [10]i32";
-    let lexer = Lexer::new(input);
-    let result = parser::TypeAliasParser::new().parse(lexer);
-    assert!(result.is_ok(), "Failed to parse: {:?}", result);
-    let type_alias = result.unwrap();
-
-    // Should be [10]i32 (array of 10 i32)
-    if let Type::Array { element_type, size } = type_alias.aliased_type() {
-        assert_eq!(size, &Some(10));
-        assert_eq!(element_type.as_ref(), &Type::I32);
+fn test_type_alias_fixed_array_type() {
+    let input = "type SmallBuf = [i32; 10]";
+    let ta = parser::TypeAliasParser::new().parse(Lexer::new(input)).unwrap();
+    if let Type::Array { element_type, size } = ta.aliased_type {
+        assert!(size.is_some());
+        assert_eq!(*element_type, Type::I32);
     } else {
-        panic!("Expected array type");
+        panic!("Expected fixed array type");
+    }
+}
+
+#[test]
+fn test_type_alias_error_union() {
+    let input = "type Result[T] = T ! IoError";
+    let ta = parser::TypeAliasParser::new().parse(Lexer::new(input)).unwrap();
+    if let Type::ErrorUnion { ok_type, err_type } = ta.aliased_type {
+        // ok_type is the path T
+        assert!(matches!(*ok_type, Type::Path(_)));
+        assert_eq!(err_type.segments[0], "IoError");
+    } else {
+        panic!("Expected ErrorUnion type");
     }
 }

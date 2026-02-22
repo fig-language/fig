@@ -1,0 +1,73 @@
+---
+source: crates/nyx-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: Pair
+      generic_params:
+        - Type:
+            name: A
+            bounds:
+              - Path:
+                  segments:
+                    - Eq
+                  generic_args: []
+            default_type: ~
+        - Type:
+            name: B
+            bounds:
+              - Path:
+                  segments:
+                    - Ord
+                  generic_args: []
+            default_type: ~
+      requires: []
+      fields:
+        - name: first
+          ty:
+            Path:
+              segments:
+                - A
+              generic_args: []
+        - name: second
+          ty:
+            Path:
+              segments:
+                - B
+              generic_args: []
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: Sorted
+      generic_params:
+        - Type:
+            name: T
+            bounds:
+              - Path:
+                  segments:
+                    - Ord
+                  generic_args: []
+              - Path:
+                  segments:
+                    - Copy
+                  generic_args: []
+            default_type: ~
+      requires: []
+      fields:
+        - name: data
+          ty:
+            Array:
+              element_type:
+                Path:
+                  segments:
+                    - T
+                  generic_args: []
+              size: ~
+        - name: len
+          ty: USize

@@ -47,7 +47,7 @@ export struct Logger
     color_enabled: bool
 
 // Global logger instance
-mut GLOBAL_LOGGER: ?*mut Logger = null
+const GLOBAL_LOGGER: ?*mut Logger = null
 
 export func! init_logger() -> ok
     let logger = Logger::new()

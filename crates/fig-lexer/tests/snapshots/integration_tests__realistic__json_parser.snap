@@ -1,0 +1,2178 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Using
+- Std
+- ColonColon
+- Ident: io
+- Newline
+- Union
+- Ident: JsonValue
+- Newline
+- Indent
+- Ident: null_val
+- Colon
+- OkLiteral
+- Newline
+- Ident: bool_val
+- Colon
+- Bool
+- Newline
+- Ident: number_val
+- Colon
+- F64
+- Newline
+- Ident: string_val
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: array_val
+- Colon
+- Star
+- Ident: JsonArray
+- Newline
+- Ident: object_val
+- Colon
+- Star
+- Ident: JsonObject
+- Newline
+- Dedent
+- Struct
+- Ident: JsonArray
+- Newline
+- Indent
+- Ident: values
+- Colon
+- Star
+- Mut
+- Ident: JsonValue
+- Newline
+- Ident: len
+- Colon
+- USize
+- Newline
+- Ident: cap
+- Colon
+- USize
+- Newline
+- Dedent
+- Struct
+- Ident: JsonObject
+- Newline
+- Indent
+- Ident: entries
+- Colon
+- Star
+- Mut
+- Ident: JsonEntry
+- Newline
+- Ident: len
+- Colon
+- USize
+- Newline
+- Ident: cap
+- Colon
+- USize
+- Newline
+- Dedent
+- Struct
+- Ident: JsonEntry
+- Newline
+- Indent
+- Ident: key
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: value
+- Colon
+- Ident: JsonValue
+- Newline
+- Dedent
+- Union
+- Ident: ParseError
+- Newline
+- Indent
+- Ident: unexpected_eof
+- Colon
+- OkLiteral
+- Newline
+- Ident: unexpected_char
+- Colon
+- U8
+- Newline
+- Ident: invalid_number
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: invalid_escape
+- Colon
+- U8
+- Newline
+- Ident: unclosed_string
+- Colon
+- OkLiteral
+- Newline
+- Ident: unclosed_array
+- Colon
+- OkLiteral
+- Newline
+- Ident: unclosed_object
+- Colon
+- OkLiteral
+- Newline
+- Dedent
+- Union
+- Ident: ParseResult
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- OkLiteral
+- Colon
+- Ident: T
+- Newline
+- Ident: err
+- Colon
+- Ident: ParseError
+- Newline
+- Dedent
+- Struct
+- Ident: JsonParser
+- Newline
+- Indent
+- Ident: input
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: pos
+- Colon
+- USize
+- Newline
+- Ident: line
+- Colon
+- USize
+- Newline
+- Ident: col
+- Colon
+- USize
+- Newline
+- Dedent
+- Export
+- Func
+- Bang
+- Ident: JsonParser
+- ColonColon
+- Ident: new
+- LParen
+- Ident: input
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Ident: JsonParser
+- Newline
+- Indent
+- Return
+- Ident: JsonParser
+- LParen
+- Newline
+- Indent
+- Ident: input
+- Colon
+- Ident: input
+- Comma
+- Newline
+- Ident: pos
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Newline
+- Ident: line
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Comma
+- Newline
+- Ident: col
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: JsonParser
+- ColonColon
+- Ident: parse
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: skip_whitespace
+- LParen
+- RParen
+- Newline
+- Return
+- SelfLower
+- Dot
+- Ident: parse_value
+- LParen
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: JsonParser
+- ColonColon
+- Ident: parse_value
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: skip_whitespace
+- LParen
+- RParen
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: is_eof
+- LParen
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: unexpected_eof
+- LParen
+- OkLiteral
+- RParen
+- RParen
+- Newline
+- Dedent
+- Let
+- Ident: ch
+- Eq
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- Newline
+- If
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "110"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: parse_null
+- LParen
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "116"
+    suffix: ~
+- OrOr
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "102"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: parse_bool
+- LParen
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "34"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: parse_string_value
+- LParen
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "91"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: parse_array
+- LParen
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "123"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: parse_object
+- LParen
+- RParen
+- Newline
+- Dedent
+- Elif
+- SelfLower
+- Dot
+- Ident: is_digit
+- LParen
+- Ident: ch
+- RParen
+- OrOr
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "45"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: parse_number
+- LParen
+- RParen
+- Newline
+- Dedent
+- Else
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: unexpected_char
+- LParen
+- Ident: ch
+- RParen
+- RParen
+- Newline
+- Dedent
+- Dedent
+- Func
+- Bang
+- Ident: JsonParser
+- ColonColon
+- Ident: parse_null
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: expect_keyword
+- LParen
+- StringLiteral: "null"
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: JsonValue
+- ColonColon
+- Ident: null_val
+- LParen
+- OkLiteral
+- RParen
+- RParen
+- Newline
+- Dedent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: unexpected_eof
+- LParen
+- OkLiteral
+- RParen
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: JsonParser
+- ColonColon
+- Ident: parse_bool
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: expect_keyword
+- LParen
+- StringLiteral: "true"
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: JsonValue
+- ColonColon
+- Ident: bool_val
+- LParen
+- "True"
+- RParen
+- RParen
+- Newline
+- Dedent
+- Elif
+- SelfLower
+- Dot
+- Ident: expect_keyword
+- LParen
+- StringLiteral: "false"
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: JsonValue
+- ColonColon
+- Ident: bool_val
+- LParen
+- "False"
+- RParen
+- RParen
+- Newline
+- Dedent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: unexpected_eof
+- LParen
+- OkLiteral
+- RParen
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: JsonParser
+- ColonColon
+- Ident: parse_string_value
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: str_result
+- Eq
+- SelfLower
+- Dot
+- Ident: parse_string
+- LParen
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: JsonParser
+- ColonColon
+- Ident: parse_string
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- LBracket
+- U8
+- RBracket
+- RBracket
+- Newline
+- Indent
+- If
+- Bang
+- SelfLower
+- Dot
+- Ident: expect_char
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "34"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- LBracket
+- U8
+- RBracket
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: unexpected_eof
+- LParen
+- OkLiteral
+- RParen
+- RParen
+- Newline
+- Dedent
+- Mut
+- Ident: buffer
+- Colon
+- LBracket
+- U8
+- RBracket
+- Eq
+- LBracket
+- RBracket
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "1000"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: is_eof
+- LParen
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- LBracket
+- U8
+- RBracket
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: unclosed_string
+- LParen
+- OkLiteral
+- RParen
+- RParen
+- Newline
+- Dedent
+- Let
+- Ident: ch
+- Eq
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- If
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "34"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- LBracket
+- U8
+- RBracket
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: buffer
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "92"
+    suffix: ~
+- Newline
+- Indent
+- Let
+- Ident: escaped
+- Eq
+- SelfLower
+- Dot
+- Ident: parse_escape
+- LParen
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Else
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Dedent
+- Return
+- Ident: ParseResult
+- LBracket
+- LBracket
+- U8
+- RBracket
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: unclosed_string
+- LParen
+- OkLiteral
+- RParen
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: JsonParser
+- ColonColon
+- Ident: parse_escape
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: is_eof
+- LParen
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- U8
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: unexpected_eof
+- LParen
+- OkLiteral
+- RParen
+- RParen
+- Newline
+- Dedent
+- Let
+- Ident: ch
+- Eq
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- If
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "110"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- U8
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "10"
+    suffix: ~
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "116"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- U8
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "9"
+    suffix: ~
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "114"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- U8
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "13"
+    suffix: ~
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "34"
+    suffix: ~
+- OrOr
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "92"
+    suffix: ~
+- OrOr
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "47"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- U8
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: ch
+- RParen
+- Newline
+- Dedent
+- Else
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- U8
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: invalid_escape
+- LParen
+- Ident: ch
+- RParen
+- RParen
+- Newline
+- Dedent
+- Dedent
+- Func
+- Bang
+- Ident: JsonParser
+- ColonColon
+- Ident: parse_number
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- Newline
+- Indent
+- Mut
+- Ident: num_str
+- Colon
+- LBracket
+- U8
+- RBracket
+- Eq
+- LBracket
+- RBracket
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "45"
+    suffix: ~
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- Dedent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "100"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: is_eof
+- LParen
+- RParen
+- OrOr
+- Bang
+- SelfLower
+- Dot
+- Ident: is_digit
+- LParen
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- RParen
+- AndAnd
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- Ne
+- IntegerLiteral:
+    base: Decimal
+    digits: "46"
+    suffix: ~
+- Newline
+- Indent
+- Break
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- Dedent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: JsonValue
+- ColonColon
+- Ident: number_val
+- LParen
+- FloatLiteral:
+    digits: "0.0"
+    exponent: ~
+    suffix: ~
+- RParen
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: JsonParser
+- ColonColon
+- Ident: parse_array
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- Newline
+- Indent
+- If
+- Bang
+- SelfLower
+- Dot
+- Ident: expect_char
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "91"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: unexpected_eof
+- LParen
+- OkLiteral
+- RParen
+- RParen
+- Newline
+- Dedent
+- Mut
+- Ident: arr
+- Eq
+- Ident: JsonArray
+- LParen
+- Ident: values
+- Colon
+- "Null"
+- Comma
+- Ident: len
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: cap
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: skip_whitespace
+- LParen
+- RParen
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "93"
+    suffix: ~
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: JsonValue
+- ColonColon
+- Ident: array_val
+- LParen
+- And
+- Ident: arr
+- RParen
+- RParen
+- Newline
+- Dedent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "1000"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: value_result
+- Eq
+- SelfLower
+- Dot
+- Ident: parse_value
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: skip_whitespace
+- LParen
+- RParen
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "93"
+    suffix: ~
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: JsonValue
+- ColonColon
+- Ident: array_val
+- LParen
+- And
+- Ident: arr
+- RParen
+- RParen
+- Newline
+- Dedent
+- Elif
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "44"
+    suffix: ~
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: skip_whitespace
+- LParen
+- RParen
+- Newline
+- Dedent
+- Else
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: unclosed_array
+- LParen
+- OkLiteral
+- RParen
+- RParen
+- Newline
+- Dedent
+- Dedent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: unclosed_array
+- LParen
+- OkLiteral
+- RParen
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: JsonParser
+- ColonColon
+- Ident: parse_object
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- Newline
+- Indent
+- If
+- Bang
+- SelfLower
+- Dot
+- Ident: expect_char
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "123"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: unexpected_eof
+- LParen
+- OkLiteral
+- RParen
+- RParen
+- Newline
+- Dedent
+- Mut
+- Ident: obj
+- Eq
+- Ident: JsonObject
+- LParen
+- Ident: entries
+- Colon
+- "Null"
+- Comma
+- Ident: len
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: cap
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: skip_whitespace
+- LParen
+- RParen
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "125"
+    suffix: ~
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: JsonValue
+- ColonColon
+- Ident: object_val
+- LParen
+- And
+- Ident: obj
+- RParen
+- RParen
+- Newline
+- Dedent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "1000"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: key_result
+- Eq
+- SelfLower
+- Dot
+- Ident: parse_string
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: skip_whitespace
+- LParen
+- RParen
+- Newline
+- If
+- Bang
+- SelfLower
+- Dot
+- Ident: expect_char
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "58"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: unexpected_eof
+- LParen
+- OkLiteral
+- RParen
+- RParen
+- Newline
+- Dedent
+- Let
+- Ident: value_result
+- Eq
+- SelfLower
+- Dot
+- Ident: parse_value
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: skip_whitespace
+- LParen
+- RParen
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "125"
+    suffix: ~
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: JsonValue
+- ColonColon
+- Ident: object_val
+- LParen
+- And
+- Ident: obj
+- RParen
+- RParen
+- Newline
+- Dedent
+- Elif
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "44"
+    suffix: ~
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: skip_whitespace
+- LParen
+- RParen
+- Newline
+- Dedent
+- Else
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: unclosed_object
+- LParen
+- OkLiteral
+- RParen
+- RParen
+- Newline
+- Dedent
+- Dedent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: JsonValue
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: unclosed_object
+- LParen
+- OkLiteral
+- RParen
+- RParen
+- Newline
+- Dedent
+- Func
+- Ident: JsonParser
+- ColonColon
+- Ident: is_eof
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: pos
+- Ge
+- SelfLower
+- Dot
+- Ident: input
+- Dot
+- Ident: len
+- Newline
+- Dedent
+- Func
+- Ident: JsonParser
+- ColonColon
+- Ident: peek
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- U8
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: is_eof
+- LParen
+- RParen
+- Newline
+- Indent
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Dedent
+- Return
+- SelfLower
+- Dot
+- Ident: input
+- LBracket
+- SelfLower
+- Dot
+- Ident: pos
+- RBracket
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: JsonParser
+- ColonColon
+- Ident: advance
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- U8
+- Newline
+- Indent
+- Let
+- Ident: ch
+- Eq
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: pos
+- Eq
+- SelfLower
+- Dot
+- Ident: pos
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- If
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "10"
+    suffix: ~
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: line
+- Eq
+- SelfLower
+- Dot
+- Ident: line
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- SelfLower
+- Dot
+- Ident: col
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- Else
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: col
+- Eq
+- SelfLower
+- Dot
+- Ident: col
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- Return
+- Ident: ch
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: JsonParser
+- ColonColon
+- Ident: skip_whitespace
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "10000"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: is_eof
+- LParen
+- RParen
+- Newline
+- Indent
+- Break
+- Newline
+- Dedent
+- Let
+- Ident: ch
+- Eq
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- Newline
+- If
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "32"
+    suffix: ~
+- OrOr
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "9"
+    suffix: ~
+- OrOr
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "10"
+    suffix: ~
+- OrOr
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "13"
+    suffix: ~
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- Dedent
+- Else
+- Newline
+- Indent
+- Break
+- Newline
+- Dedent
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: JsonParser
+- ColonColon
+- Ident: expect_char
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: expected
+- Colon
+- U8
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- EqEq
+- Ident: expected
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- Return
+- "True"
+- Newline
+- Dedent
+- Return
+- "False"
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: JsonParser
+- ColonColon
+- Ident: expect_keyword
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: keyword
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: keyword
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: is_eof
+- LParen
+- RParen
+- OrOr
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- Ne
+- Ident: keyword
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Indent
+- Return
+- "False"
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- Dedent
+- Return
+- "True"
+- Newline
+- Dedent
+- Func
+- Ident: JsonParser
+- ColonColon
+- Ident: is_digit
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: ch
+- Colon
+- U8
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- Ident: ch
+- Ge
+- IntegerLiteral:
+    base: Decimal
+    digits: "48"
+    suffix: ~
+- AndAnd
+- Ident: ch
+- Le
+- IntegerLiteral:
+    base: Decimal
+    digits: "57"
+    suffix: ~
+- Newline
+- Dedent
+- Export
+- Func
+- Bang
+- Ident: json_serialize
+- LParen
+- Ident: value
+- Colon
+- Star
+- Ident: JsonValue
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Mut
+- Ident: buffer
+- Colon
+- LBracket
+- U8
+- RBracket
+- Eq
+- LBracket
+- RBracket
+- Newline
+- Ident: serialize_value
+- LParen
+- Ident: value
+- Comma
+- And
+- Ident: buffer
+- RParen
+- Newline
+- Return
+- Ident: buffer
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: serialize_value
+- LParen
+- Ident: value
+- Colon
+- Star
+- Ident: JsonValue
+- Comma
+- Ident: buffer
+- Colon
+- Star
+- Mut
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: serialize_string
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: buffer
+- Colon
+- Star
+- Mut
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: serialize_array
+- LParen
+- Ident: arr
+- Colon
+- Star
+- Ident: JsonArray
+- Comma
+- Ident: buffer
+- Colon
+- Star
+- Mut
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: serialize_object
+- LParen
+- Ident: obj
+- Colon
+- Star
+- Ident: JsonObject
+- Comma
+- Ident: buffer
+- Colon
+- Star
+- Mut
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

@@ -1,0 +1,116 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: precedence
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: a
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Star
+- IntegerLiteral:
+    base: Decimal
+    digits: "3"
+    suffix: ~
+- Newline
+- Let
+- Ident: b
+- Eq
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- RParen
+- Star
+- IntegerLiteral:
+    base: Decimal
+    digits: "3"
+    suffix: ~
+- Newline
+- Let
+- Ident: c
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "8"
+    suffix: ~
+- Slash
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Let
+- Ident: d
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Star
+- IntegerLiteral:
+    base: Decimal
+    digits: "3"
+    suffix: ~
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "4"
+    suffix: ~
+- Slash
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Let
+- Ident: e
+- Eq
+- "True"
+- OrOr
+- "False"
+- AndAnd
+- "False"
+- Newline
+- Let
+- Ident: f
+- Eq
+- Bang
+- "True"
+- OrOr
+- "True"
+- Newline
+- Pass
+- Newline
+- Dedent

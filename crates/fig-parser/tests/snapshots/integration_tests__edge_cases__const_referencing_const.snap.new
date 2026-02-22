@@ -1,0 +1,58 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Const:
+      visibility: Default
+      annotations: []
+      generic_params: []
+      receiver: []
+      name: BASE
+      ty: U32
+      value:
+        IntegerLiteral:
+          base: Decimal
+          digits: "4"
+          suffix: ~
+  - Const:
+      visibility: Default
+      annotations: []
+      generic_params: []
+      receiver: []
+      name: DOUBLE
+      ty: U32
+      value:
+        BinaryOp:
+          lhs:
+            Path:
+              segments:
+                - BASE
+              generic_args: []
+          op: Multiply
+          rhs:
+            IntegerLiteral:
+              base: Decimal
+              digits: "2"
+              suffix: ~
+  - Const:
+      visibility: Default
+      annotations: []
+      generic_params: []
+      receiver: []
+      name: MAX
+      ty: U32
+      value:
+        BinaryOp:
+          lhs:
+            Path:
+              segments:
+                - DOUBLE
+              generic_args: []
+          op: Add
+          rhs:
+            Path:
+              segments:
+                - BASE
+              generic_args: []

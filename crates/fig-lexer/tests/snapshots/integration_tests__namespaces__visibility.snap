@@ -1,0 +1,46 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Public
+- Namespace
+- Ident: api
+- Newline
+- Indent
+- Func
+- Ident: version
+- LParen
+- RParen
+- Arrow
+- U32
+- Newline
+- Func
+- Ident: help
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Dedent
+- Export
+- Namespace
+- Ident: runtime
+- Newline
+- Indent
+- Export
+- Func
+- Ident: init
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Public
+- Func
+- Ident: shutdown
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Dedent

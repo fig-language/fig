@@ -1,0 +1,36 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Type
+- Ident: HashMap
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Eq
+- Core
+- ColonColon
+- Ident: Map
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Type
+- Ident: Set
+- LBracket
+- Ident: T
+- RBracket
+- Eq
+- Std
+- ColonColon
+- Ident: collections
+- ColonColon
+- Ident: HashSet
+- LBracket
+- Ident: T
+- RBracket
+- Newline

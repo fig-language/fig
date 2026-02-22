@@ -1,0 +1,60 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: logical_ops
+        generic_params: []
+        self_param: ~
+        params:
+          - name: a
+            ty: Bool
+          - name: b
+            ty: Bool
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Let:
+              annotations: []
+              name: and
+              ty: ~
+              value:
+                BinaryOp:
+                  lhs:
+                    Path:
+                      segments:
+                        - a
+                      generic_args: []
+                  op: LogicalAnd
+                  rhs:
+                    Path:
+                      segments:
+                        - b
+                      generic_args: []
+          - Let:
+              annotations: []
+              name: or
+              ty: ~
+              value:
+                BinaryOp:
+                  lhs:
+                    Path:
+                      segments:
+                        - a
+                      generic_args: []
+                  op: LogicalOr
+                  rhs:
+                    Path:
+                      segments:
+                        - b
+                      generic_args: []
+          - Pass

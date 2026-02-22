@@ -1,0 +1,34 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Type
+- Ident: ByteSlice
+- Eq
+- LBracket
+- U8
+- RBracket
+- Newline
+- Type
+- Ident: IntSlice
+- Eq
+- LBracket
+- I32
+- RBracket
+- Newline
+- Type
+- Ident: BoolSlice
+- Eq
+- LBracket
+- Bool
+- RBracket
+- Newline
+- Type
+- Ident: SliceOfSlices
+- Eq
+- LBracket
+- LBracket
+- U8
+- RBracket
+- RBracket
+- Newline

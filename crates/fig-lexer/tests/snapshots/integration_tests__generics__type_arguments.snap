@@ -1,0 +1,73 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: use_generics
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: s
+- Eq
+- Ident: Seq
+- LBracket
+- I32
+- RBracket
+- ColonColon
+- Ident: new
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: v
+- Colon
+- Ident: Vec
+- LBracket
+- U8
+- RBracket
+- Eq
+- Ident: Vec
+- LBracket
+- U8
+- RBracket
+- ColonColon
+- Ident: with_capacity
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "32"
+    suffix: ~
+- RParen
+- Newline
+- Let
+- Ident: m
+- Colon
+- Ident: Map
+- LBracket
+- I32
+- Comma
+- LBracket
+- U8
+- RBracket
+- RBracket
+- Eq
+- Ident: Map
+- LBracket
+- I32
+- Comma
+- LBracket
+- U8
+- RBracket
+- RBracket
+- ColonColon
+- Ident: new
+- LParen
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent

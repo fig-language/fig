@@ -1,0 +1,90 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Public
+- Func
+- Ident: public_fn
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Export
+- Func
+- Ident: export_fn
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Private
+- Func
+- Ident: private_fn
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Public
+- Struct
+- Ident: PublicS
+- Newline
+- Indent
+- Ident: x
+- Colon
+- I32
+- Newline
+- Dedent
+- Export
+- Struct
+- Ident: ExportS
+- Newline
+- Indent
+- Ident: x
+- Colon
+- I32
+- Newline
+- Dedent
+- Private
+- Struct
+- Ident: PrivateS
+- Newline
+- Indent
+- Ident: x
+- Colon
+- I32
+- Newline
+- Dedent
+- Public
+- Enum
+- Ident: PubEnum
+- Newline
+- Indent
+- Ident: A
+- Newline
+- Ident: B
+- Newline
+- Dedent
+- Export
+- Enum
+- Ident: ExportEnum
+- Newline
+- Indent
+- Ident: A
+- Newline
+- Ident: B
+- Newline
+- Dedent

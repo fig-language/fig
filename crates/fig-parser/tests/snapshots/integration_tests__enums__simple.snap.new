@@ -1,0 +1,22 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Enum:
+      visibility: Default
+      annotations: []
+      name: Direction
+      representation: ~
+      generic_params: []
+      requires: []
+      variants:
+        - name: UP
+          value: ~
+        - name: DOWN
+          value: ~
+        - name: LEFT
+          value: ~
+        - name: RIGHT
+          value: ~

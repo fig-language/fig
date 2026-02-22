@@ -1,0 +1,28 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: strings
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: name
+- Eq
+- StringLiteral: World
+- Newline
+- Let
+- Ident: x
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "42"
+    suffix: ~
+- Newline
+- Pass
+- Newline
+- Dedent

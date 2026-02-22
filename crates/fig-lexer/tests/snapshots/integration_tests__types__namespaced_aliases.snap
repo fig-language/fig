@@ -1,0 +1,25 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Type
+- Ident: String
+- Eq
+- LBracket
+- U8
+- RBracket
+- Newline
+- Type
+- Ident: Vector2
+- ColonColon
+- Ident: Alpine
+- Eq
+- I32
+- Newline
+- Type
+- Ident: math
+- ColonColon
+- Ident: Matrix
+- Eq
+- I32
+- Newline

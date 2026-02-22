@@ -1,0 +1,55 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: complex_postfix
+- LParen
+- Ident: v
+- Colon
+- Star
+- Mut
+- Ident: Vec
+- LBracket
+- I32
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: len
+- Eq
+- Ident: v
+- Dot
+- Ident: len
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: item
+- Eq
+- Ident: v
+- Dot
+- Ident: get
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RParen
+- Newline
+- Ident: v
+- Dot
+- Ident: push
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "42"
+    suffix: ~
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent

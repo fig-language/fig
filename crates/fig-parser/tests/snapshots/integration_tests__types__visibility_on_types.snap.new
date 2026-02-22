@@ -1,0 +1,24 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - TypeAlias:
+      visibility: Public
+      annotations: []
+      name: PublicInt
+      generic_params: []
+      aliased_type: I32
+  - TypeAlias:
+      visibility: Export
+      annotations: []
+      name: ExportedByte
+      generic_params: []
+      aliased_type: U8
+  - TypeAlias:
+      visibility: Private
+      annotations: []
+      name: PrivateFloat
+      generic_params: []
+      aliased_type: F64

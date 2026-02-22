@@ -1,0 +1,30 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Enum:
+      visibility: Default
+      annotations: []
+      name: Priority
+      representation: ~
+      generic_params: []
+      requires: []
+      variants:
+        - name: LOW
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "0"
+              suffix: ~
+        - name: MEDIUM
+          value: ~
+        - name: HIGH
+          value: ~
+        - name: CRITICAL
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "100"
+              suffix: ~

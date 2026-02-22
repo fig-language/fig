@@ -1,0 +1,44 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Const:
+      visibility: Default
+      annotations:
+        - name: link_section
+          args:
+            - StringLiteral: ".rodata"
+      generic_params: []
+      receiver: []
+      name: MAGIC
+      ty: U32
+      value:
+        IntegerLiteral:
+          base: Hex
+          digits: DEADBEEF
+          suffix: ~
+  - Struct:
+      visibility: Default
+      annotations:
+        - name: align
+          args:
+            - IntegerLiteral:
+                base: Decimal
+                digits: "4096"
+                suffix: ~
+      is_packed: false
+      name: Page
+      generic_params: []
+      requires: []
+      fields:
+        - name: data
+          ty:
+            Array:
+              element_type: U8
+              size:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "4096"
+                  suffix: ~

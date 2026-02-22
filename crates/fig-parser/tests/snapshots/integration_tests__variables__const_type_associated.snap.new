@@ -1,0 +1,42 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Const:
+      visibility: Default
+      annotations: []
+      generic_params: []
+      receiver:
+        - name: Seq
+          generic_args:
+            - Path:
+                segments:
+                  - T
+                generic_args: []
+      name: DEFAULT_CAPACITY
+      ty: USize
+      value:
+        IntegerLiteral:
+          base: Decimal
+          digits: "4"
+          suffix: ~
+  - Const:
+      visibility: Default
+      annotations: []
+      generic_params: []
+      receiver:
+        - name: Seq
+          generic_args:
+            - Path:
+                segments:
+                  - T
+                generic_args: []
+      name: GROW_FACTOR
+      ty: USize
+      value:
+        IntegerLiteral:
+          base: Decimal
+          digits: "2"
+          suffix: ~

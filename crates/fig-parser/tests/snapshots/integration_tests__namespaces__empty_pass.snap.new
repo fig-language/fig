@@ -1,0 +1,15 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Namespace:
+      visibility: Default
+      annotations: []
+      name:
+        segments:
+          - App
+        generic_args: []
+      items:
+        - Pass

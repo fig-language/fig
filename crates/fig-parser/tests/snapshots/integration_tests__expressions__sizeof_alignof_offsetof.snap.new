@@ -1,0 +1,84 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: Foo
+      generic_params: []
+      requires: []
+      fields:
+        - name: a
+          ty: U8
+        - name: b
+          ty: U32
+        - name: c
+          ty: U64
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: size_exprs
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Let:
+              annotations: []
+              name: sz
+              ty: ~
+              value:
+                Sizeof:
+                  Path:
+                    segments:
+                      - Foo
+                    generic_args: []
+          - Let:
+              annotations: []
+              name: al
+              ty: ~
+              value:
+                Alignof:
+                  Path:
+                    segments:
+                      - Foo
+                    generic_args: []
+          - Let:
+              annotations: []
+              name: "off"
+              ty: ~
+              value:
+                Offsetof:
+                  ty:
+                    Path:
+                      segments:
+                        - Foo
+                      generic_args: []
+                  field: b
+          - Let:
+              annotations: []
+              name: sz2
+              ty: ~
+              value:
+                Sizeof: U64
+          - Let:
+              annotations: []
+              name: al2
+              ty: ~
+              value:
+                Alignof:
+                  Pointer:
+                    nullable: false
+                    mutable: true
+                    element_type: U8
+          - Pass

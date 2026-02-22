@@ -1,0 +1,39 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Type
+- Ident: BoxedInt
+- Eq
+- ColonColon
+- Ident: Box
+- LBracket
+- I32
+- RBracket
+- ColonColon
+- Ident: Inner
+- Newline
+- Func
+- Ident: type_prefix_path
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: x
+- Colon
+- ColonColon
+- Ident: Vec
+- LBracket
+- U8
+- RBracket
+- ColonColon
+- Ident: Iter
+- Eq
+- Ident: stuff
+- Newline
+- Pass
+- Newline
+- Dedent

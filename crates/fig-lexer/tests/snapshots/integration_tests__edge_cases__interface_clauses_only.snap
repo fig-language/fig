@@ -1,0 +1,41 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Interface
+- Ident: RequiresAllocator
+- Newline
+- Indent
+- Requires
+- Newline
+- Indent
+- Ident: Allocator
+- Newline
+- Dedent
+- Dedent
+- Interface
+- Ident: MustBeOrdered
+- Newline
+- Indent
+- Where
+- Newline
+- Indent
+- SelfKeyword
+- Colon
+- Ident: Ord
+- Newline
+- Dedent
+- Dedent
+- Interface
+- Ident: ExtendsOnly
+- Newline
+- Indent
+- Extends
+- Newline
+- Indent
+- Ident: Display
+- Newline
+- Ident: Debug
+- Newline
+- Dedent
+- Dedent

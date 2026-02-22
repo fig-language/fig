@@ -1,0 +1,11 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Namespace
+- Ident: App
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

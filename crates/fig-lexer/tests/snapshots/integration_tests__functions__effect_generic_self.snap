@@ -1,0 +1,69 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Bang
+- Ident: Seq
+- LBracket
+- Ident: T
+- RBracket
+- ColonColon
+- Ident: push
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: item
+- Colon
+- Ident: T
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Seq
+- LBracket
+- Ident: T
+- RBracket
+- ColonColon
+- Ident: pop
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Question
+- Ident: T
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Seq
+- LBracket
+- Ident: T
+- RBracket
+- ColonColon
+- Ident: grow
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

@@ -1,0 +1,42 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Hash
+- Ident: inline
+- Newline
+- Hash
+- Ident: cold
+- Newline
+- Hash
+- Ident: no_mangle
+- Newline
+- Func
+- Ident: multi_annotated
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Hash
+- Ident: deprecated
+- Newline
+- Hash
+- Ident: repr
+- LParen
+- Ident: C
+- RParen
+- Newline
+- Struct
+- Ident: OldStruct
+- Newline
+- Indent
+- Ident: x
+- Colon
+- I32
+- Newline
+- Dedent

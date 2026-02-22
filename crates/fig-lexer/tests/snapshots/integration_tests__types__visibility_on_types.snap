@@ -1,0 +1,22 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Public
+- Type
+- Ident: PublicInt
+- Eq
+- I32
+- Newline
+- Export
+- Type
+- Ident: ExportedByte
+- Eq
+- U8
+- Newline
+- Private
+- Type
+- Ident: PrivateFloat
+- Eq
+- F64
+- Newline

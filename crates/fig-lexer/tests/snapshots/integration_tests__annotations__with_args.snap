@@ -1,0 +1,67 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Hash
+- Ident: repr
+- LParen
+- Ident: C
+- RParen
+- Newline
+- Struct
+- Ident: CCompatible
+- Newline
+- Indent
+- Ident: a
+- Colon
+- I32
+- Newline
+- Ident: b
+- Colon
+- I32
+- Newline
+- Dedent
+- Hash
+- Ident: align
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "16"
+    suffix: ~
+- RParen
+- Newline
+- Struct
+- Ident: AlignedData
+- Newline
+- Indent
+- Ident: data
+- Colon
+- LBracket
+- U8
+- Semicolon
+- IntegerLiteral:
+    base: Decimal
+    digits: "16"
+    suffix: ~
+- RBracket
+- Newline
+- Dedent
+- Hash
+- Ident: link_name
+- LParen
+- StringLiteral: malloc
+- RParen
+- Newline
+- Extern
+- Func
+- Ident: c_malloc
+- LParen
+- Ident: size
+- Colon
+- USize
+- RParen
+- Arrow
+- Star
+- Mut
+- U8
+- Newline

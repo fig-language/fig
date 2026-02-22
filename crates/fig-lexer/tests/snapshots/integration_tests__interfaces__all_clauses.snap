@@ -1,0 +1,70 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Interface
+- Ident: Drawable
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- Extends
+- Newline
+- Indent
+- Ident: Display
+- Newline
+- Ident: Debug
+- Newline
+- Dedent
+- Where
+- Newline
+- Indent
+- Ident: T
+- Colon
+- Ident: Sized
+- Newline
+- Dedent
+- Requires
+- Newline
+- Indent
+- Ident: Allocator
+- Newline
+- Dedent
+- Func
+- Ident: draw
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Func
+- Ident: resize
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: width
+- Colon
+- Ident: T
+- Comma
+- Ident: height
+- Colon
+- Ident: T
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Func
+- Ident: bounding_box
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Ident: Rect
+- Newline
+- Dedent

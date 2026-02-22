@@ -1,0 +1,62 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Hash
+- Ident: repr
+- LParen
+- Ident: C
+- RParen
+- Newline
+- Enum
+- Ident: CEnum
+- Newline
+- Indent
+- Ident: FIRST
+- Newline
+- Ident: SECOND
+- Newline
+- Ident: THIRD
+- Newline
+- Dedent
+- Hash
+- Ident: derive
+- LParen
+- Ident: Debug
+- Comma
+- Ident: Clone
+- RParen
+- Newline
+- Enum
+- Ident: Season
+- Newline
+- Indent
+- Ident: SPRING
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Ident: SUMMER
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Ident: AUTUMN
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Ident: WINTER
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "3"
+    suffix: ~
+- Newline
+- Dedent

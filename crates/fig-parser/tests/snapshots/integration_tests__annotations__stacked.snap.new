@@ -1,0 +1,46 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Function:
+      signature:
+        visibility: Default
+        annotations:
+          - name: inline
+            args: []
+          - name: cold
+            args: []
+          - name: no_mangle
+            args: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: multi_annotated
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Pass
+  - Struct:
+      visibility: Default
+      annotations:
+        - name: deprecated
+          args: []
+        - name: repr
+          args:
+            - Path:
+                segments:
+                  - C
+                generic_args: []
+      is_packed: false
+      name: OldStruct
+      generic_params: []
+      requires: []
+      fields:
+        - name: x
+          ty: I32

@@ -1,0 +1,134 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Enum:
+      visibility: Default
+      annotations: []
+      name: Opcode
+      representation: U8
+      generic_params: []
+      requires: []
+      variants:
+        - name: NOP
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "0"
+              suffix: ~
+        - name: ADD
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "1"
+              suffix: ~
+        - name: SUB
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "2"
+              suffix: ~
+        - name: MUL
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "3"
+              suffix: ~
+        - name: DIV
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "4"
+              suffix: ~
+        - name: MOD
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "5"
+              suffix: ~
+        - name: AND
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "6"
+              suffix: ~
+        - name: OR
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "7"
+              suffix: ~
+        - name: XOR
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "8"
+              suffix: ~
+        - name: NOT
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "9"
+              suffix: ~
+        - name: SHL
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "10"
+              suffix: ~
+        - name: SHR
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "11"
+              suffix: ~
+        - name: JMP
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "12"
+              suffix: ~
+        - name: JZ
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "13"
+              suffix: ~
+        - name: JNZ
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "14"
+              suffix: ~
+        - name: CALL
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "15"
+              suffix: ~
+        - name: RET
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "16"
+              suffix: ~
+        - name: PUSH
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "17"
+              suffix: ~
+        - name: POP
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "18"
+              suffix: ~
+        - name: HALT
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "255"
+              suffix: ~

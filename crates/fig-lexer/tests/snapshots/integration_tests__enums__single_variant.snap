@@ -1,0 +1,26 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Enum
+- Ident: One
+- Newline
+- Indent
+- Ident: ONLY
+- Newline
+- Dedent
+- Enum
+- LBracket
+- U8
+- RBracket
+- Ident: SingleByte
+- Newline
+- Indent
+- Ident: ONLY
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "42"
+    suffix: ~
+- Newline
+- Dedent

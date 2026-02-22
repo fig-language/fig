@@ -1,0 +1,56 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Enum
+- Ident: Color
+- Newline
+- Indent
+- Ident: RED
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Ident: GREEN
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Ident: BLUE
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Dedent
+- Enum
+- Ident: HttpStatus
+- Newline
+- Indent
+- Ident: OK
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "200"
+    suffix: ~
+- Newline
+- Ident: NOT_FOUND
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "404"
+    suffix: ~
+- Newline
+- Ident: INTERNAL_SERVER_ERROR
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "500"
+    suffix: ~
+- Newline
+- Dedent

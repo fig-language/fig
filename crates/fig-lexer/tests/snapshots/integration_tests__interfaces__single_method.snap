@@ -1,0 +1,18 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Interface
+- Ident: Printable
+- Newline
+- Indent
+- Func
+- Ident: print
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Dedent

@@ -1,0 +1,60 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: zeros
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: iz
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Let
+- Ident: fz
+- Eq
+- FloatLiteral:
+    digits: "0.0"
+    exponent: ~
+    suffix: ~
+- Newline
+- Let
+- Ident: one
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Let
+- Ident: neg_in_expr
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Let
+- Ident: fone
+- Eq
+- FloatLiteral:
+    digits: "1.0"
+    exponent: ~
+    suffix: ~
+- Newline
+- Pass
+- Newline
+- Dedent

@@ -1,0 +1,40 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Struct
+- Ident: Node
+- Newline
+- Indent
+- Ident: data
+- Colon
+- I32
+- Newline
+- Ident: next
+- Colon
+- Star
+- Mut
+- Ident: Node
+- Newline
+- Dedent
+- Struct
+- Ident: Tree
+- Newline
+- Indent
+- Ident: value
+- Colon
+- I32
+- Newline
+- Ident: left
+- Colon
+- Question
+- Star
+- Ident: Tree
+- Newline
+- Ident: right
+- Colon
+- Question
+- Star
+- Ident: Tree
+- Newline
+- Dedent

@@ -1,0 +1,43 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Public
+- Enum
+- Ident: Visibility
+- Newline
+- Indent
+- Ident: PUBLIC
+- Newline
+- Ident: PRIVATE
+- Newline
+- Ident: PROTECTED
+- Newline
+- Dedent
+- Export
+- Enum
+- Ident: ExportedStatus
+- Newline
+- Indent
+- Ident: ACTIVE
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Ident: INACTIVE
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Ident: PENDING
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Dedent

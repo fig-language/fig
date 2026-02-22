@@ -1,0 +1,31 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Interface
+- Ident: Ordered
+- Newline
+- Indent
+- Extends
+- Newline
+- Indent
+- Ident: Eq
+- Newline
+- Ident: PartialOrd
+- Newline
+- Dedent
+- Func
+- Ident: compare
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: other
+- Colon
+- Star
+- SelfKeyword
+- RParen
+- Arrow
+- I32
+- Newline
+- Dedent

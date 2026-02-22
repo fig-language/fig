@@ -1,0 +1,57 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Using
+- Std
+- ColonColon
+- Ident: io
+- Newline
+- Using
+- Core
+- ColonColon
+- Ident: mem
+- Newline
+- Using
+- Alloc
+- ColonColon
+- Ident: global
+- Newline
+- Func
+- Ident: builtin_ns
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: x
+- Eq
+- Std
+- ColonColon
+- Ident: VERSION
+- Newline
+- Let
+- Ident: y
+- Eq
+- Core
+- ColonColon
+- Ident: ARCH
+- Newline
+- Let
+- Ident: ptr
+- Eq
+- Alloc
+- ColonColon
+- Ident: allocate
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "64"
+    suffix: ~
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent

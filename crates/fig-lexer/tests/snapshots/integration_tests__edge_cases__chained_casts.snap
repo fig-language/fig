@@ -1,0 +1,40 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: casts
+- LParen
+- Ident: x
+- Colon
+- I32
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: a
+- Eq
+- Ident: x
+- As
+- U8
+- As
+- U16
+- As
+- U32
+- As
+- U64
+- Newline
+- Let
+- Ident: b
+- Eq
+- Ident: x
+- As
+- F32
+- As
+- F64
+- Newline
+- Pass
+- Newline
+- Dedent

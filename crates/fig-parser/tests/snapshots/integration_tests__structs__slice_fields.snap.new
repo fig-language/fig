@@ -1,0 +1,38 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: Buffer
+      generic_params: []
+      requires: []
+      fields:
+        - name: data
+          ty:
+            Array:
+              element_type: U8
+              size: ~
+        - name: len
+          ty: USize
+  - Struct:
+      visibility: Default
+      annotations: []
+      is_packed: false
+      name: Matrix
+      generic_params: []
+      requires: []
+      fields:
+        - name: rows
+          ty: USize
+        - name: cols
+          ty: USize
+        - name: data
+          ty:
+            Array:
+              element_type: F64
+              size: ~

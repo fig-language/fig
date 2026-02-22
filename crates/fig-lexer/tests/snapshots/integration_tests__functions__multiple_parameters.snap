@@ -1,0 +1,91 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: add
+- LParen
+- Ident: a
+- Colon
+- I32
+- Comma
+- Ident: b
+- Colon
+- I32
+- RParen
+- Arrow
+- I32
+- Newline
+- Indent
+- Return
+- Ident: a
+- Plus
+- Ident: b
+- Newline
+- Dedent
+- Func
+- Ident: max3
+- LParen
+- Ident: a
+- Colon
+- I32
+- Comma
+- Ident: b
+- Colon
+- I32
+- Comma
+- Ident: c
+- Colon
+- I32
+- RParen
+- Arrow
+- I32
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: lerp
+- LParen
+- Ident: a
+- Colon
+- F64
+- Comma
+- Ident: b
+- Colon
+- F64
+- Comma
+- Ident: t
+- Colon
+- F64
+- RParen
+- Arrow
+- F64
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: clamp
+- LParen
+- Ident: val
+- Colon
+- F64
+- Comma
+- Ident: lo
+- Colon
+- F64
+- Comma
+- Ident: hi
+- Colon
+- F64
+- RParen
+- Arrow
+- F64
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

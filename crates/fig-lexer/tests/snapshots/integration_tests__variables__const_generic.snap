@@ -1,0 +1,45 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Const
+- LBracket
+- Ident: U
+- Comma
+- Ident: V
+- RBracket
+- Ident: either_ns
+- ColonColon
+- Ident: Either
+- LBracket
+- Ident: U
+- Comma
+- Ident: V
+- RBracket
+- ColonColon
+- Ident: DEFAULT
+- Colon
+- U32
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Const
+- LBracket
+- Ident: T
+- RBracket
+- Ident: something
+- ColonColon
+- Ident: Option
+- LBracket
+- Ident: T
+- RBracket
+- ColonColon
+- Ident: A_CONST_VALUE
+- Colon
+- Bool
+- Eq
+- "False"
+- Newline

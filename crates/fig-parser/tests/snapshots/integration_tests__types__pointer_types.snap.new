@@ -1,0 +1,74 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: RawPtr
+      generic_params: []
+      aliased_type:
+        Pointer:
+          nullable: false
+          mutable: false
+          element_type: U8
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: MutPtr
+      generic_params: []
+      aliased_type:
+        Pointer:
+          nullable: false
+          mutable: true
+          element_type: U8
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: OptPtr
+      generic_params: []
+      aliased_type:
+        Pointer:
+          nullable: true
+          mutable: false
+          element_type: U8
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: OptMutPtr
+      generic_params: []
+      aliased_type:
+        Pointer:
+          nullable: true
+          mutable: true
+          element_type: U8
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: PtrPtr
+      generic_params: []
+      aliased_type:
+        Pointer:
+          nullable: false
+          mutable: false
+          element_type:
+            Pointer:
+              nullable: false
+              mutable: false
+              element_type: U8
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: MutPtrPtr
+      generic_params: []
+      aliased_type:
+        Pointer:
+          nullable: false
+          mutable: true
+          element_type:
+            Pointer:
+              nullable: false
+              mutable: true
+              element_type: U8

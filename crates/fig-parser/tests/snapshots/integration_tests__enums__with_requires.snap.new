@@ -1,0 +1,46 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Enum:
+      visibility: Default
+      annotations: []
+      name: Error
+      representation: U8
+      generic_params: []
+      requires:
+        - Path:
+            segments:
+              - Display
+            generic_args: []
+        - Path:
+            segments:
+              - Debug
+            generic_args: []
+      variants:
+        - name: NONE
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "0"
+              suffix: ~
+        - name: IO_ERROR
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "1"
+              suffix: ~
+        - name: PARSE_ERROR
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "2"
+              suffix: ~
+        - name: NOT_FOUND
+          value:
+            IntegerLiteral:
+              base: Decimal
+              digits: "3"
+              suffix: ~

@@ -1,0 +1,23 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: no_body_for
+- LParen
+- Ident: data
+- Colon
+- LBracket
+- I32
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- For
+- Ident: item
+- In
+- Ident: data
+- Newline
+- Dedent

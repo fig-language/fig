@@ -1,0 +1,13 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Namespace
+- Core
+- Newline
+- Namespace
+- Std
+- Newline
+- Namespace
+- Ident: math
+- Newline

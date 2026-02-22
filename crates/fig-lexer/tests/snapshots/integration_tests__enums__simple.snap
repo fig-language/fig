@@ -1,0 +1,17 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Enum
+- Ident: Direction
+- Newline
+- Indent
+- Ident: UP
+- Newline
+- Ident: DOWN
+- Newline
+- Ident: LEFT
+- Newline
+- Ident: RIGHT
+- Newline
+- Dedent

@@ -1,0 +1,59 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: zip
+- LBracket
+- Ident: A
+- Comma
+- Ident: B
+- Comma
+- Ident: C
+- RBracket
+- LParen
+- Ident: a
+- Colon
+- Ident: A
+- Comma
+- Ident: b
+- Colon
+- Ident: B
+- RParen
+- Arrow
+- Ident: C
+- Newline
+- Indent
+- Where
+- Newline
+- Indent
+- Ident: A
+- Colon
+- Ident: Into
+- LBracket
+- Ident: C
+- RBracket
+- Newline
+- Ident: B
+- Colon
+- Ident: Into
+- LBracket
+- Ident: C
+- RBracket
+- Newline
+- Ident: C
+- Colon
+- Ident: From
+- LBracket
+- Ident: A
+- RBracket
+- Plus
+- Ident: From
+- LBracket
+- Ident: B
+- RBracket
+- Newline
+- Dedent
+- Pass
+- Newline
+- Dedent

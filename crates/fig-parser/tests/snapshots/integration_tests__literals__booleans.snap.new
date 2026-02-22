@@ -1,0 +1,46 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: booleans
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Let:
+              annotations: []
+              name: t
+              ty: ~
+              value:
+                BooleanLiteral: true
+          - Let:
+              annotations: []
+              name: f
+              ty: ~
+              value:
+                BooleanLiteral: false
+          - Let:
+              annotations: []
+              name: condition
+              ty: ~
+              value:
+                BooleanLiteral: true
+          - Let:
+              annotations: []
+              name: flag
+              ty: ~
+              value:
+                BooleanLiteral: false
+          - Pass

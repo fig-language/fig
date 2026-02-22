@@ -1,0 +1,66 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Extern
+- Func
+- Ident: malloc
+- LParen
+- Ident: size
+- Colon
+- USize
+- RParen
+- Arrow
+- Star
+- Mut
+- U8
+- Newline
+- Extern
+- Func
+- Ident: free
+- LParen
+- Ident: ptr
+- Colon
+- Star
+- Mut
+- U8
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Extern
+- Func
+- Ident: memcpy
+- LParen
+- Ident: dst
+- Colon
+- Star
+- Mut
+- U8
+- Comma
+- Ident: src
+- Colon
+- Star
+- U8
+- Comma
+- Ident: len
+- Colon
+- USize
+- RParen
+- Arrow
+- Star
+- Mut
+- U8
+- Newline
+- Extern
+- Func
+- Ident: printf
+- LParen
+- Ident: fmt
+- Colon
+- Star
+- U8
+- RParen
+- Arrow
+- I32
+- Newline

@@ -1,0 +1,166 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Interface
+- Ident: Iterator
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- Func
+- Ident: next
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Question
+- Ident: T
+- Newline
+- Func
+- Ident: has_next
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Bool
+- Newline
+- Dedent
+- Struct
+- Ident: Range
+- Newline
+- Indent
+- Ident: current
+- Colon
+- I64
+- Newline
+- Ident: end
+- Colon
+- I64
+- Newline
+- Ident: step
+- Colon
+- I64
+- Newline
+- Dedent
+- Func
+- Ident: Range
+- ColonColon
+- Ident: new
+- LParen
+- Ident: start
+- Colon
+- I64
+- Comma
+- Ident: end
+- Colon
+- I64
+- Comma
+- Ident: step
+- Colon
+- I64
+- RParen
+- Arrow
+- Ident: Range
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Range
+- ColonColon
+- Ident: next
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Question
+- I64
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: current
+- Ge
+- SelfLower
+- Dot
+- Ident: end
+- Newline
+- Indent
+- Return
+- "Null"
+- Newline
+- Dedent
+- Let
+- Ident: val
+- Eq
+- SelfLower
+- Dot
+- Ident: current
+- Newline
+- SelfLower
+- Dot
+- Ident: current
+- Eq
+- SelfLower
+- Dot
+- Ident: current
+- Plus
+- SelfLower
+- Dot
+- Ident: step
+- Newline
+- Return
+- Ident: val
+- Newline
+- Dedent
+- Func
+- Ident: Range
+- ColonColon
+- Ident: has_next
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: current
+- Lt
+- SelfLower
+- Dot
+- Ident: end
+- Newline
+- Dedent
+- Func
+- Ident: collect_range
+- LParen
+- Ident: start
+- Colon
+- I64
+- Comma
+- Ident: end
+- Colon
+- I64
+- RParen
+- Arrow
+- LBracket
+- I64
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

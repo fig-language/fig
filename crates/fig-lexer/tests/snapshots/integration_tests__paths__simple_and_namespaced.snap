@@ -1,0 +1,59 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: use_paths
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: x
+- Eq
+- Ident: foo
+- Newline
+- Let
+- Ident: y
+- Eq
+- Std
+- ColonColon
+- Ident: io
+- ColonColon
+- Ident: stdin
+- Newline
+- Let
+- Ident: z
+- Eq
+- Core
+- ColonColon
+- Ident: math
+- ColonColon
+- Ident: PI
+- Newline
+- Let
+- Ident: a
+- Eq
+- Ident: some_value
+- Newline
+- Let
+- Ident: b
+- Eq
+- Ident: some_module
+- ColonColon
+- Ident: some_value
+- Newline
+- Let
+- Ident: c
+- Eq
+- Ident: a
+- ColonColon
+- Ident: b
+- ColonColon
+- Ident: c
+- Newline
+- Pass
+- Newline
+- Dedent

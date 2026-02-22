@@ -1,0 +1,68 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Struct:
+      visibility: Default
+      annotations:
+        - name: repr
+          args:
+            - Path:
+                segments:
+                  - C
+                generic_args: []
+      is_packed: false
+      name: CCompatible
+      generic_params: []
+      requires: []
+      fields:
+        - name: a
+          ty: I32
+        - name: b
+          ty: I32
+  - Struct:
+      visibility: Default
+      annotations:
+        - name: align
+          args:
+            - IntegerLiteral:
+                base: Decimal
+                digits: "16"
+                suffix: ~
+      is_packed: false
+      name: AlignedData
+      generic_params: []
+      requires: []
+      fields:
+        - name: data
+          ty:
+            Array:
+              element_type: U8
+              size:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "16"
+                  suffix: ~
+  - FunctionDeclaration:
+      signature:
+        visibility: Default
+        annotations:
+          - name: link_name
+            args:
+              - StringLiteral: malloc
+        is_extern: true
+        is_effect: false
+        receiver: ~
+        name: c_malloc
+        generic_params: []
+        self_param: ~
+        params:
+          - name: size
+            ty: USize
+        return_types:
+          - Pointer:
+              nullable: false
+              mutable: true
+              element_type: U8

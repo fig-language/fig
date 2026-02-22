@@ -1,0 +1,55 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Namespace
+- Std
+- Newline
+- Indent
+- Namespace
+- Ident: io
+- Newline
+- Indent
+- Func
+- Bang
+- Ident: read
+- LParen
+- Ident: fd
+- Colon
+- I32
+- Comma
+- Ident: buf
+- Colon
+- Star
+- Mut
+- U8
+- Comma
+- Ident: len
+- Colon
+- USize
+- RParen
+- Arrow
+- USize
+- Newline
+- Func
+- Bang
+- Ident: write
+- LParen
+- Ident: fd
+- Colon
+- I32
+- Comma
+- Ident: buf
+- Colon
+- Star
+- U8
+- Comma
+- Ident: len
+- Colon
+- USize
+- RParen
+- Arrow
+- USize
+- Newline
+- Dedent
+- Dedent

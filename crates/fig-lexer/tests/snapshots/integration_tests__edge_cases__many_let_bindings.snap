@@ -1,0 +1,143 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: many_bindings
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: a
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Let
+- Ident: b
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Let
+- Ident: c
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "3"
+    suffix: ~
+- Newline
+- Let
+- Ident: d
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "4"
+    suffix: ~
+- Newline
+- Let
+- Ident: e
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "5"
+    suffix: ~
+- Newline
+- Let
+- Ident: f
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "6"
+    suffix: ~
+- Newline
+- Let
+- Ident: g
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "7"
+    suffix: ~
+- Newline
+- Let
+- Ident: h
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "8"
+    suffix: ~
+- Newline
+- Let
+- Ident: i
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "9"
+    suffix: ~
+- Newline
+- Let
+- Ident: j
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "10"
+    suffix: ~
+- Newline
+- Let
+- Ident: k
+- Eq
+- Ident: a
+- Plus
+- Ident: b
+- Newline
+- Let
+- Ident: l
+- Eq
+- Ident: c
+- Plus
+- Ident: d
+- Newline
+- Let
+- Ident: m
+- Eq
+- Ident: e
+- Plus
+- Ident: f
+- Newline
+- Let
+- Ident: n
+- Eq
+- Ident: g
+- Plus
+- Ident: h
+- Newline
+- Let
+- Ident: o
+- Eq
+- Ident: i
+- Plus
+- Ident: j
+- Newline
+- Let
+- Ident: p
+- Eq
+- Ident: k
+- Plus
+- Ident: l
+- Plus
+- Ident: m
+- Plus
+- Ident: n
+- Plus
+- Ident: o
+- Newline
+- Pass
+- Newline
+- Dedent

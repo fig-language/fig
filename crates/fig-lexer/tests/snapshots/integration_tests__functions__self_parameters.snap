@@ -1,0 +1,75 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Struct
+- Ident: Counter
+- Newline
+- Indent
+- Ident: value
+- Colon
+- I32
+- Newline
+- Dedent
+- Func
+- Ident: Counter
+- ColonColon
+- Ident: get
+- LParen
+- SelfLower
+- RParen
+- Arrow
+- I32
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Counter
+- ColonColon
+- Ident: increment
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Counter
+- ColonColon
+- Ident: reset
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Counter
+- ColonColon
+- Ident: get_ref
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Star
+- I32
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

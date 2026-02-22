@@ -1,0 +1,29 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: single_pass_with_where
+- LBracket
+- Ident: T
+- RBracket
+- LParen
+- Ident: x
+- Colon
+- Ident: T
+- RParen
+- Arrow
+- Ident: T
+- Newline
+- Indent
+- Where
+- Newline
+- Indent
+- Ident: T
+- Colon
+- Ident: Clone
+- Newline
+- Dedent
+- Pass
+- Newline
+- Dedent

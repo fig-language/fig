@@ -1,0 +1,48 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Type
+- Ident: RawPtr
+- Eq
+- Star
+- U8
+- Newline
+- Type
+- Ident: MutPtr
+- Eq
+- Star
+- Mut
+- U8
+- Newline
+- Type
+- Ident: OptPtr
+- Eq
+- Question
+- Star
+- U8
+- Newline
+- Type
+- Ident: OptMutPtr
+- Eq
+- Question
+- Star
+- Mut
+- U8
+- Newline
+- Type
+- Ident: PtrPtr
+- Eq
+- Star
+- Star
+- U8
+- Newline
+- Type
+- Ident: MutPtrPtr
+- Eq
+- Star
+- Mut
+- Star
+- Mut
+- U8
+- Newline

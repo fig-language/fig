@@ -1,0 +1,54 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: Byte
+      generic_params: []
+      aliased_type: U8
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: Short
+      generic_params: []
+      aliased_type: I16
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: Int
+      generic_params: []
+      aliased_type: I32
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: Long
+      generic_params: []
+      aliased_type: I64
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: UInt
+      generic_params: []
+      aliased_type: U32
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: Float
+      generic_params: []
+      aliased_type: F32
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: Double
+      generic_params: []
+      aliased_type: F64
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: Bool
+      generic_params: []
+      aliased_type: Bool

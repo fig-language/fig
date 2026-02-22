@@ -1,0 +1,72 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Interface:
+      visibility: Default
+      annotations: []
+      name: FullNumeric
+      generic_params: []
+      extends:
+        - Path:
+            segments:
+              - Add
+            generic_args: []
+        - Path:
+            segments:
+              - Sub
+            generic_args: []
+        - Path:
+            segments:
+              - Mul
+            generic_args: []
+        - Path:
+            segments:
+              - Div
+            generic_args: []
+        - Path:
+            segments:
+              - Neg
+            generic_args: []
+        - Path:
+            segments:
+              - Eq
+            generic_args: []
+        - Path:
+            segments:
+              - Ord
+            generic_args: []
+        - Path:
+            segments:
+              - Display
+            generic_args: []
+      requires: []
+      methods:
+        - visibility: Default
+          annotations: []
+          is_extern: false
+          is_effect: false
+          receiver: ~
+          name: abs
+          generic_params: []
+          self_param:
+            is_pointer: true
+            is_mutable: false
+          params: []
+          return_types:
+            - SelfType
+        - visibility: Default
+          annotations: []
+          is_extern: false
+          is_effect: false
+          receiver: ~
+          name: signum
+          generic_params: []
+          self_param:
+            is_pointer: true
+            is_mutable: false
+          params: []
+          return_types:
+            - I32

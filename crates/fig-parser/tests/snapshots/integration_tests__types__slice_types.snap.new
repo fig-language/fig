@@ -1,0 +1,45 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: ByteSlice
+      generic_params: []
+      aliased_type:
+        Array:
+          element_type: U8
+          size: ~
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: IntSlice
+      generic_params: []
+      aliased_type:
+        Array:
+          element_type: I32
+          size: ~
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: BoolSlice
+      generic_params: []
+      aliased_type:
+        Array:
+          element_type: Bool
+          size: ~
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: SliceOfSlices
+      generic_params: []
+      aliased_type:
+        Array:
+          element_type:
+            Array:
+              element_type: U8
+              size: ~
+          size: ~

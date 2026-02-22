@@ -1,0 +1,64 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: comparison_ops
+- LParen
+- Ident: a
+- Colon
+- I32
+- Comma
+- Ident: b
+- Colon
+- I32
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: lt
+- Eq
+- Ident: a
+- Lt
+- Ident: b
+- Newline
+- Let
+- Ident: gt
+- Eq
+- Ident: a
+- Gt
+- Ident: b
+- Newline
+- Let
+- Ident: le
+- Eq
+- Ident: a
+- Le
+- Ident: b
+- Newline
+- Let
+- Ident: ge
+- Eq
+- Ident: a
+- Ge
+- Ident: b
+- Newline
+- Let
+- Ident: eq
+- Eq
+- Ident: a
+- EqEq
+- Ident: b
+- Newline
+- Let
+- Ident: ne
+- Eq
+- Ident: a
+- Ne
+- Ident: b
+- Newline
+- Pass
+- Newline
+- Dedent

@@ -1,0 +1,40 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: strings
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: empty
+- Eq
+- StringLiteral: ""
+- Newline
+- Let
+- Ident: hello
+- Eq
+- StringLiteral: hello
+- Newline
+- Let
+- Ident: world
+- Eq
+- StringLiteral: world
+- Newline
+- Let
+- Ident: sentence
+- Eq
+- StringLiteral: The quick brown fox
+- Newline
+- Let
+- Ident: with_spaces
+- Eq
+- StringLiteral: hello world
+- Newline
+- Pass
+- Newline
+- Dedent

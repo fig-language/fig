@@ -1,0 +1,3020 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Using
+- Std
+- ColonColon
+- Ident: io
+- Newline
+- Using
+- Std
+- ColonColon
+- Ident: collections
+- Newline
+- Enum
+- Ident: HttpMethod
+- Newline
+- Indent
+- Ident: GET
+- Newline
+- Ident: POST
+- Newline
+- Ident: PUT
+- Newline
+- Ident: DELETE
+- Newline
+- Ident: PATCH
+- Newline
+- Ident: HEAD
+- Newline
+- Ident: OPTIONS
+- Newline
+- Ident: TRACE
+- Newline
+- Ident: CONNECT
+- Newline
+- Dedent
+- Enum
+- Ident: HttpVersion
+- Newline
+- Indent
+- Ident: HTTP_0_9
+- Newline
+- Ident: HTTP_1_0
+- Newline
+- Ident: HTTP_1_1
+- Newline
+- Ident: HTTP_2_0
+- Newline
+- Ident: HTTP_3_0
+- Newline
+- Dedent
+- Struct
+- Ident: HttpHeader
+- Newline
+- Indent
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: value
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Dedent
+- Struct
+- Ident: HttpHeaders
+- Newline
+- Indent
+- Ident: entries
+- Colon
+- Star
+- Mut
+- Ident: HttpHeader
+- Newline
+- Ident: count
+- Colon
+- USize
+- Newline
+- Ident: capacity
+- Colon
+- USize
+- Newline
+- Dedent
+- Export
+- Struct
+- Ident: HttpRequest
+- Newline
+- Indent
+- Ident: method
+- Colon
+- Ident: HttpMethod
+- Newline
+- Ident: path
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: query_string
+- Colon
+- Question
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: version
+- Colon
+- Ident: HttpVersion
+- Newline
+- Ident: headers
+- Colon
+- Ident: HttpHeaders
+- Newline
+- Ident: body
+- Colon
+- Question
+- LBracket
+- U8
+- RBracket
+- Newline
+- Dedent
+- Export
+- Struct
+- Ident: HttpResponse
+- Newline
+- Indent
+- Ident: version
+- Colon
+- Ident: HttpVersion
+- Newline
+- Ident: status_code
+- Colon
+- U16
+- Newline
+- Ident: status_message
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: headers
+- Colon
+- Ident: HttpHeaders
+- Newline
+- Ident: body
+- Colon
+- Question
+- LBracket
+- U8
+- RBracket
+- Newline
+- Dedent
+- Union
+- Ident: ParseError
+- Newline
+- Indent
+- Ident: invalid_method
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: invalid_version
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: invalid_header
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: malformed_request
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: incomplete_request
+- Colon
+- OkLiteral
+- Newline
+- Dedent
+- Union
+- Ident: ParseResult
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- OkLiteral
+- Colon
+- Ident: T
+- Newline
+- Ident: err
+- Colon
+- Ident: ParseError
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HttpRequest
+- ColonColon
+- Ident: new
+- LParen
+- Ident: method
+- Colon
+- Ident: HttpMethod
+- Comma
+- Ident: path
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Ident: HttpRequest
+- Newline
+- Indent
+- Return
+- Ident: HttpRequest
+- LParen
+- Newline
+- Indent
+- Ident: method
+- Colon
+- Ident: method
+- Comma
+- Newline
+- Ident: path
+- Colon
+- Ident: path
+- Comma
+- Newline
+- Ident: query_string
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: version
+- Colon
+- Ident: HttpVersion
+- ColonColon
+- Ident: HTTP_1_1
+- Comma
+- Newline
+- Ident: headers
+- Colon
+- Ident: HttpHeaders
+- ColonColon
+- Ident: new
+- LParen
+- RParen
+- Comma
+- Newline
+- Ident: body
+- Colon
+- "Null"
+- Newline
+- Dedent
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HttpRequest
+- ColonColon
+- Ident: parse
+- LParen
+- Ident: data
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- Ident: HttpRequest
+- RBracket
+- Newline
+- Indent
+- Mut
+- Ident: parser
+- Eq
+- Ident: RequestParser
+- ColonColon
+- Ident: new
+- LParen
+- Ident: data
+- RParen
+- Newline
+- Return
+- Ident: parser
+- Dot
+- Ident: parse
+- LParen
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HttpRequest
+- ColonColon
+- Ident: add_header
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: value
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: headers
+- Dot
+- Ident: add
+- LParen
+- Ident: name
+- Comma
+- Ident: value
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: HttpRequest
+- ColonColon
+- Ident: get_header
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Question
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: headers
+- Dot
+- Ident: get
+- LParen
+- Ident: name
+- RParen
+- Newline
+- Dedent
+- Func
+- Ident: HttpRequest
+- ColonColon
+- Ident: has_header
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: headers
+- Dot
+- Ident: contains
+- LParen
+- Ident: name
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HttpRequest
+- ColonColon
+- Ident: set_body
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: body
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: body
+- Eq
+- Ident: body
+- Newline
+- SelfLower
+- Dot
+- Ident: add_header
+- LParen
+- StringLiteral: Content-Length
+- Comma
+- Ident: u64_to_string
+- LParen
+- Ident: body
+- Dot
+- Ident: len
+- As
+- U64
+- RParen
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HttpRequest
+- ColonColon
+- Ident: to_bytes
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Mut
+- Ident: buffer
+- Colon
+- LBracket
+- U8
+- RBracket
+- Eq
+- LBracket
+- RBracket
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- SelfLower
+- Dot
+- Ident: method_string
+- LParen
+- RParen
+- RParen
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- StringLiteral: " "
+- RParen
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- SelfLower
+- Dot
+- Ident: path
+- RParen
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: query_string
+- Ne
+- "Null"
+- Newline
+- Indent
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- StringLiteral: "?"
+- RParen
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- SelfLower
+- Dot
+- Ident: query_string
+- RParen
+- Newline
+- Dedent
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- StringLiteral: " "
+- RParen
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- SelfLower
+- Dot
+- Ident: version_string
+- LParen
+- RParen
+- RParen
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- StringLiteral: "\r\n"
+- RParen
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: headers
+- Dot
+- Ident: count
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: header
+- Eq
+- And
+- SelfLower
+- Dot
+- Ident: headers
+- Dot
+- Ident: entries
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- Ident: header
+- Dot
+- Ident: name
+- RParen
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- StringLiteral: ": "
+- RParen
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- Ident: header
+- Dot
+- Ident: value
+- RParen
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- StringLiteral: "\r\n"
+- RParen
+- Newline
+- Dedent
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- StringLiteral: "\r\n"
+- RParen
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: body
+- Ne
+- "Null"
+- Newline
+- Indent
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- SelfLower
+- Dot
+- Ident: body
+- RParen
+- Newline
+- Dedent
+- Return
+- Ident: buffer
+- Newline
+- Dedent
+- Func
+- Ident: HttpRequest
+- ColonColon
+- Ident: method_string
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: method
+- EqEq
+- Ident: HttpMethod
+- ColonColon
+- Ident: GET
+- Newline
+- Indent
+- Return
+- StringLiteral: GET
+- Newline
+- Dedent
+- Elif
+- SelfLower
+- Dot
+- Ident: method
+- EqEq
+- Ident: HttpMethod
+- ColonColon
+- Ident: POST
+- Newline
+- Indent
+- Return
+- StringLiteral: POST
+- Newline
+- Dedent
+- Elif
+- SelfLower
+- Dot
+- Ident: method
+- EqEq
+- Ident: HttpMethod
+- ColonColon
+- Ident: PUT
+- Newline
+- Indent
+- Return
+- StringLiteral: PUT
+- Newline
+- Dedent
+- Elif
+- SelfLower
+- Dot
+- Ident: method
+- EqEq
+- Ident: HttpMethod
+- ColonColon
+- Ident: DELETE
+- Newline
+- Indent
+- Return
+- StringLiteral: DELETE
+- Newline
+- Dedent
+- Elif
+- SelfLower
+- Dot
+- Ident: method
+- EqEq
+- Ident: HttpMethod
+- ColonColon
+- Ident: PATCH
+- Newline
+- Indent
+- Return
+- StringLiteral: PATCH
+- Newline
+- Dedent
+- Elif
+- SelfLower
+- Dot
+- Ident: method
+- EqEq
+- Ident: HttpMethod
+- ColonColon
+- Ident: HEAD
+- Newline
+- Indent
+- Return
+- StringLiteral: HEAD
+- Newline
+- Dedent
+- Elif
+- SelfLower
+- Dot
+- Ident: method
+- EqEq
+- Ident: HttpMethod
+- ColonColon
+- Ident: OPTIONS
+- Newline
+- Indent
+- Return
+- StringLiteral: OPTIONS
+- Newline
+- Dedent
+- Elif
+- SelfLower
+- Dot
+- Ident: method
+- EqEq
+- Ident: HttpMethod
+- ColonColon
+- Ident: TRACE
+- Newline
+- Indent
+- Return
+- StringLiteral: TRACE
+- Newline
+- Dedent
+- Elif
+- SelfLower
+- Dot
+- Ident: method
+- EqEq
+- Ident: HttpMethod
+- ColonColon
+- Ident: CONNECT
+- Newline
+- Indent
+- Return
+- StringLiteral: CONNECT
+- Newline
+- Dedent
+- Return
+- StringLiteral: UNKNOWN
+- Newline
+- Dedent
+- Func
+- Ident: HttpRequest
+- ColonColon
+- Ident: version_string
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: version
+- EqEq
+- Ident: HttpVersion
+- ColonColon
+- Ident: HTTP_1_0
+- Newline
+- Indent
+- Return
+- StringLiteral: HTTP/1.0
+- Newline
+- Dedent
+- Elif
+- SelfLower
+- Dot
+- Ident: version
+- EqEq
+- Ident: HttpVersion
+- ColonColon
+- Ident: HTTP_1_1
+- Newline
+- Indent
+- Return
+- StringLiteral: HTTP/1.1
+- Newline
+- Dedent
+- Elif
+- SelfLower
+- Dot
+- Ident: version
+- EqEq
+- Ident: HttpVersion
+- ColonColon
+- Ident: HTTP_2_0
+- Newline
+- Indent
+- Return
+- StringLiteral: HTTP/2.0
+- Newline
+- Dedent
+- Return
+- StringLiteral: HTTP/1.1
+- Newline
+- Dedent
+- Struct
+- Ident: RequestParser
+- Newline
+- Indent
+- Ident: data
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: pos
+- Colon
+- USize
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: RequestParser
+- ColonColon
+- Ident: new
+- LParen
+- Ident: data
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Ident: RequestParser
+- Newline
+- Indent
+- Return
+- Ident: RequestParser
+- LParen
+- Ident: data
+- Colon
+- Ident: data
+- Comma
+- Ident: pos
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: RequestParser
+- ColonColon
+- Ident: parse
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- Ident: HttpRequest
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: method_result
+- Eq
+- SelfLower
+- Dot
+- Ident: parse_method
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: skip_whitespace
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: path_result
+- Eq
+- SelfLower
+- Dot
+- Ident: parse_path
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: skip_whitespace
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: version_result
+- Eq
+- SelfLower
+- Dot
+- Ident: parse_version
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: expect_crlf
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: headers_result
+- Eq
+- SelfLower
+- Dot
+- Ident: parse_headers
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: body
+- Eq
+- SelfLower
+- Dot
+- Ident: parse_body
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: request
+- Eq
+- Ident: HttpRequest
+- LParen
+- Newline
+- Indent
+- Ident: method
+- Colon
+- Ident: HttpMethod
+- ColonColon
+- Ident: GET
+- Comma
+- Newline
+- Ident: path
+- Colon
+- StringLiteral: /
+- Comma
+- Newline
+- Ident: query_string
+- Colon
+- "Null"
+- Comma
+- Newline
+- Ident: version
+- Colon
+- Ident: HttpVersion
+- ColonColon
+- Ident: HTTP_1_1
+- Comma
+- Newline
+- Ident: headers
+- Colon
+- Ident: HttpHeaders
+- ColonColon
+- Ident: new
+- LParen
+- RParen
+- Comma
+- Newline
+- Ident: body
+- Colon
+- Ident: body
+- Newline
+- Dedent
+- RParen
+- Newline
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpRequest
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: request
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: RequestParser
+- ColonColon
+- Ident: parse_method
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- Ident: HttpMethod
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: word
+- Eq
+- SelfLower
+- Dot
+- Ident: read_until_whitespace
+- LParen
+- RParen
+- Newline
+- If
+- Ident: word
+- EqEq
+- StringLiteral: GET
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpMethod
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: HttpMethod
+- ColonColon
+- Ident: GET
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: word
+- EqEq
+- StringLiteral: POST
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpMethod
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: HttpMethod
+- ColonColon
+- Ident: POST
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: word
+- EqEq
+- StringLiteral: PUT
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpMethod
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: HttpMethod
+- ColonColon
+- Ident: PUT
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: word
+- EqEq
+- StringLiteral: DELETE
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpMethod
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: HttpMethod
+- ColonColon
+- Ident: DELETE
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: word
+- EqEq
+- StringLiteral: PATCH
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpMethod
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: HttpMethod
+- ColonColon
+- Ident: PATCH
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: word
+- EqEq
+- StringLiteral: HEAD
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpMethod
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: HttpMethod
+- ColonColon
+- Ident: HEAD
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: word
+- EqEq
+- StringLiteral: OPTIONS
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpMethod
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: HttpMethod
+- ColonColon
+- Ident: OPTIONS
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: word
+- EqEq
+- StringLiteral: TRACE
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpMethod
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: HttpMethod
+- ColonColon
+- Ident: TRACE
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: word
+- EqEq
+- StringLiteral: CONNECT
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpMethod
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: HttpMethod
+- ColonColon
+- Ident: CONNECT
+- RParen
+- Newline
+- Dedent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpMethod
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: invalid_method
+- LParen
+- Ident: word
+- RParen
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: RequestParser
+- ColonColon
+- Ident: parse_path
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- LBracket
+- U8
+- RBracket
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: path
+- Eq
+- SelfLower
+- Dot
+- Ident: read_until_whitespace
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: query_pos
+- Eq
+- Ident: find_byte
+- LParen
+- Ident: path
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "63"
+    suffix: ~
+- RParen
+- Newline
+- If
+- Ident: query_pos
+- Ge
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- LBracket
+- U8
+- RBracket
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: slice_before
+- LParen
+- Ident: path
+- Comma
+- Ident: query_pos
+- As
+- USize
+- RParen
+- RParen
+- Newline
+- Dedent
+- Return
+- Ident: ParseResult
+- LBracket
+- LBracket
+- U8
+- RBracket
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: path
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: RequestParser
+- ColonColon
+- Ident: parse_version
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- Ident: HttpVersion
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: word
+- Eq
+- SelfLower
+- Dot
+- Ident: read_until_crlf
+- LParen
+- RParen
+- Newline
+- If
+- Ident: word
+- EqEq
+- StringLiteral: HTTP/1.0
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpVersion
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: HttpVersion
+- ColonColon
+- Ident: HTTP_1_0
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: word
+- EqEq
+- StringLiteral: HTTP/1.1
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpVersion
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: HttpVersion
+- ColonColon
+- Ident: HTTP_1_1
+- RParen
+- Newline
+- Dedent
+- Elif
+- Ident: word
+- EqEq
+- StringLiteral: HTTP/2.0
+- Newline
+- Indent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpVersion
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: HttpVersion
+- ColonColon
+- Ident: HTTP_2_0
+- RParen
+- Newline
+- Dedent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpVersion
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: ParseError
+- ColonColon
+- Ident: invalid_version
+- LParen
+- Ident: word
+- RParen
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: RequestParser
+- ColonColon
+- Ident: parse_headers
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Ident: ParseResult
+- LBracket
+- Ident: HttpHeaders
+- RBracket
+- Newline
+- Indent
+- Mut
+- Ident: headers
+- Eq
+- Ident: HttpHeaders
+- ColonColon
+- Ident: new
+- LParen
+- RParen
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "100"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "13"
+    suffix: ~
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: expect_crlf
+- LParen
+- RParen
+- Newline
+- Break
+- Newline
+- Dedent
+- Let
+- Ident: name
+- Eq
+- SelfLower
+- Dot
+- Ident: read_until_byte
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "58"
+    suffix: ~
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: skip_whitespace
+- LParen
+- RParen
+- Newline
+- Let
+- Ident: value
+- Eq
+- SelfLower
+- Dot
+- Ident: read_until_crlf
+- LParen
+- RParen
+- Newline
+- Ident: headers
+- Dot
+- Ident: add
+- LParen
+- Ident: name
+- Comma
+- Ident: value
+- RParen
+- Newline
+- Dedent
+- Return
+- Ident: ParseResult
+- LBracket
+- Ident: HttpHeaders
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: headers
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: RequestParser
+- ColonColon
+- Ident: parse_body
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Question
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: is_eof
+- LParen
+- RParen
+- Newline
+- Indent
+- Return
+- "Null"
+- Newline
+- Dedent
+- Let
+- Ident: remaining
+- Eq
+- Ident: slice_from
+- LParen
+- SelfLower
+- Dot
+- Ident: data
+- Comma
+- SelfLower
+- Dot
+- Ident: pos
+- RParen
+- Newline
+- Return
+- Ident: remaining
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: RequestParser
+- ColonColon
+- Ident: read_until_whitespace
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: start
+- Eq
+- SelfLower
+- Dot
+- Ident: pos
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "1000"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: is_eof
+- LParen
+- RParen
+- OrOr
+- SelfLower
+- Dot
+- Ident: is_whitespace
+- LParen
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- RParen
+- Newline
+- Indent
+- Break
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- Dedent
+- Return
+- Ident: slice_range
+- LParen
+- SelfLower
+- Dot
+- Ident: data
+- Comma
+- Ident: start
+- Comma
+- SelfLower
+- Dot
+- Ident: pos
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: RequestParser
+- ColonColon
+- Ident: read_until_crlf
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: start
+- Eq
+- SelfLower
+- Dot
+- Ident: pos
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "10000"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: is_eof
+- LParen
+- RParen
+- OrOr
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "13"
+    suffix: ~
+- Newline
+- Indent
+- Break
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- Dedent
+- Return
+- Ident: slice_range
+- LParen
+- SelfLower
+- Dot
+- Ident: data
+- Comma
+- Ident: start
+- Comma
+- SelfLower
+- Dot
+- Ident: pos
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: RequestParser
+- ColonColon
+- Ident: read_until_byte
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: byte
+- Colon
+- U8
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: start
+- Eq
+- SelfLower
+- Dot
+- Ident: pos
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "10000"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: is_eof
+- LParen
+- RParen
+- OrOr
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- EqEq
+- Ident: byte
+- Newline
+- Indent
+- Break
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- Dedent
+- Return
+- Ident: slice_range
+- LParen
+- SelfLower
+- Dot
+- Ident: data
+- Comma
+- Ident: start
+- Comma
+- SelfLower
+- Dot
+- Ident: pos
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: RequestParser
+- ColonColon
+- Ident: skip_whitespace
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "1000"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: is_eof
+- LParen
+- RParen
+- OrOr
+- Bang
+- SelfLower
+- Dot
+- Ident: is_whitespace
+- LParen
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- RParen
+- Newline
+- Indent
+- Break
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: RequestParser
+- ColonColon
+- Ident: expect_crlf
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "13"
+    suffix: ~
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- Dedent
+- If
+- SelfLower
+- Dot
+- Ident: peek
+- LParen
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "10"
+    suffix: ~
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: advance
+- LParen
+- RParen
+- Newline
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: RequestParser
+- ColonColon
+- Ident: is_whitespace
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: ch
+- Colon
+- U8
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "32"
+    suffix: ~
+- OrOr
+- Ident: ch
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "9"
+    suffix: ~
+- Newline
+- Dedent
+- Func
+- Ident: RequestParser
+- ColonColon
+- Ident: peek
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- U8
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: is_eof
+- LParen
+- RParen
+- Newline
+- Indent
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Dedent
+- Return
+- SelfLower
+- Dot
+- Ident: data
+- LBracket
+- SelfLower
+- Dot
+- Ident: pos
+- RBracket
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: RequestParser
+- ColonColon
+- Ident: advance
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- If
+- Bang
+- SelfLower
+- Dot
+- Ident: is_eof
+- LParen
+- RParen
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: pos
+- Eq
+- SelfLower
+- Dot
+- Ident: pos
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: RequestParser
+- ColonColon
+- Ident: is_eof
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: pos
+- Ge
+- SelfLower
+- Dot
+- Ident: data
+- Dot
+- Ident: len
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HttpResponse
+- ColonColon
+- Ident: new
+- LParen
+- Ident: status
+- Colon
+- U16
+- RParen
+- Arrow
+- Ident: HttpResponse
+- Newline
+- Indent
+- Return
+- Ident: HttpResponse
+- LParen
+- Newline
+- Indent
+- Ident: version
+- Colon
+- Ident: HttpVersion
+- ColonColon
+- Ident: HTTP_1_1
+- Comma
+- Newline
+- Ident: status_code
+- Colon
+- Ident: status
+- Comma
+- Newline
+- Ident: status_message
+- Colon
+- Ident: status_message_for_code
+- LParen
+- Ident: status
+- RParen
+- Comma
+- Newline
+- Ident: headers
+- Colon
+- Ident: HttpHeaders
+- ColonColon
+- Ident: new
+- LParen
+- RParen
+- Comma
+- Newline
+- Ident: body
+- Colon
+- "Null"
+- Newline
+- Dedent
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HttpResponse
+- ColonColon
+- OkLiteral
+- LParen
+- RParen
+- Arrow
+- Ident: HttpResponse
+- Newline
+- Indent
+- Return
+- Ident: HttpResponse
+- ColonColon
+- Ident: new
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "200"
+    suffix: ~
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HttpResponse
+- ColonColon
+- Ident: created
+- LParen
+- RParen
+- Arrow
+- Ident: HttpResponse
+- Newline
+- Indent
+- Return
+- Ident: HttpResponse
+- ColonColon
+- Ident: new
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "201"
+    suffix: ~
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HttpResponse
+- ColonColon
+- Ident: not_found
+- LParen
+- RParen
+- Arrow
+- Ident: HttpResponse
+- Newline
+- Indent
+- Return
+- Ident: HttpResponse
+- ColonColon
+- Ident: new
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "404"
+    suffix: ~
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HttpResponse
+- ColonColon
+- Ident: internal_error
+- LParen
+- RParen
+- Arrow
+- Ident: HttpResponse
+- Newline
+- Indent
+- Return
+- Ident: HttpResponse
+- ColonColon
+- Ident: new
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "500"
+    suffix: ~
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HttpResponse
+- ColonColon
+- Ident: add_header
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: value
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: headers
+- Dot
+- Ident: add
+- LParen
+- Ident: name
+- Comma
+- Ident: value
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HttpResponse
+- ColonColon
+- Ident: set_body
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: body
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: body
+- Eq
+- Ident: body
+- Newline
+- SelfLower
+- Dot
+- Ident: add_header
+- LParen
+- StringLiteral: Content-Length
+- Comma
+- Ident: u64_to_string
+- LParen
+- Ident: body
+- Dot
+- Ident: len
+- As
+- U64
+- RParen
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HttpResponse
+- ColonColon
+- Ident: to_bytes
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Mut
+- Ident: buffer
+- Colon
+- LBracket
+- U8
+- RBracket
+- Eq
+- LBracket
+- RBracket
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- StringLiteral: "HTTP/1.1 "
+- RParen
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- Ident: u64_to_string
+- LParen
+- SelfLower
+- Dot
+- Ident: status_code
+- As
+- U64
+- RParen
+- RParen
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- StringLiteral: " "
+- RParen
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- SelfLower
+- Dot
+- Ident: status_message
+- RParen
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- StringLiteral: "\r\n"
+- RParen
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: headers
+- Dot
+- Ident: count
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: header
+- Eq
+- And
+- SelfLower
+- Dot
+- Ident: headers
+- Dot
+- Ident: entries
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- Ident: header
+- Dot
+- Ident: name
+- RParen
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- StringLiteral: ": "
+- RParen
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- Ident: header
+- Dot
+- Ident: value
+- RParen
+- Newline
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- StringLiteral: "\r\n"
+- RParen
+- Newline
+- Dedent
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- StringLiteral: "\r\n"
+- RParen
+- Newline
+- If
+- SelfLower
+- Dot
+- Ident: body
+- Ne
+- "Null"
+- Newline
+- Indent
+- Ident: buffer
+- Dot
+- Ident: append
+- LParen
+- SelfLower
+- Dot
+- Ident: body
+- RParen
+- Newline
+- Dedent
+- Return
+- Ident: buffer
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HttpHeaders
+- ColonColon
+- Ident: new
+- LParen
+- RParen
+- Arrow
+- Ident: HttpHeaders
+- Newline
+- Indent
+- Return
+- Ident: HttpHeaders
+- LParen
+- Ident: entries
+- Colon
+- "Null"
+- Comma
+- Ident: count
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: capacity
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: HttpHeaders
+- ColonColon
+- Ident: add
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: value
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: HttpHeaders
+- ColonColon
+- Ident: get
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Question
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: count
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: header
+- Eq
+- And
+- SelfLower
+- Dot
+- Ident: entries
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- If
+- Ident: header_name_equals
+- LParen
+- Ident: header
+- Dot
+- Ident: name
+- Comma
+- Ident: name
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: header
+- Dot
+- Ident: value
+- Newline
+- Dedent
+- Dedent
+- Return
+- "Null"
+- Newline
+- Dedent
+- Func
+- Ident: HttpHeaders
+- ColonColon
+- Ident: contains
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: name
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: get
+- LParen
+- Ident: name
+- RParen
+- Ne
+- "Null"
+- Newline
+- Dedent
+- Func
+- Ident: header_name_equals
+- LParen
+- Ident: a
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: b
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- If
+- Ident: a
+- Dot
+- Ident: len
+- Ne
+- Ident: b
+- Dot
+- Ident: len
+- Newline
+- Indent
+- Return
+- "False"
+- Newline
+- Dedent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: a
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: ca
+- Eq
+- Ident: to_lowercase
+- LParen
+- Ident: a
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- Newline
+- Let
+- Ident: cb
+- Eq
+- Ident: to_lowercase
+- LParen
+- Ident: b
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- Newline
+- If
+- Ident: ca
+- Ne
+- Ident: cb
+- Newline
+- Indent
+- Return
+- "False"
+- Newline
+- Dedent
+- Dedent
+- Return
+- "True"
+- Newline
+- Dedent
+- Func
+- Ident: to_lowercase
+- LParen
+- Ident: ch
+- Colon
+- U8
+- RParen
+- Arrow
+- U8
+- Newline
+- Indent
+- If
+- Ident: ch
+- Ge
+- IntegerLiteral:
+    base: Decimal
+    digits: "65"
+    suffix: ~
+- AndAnd
+- Ident: ch
+- Le
+- IntegerLiteral:
+    base: Decimal
+    digits: "90"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- Ident: ch
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "32"
+    suffix: ~
+- Newline
+- Dedent
+- Return
+- Ident: ch
+- Newline
+- Dedent
+- Func
+- Ident: status_message_for_code
+- LParen
+- Ident: code
+- Colon
+- U16
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- If
+- Ident: code
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "200"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- StringLiteral: OK
+- Newline
+- Dedent
+- Elif
+- Ident: code
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "201"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- StringLiteral: Created
+- Newline
+- Dedent
+- Elif
+- Ident: code
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "404"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- StringLiteral: Not Found
+- Newline
+- Dedent
+- Elif
+- Ident: code
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "500"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- StringLiteral: Internal Server Error
+- Newline
+- Dedent
+- Return
+- StringLiteral: Unknown
+- Newline
+- Dedent
+- Func
+- Ident: find_byte
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: b
+- Colon
+- U8
+- RParen
+- Arrow
+- I32
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: s
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- If
+- Ident: s
+- LBracket
+- Ident: i
+- RBracket
+- EqEq
+- Ident: b
+- Newline
+- Indent
+- Return
+- Ident: i
+- As
+- I32
+- Newline
+- Dedent
+- Dedent
+- Return
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- Func
+- Ident: slice_before
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: pos
+- Colon
+- USize
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: slice_range
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: start
+- Colon
+- USize
+- Comma
+- Ident: end
+- Colon
+- USize
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: slice_from
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: start
+- Colon
+- USize
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: u64_to_string
+- LParen
+- Ident: n
+- Colon
+- U64
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

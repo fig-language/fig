@@ -1,0 +1,71 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Struct
+- Ident: Queue
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- Requires
+- Newline
+- Indent
+- Ident: Container
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Dedent
+- Ident: head
+- Colon
+- Question
+- Star
+- Ident: Node
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Ident: tail
+- Colon
+- Question
+- Star
+- Ident: Node
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Ident: len
+- Colon
+- USize
+- Newline
+- Dedent
+- Struct
+- Ident: Display
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- Requires
+- Newline
+- Indent
+- Ident: Drawable
+- Newline
+- Ident: Resizable
+- Newline
+- Dedent
+- Ident: width
+- Colon
+- U32
+- Newline
+- Ident: height
+- Colon
+- U32
+- Newline
+- Ident: content
+- Colon
+- Ident: T
+- Newline
+- Dedent

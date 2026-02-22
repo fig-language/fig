@@ -1,0 +1,22 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: say_hello
+- LParen
+- RParen
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: do_nothing
+- LParen
+- RParen
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

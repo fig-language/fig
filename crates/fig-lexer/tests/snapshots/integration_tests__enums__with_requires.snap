@@ -1,0 +1,48 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Enum
+- LBracket
+- U8
+- RBracket
+- Ident: Error
+- Newline
+- Indent
+- Requires
+- Newline
+- Indent
+- Ident: Display
+- Newline
+- Ident: Debug
+- Newline
+- Dedent
+- Ident: NONE
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Ident: IO_ERROR
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Ident: PARSE_ERROR
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Ident: NOT_FOUND
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "3"
+    suffix: ~
+- Newline
+- Dedent

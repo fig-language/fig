@@ -1,0 +1,63 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: nop
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: empty_if
+- LParen
+- Ident: cond
+- Colon
+- Bool
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- If
+- Ident: cond
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Else
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Dedent
+- Func
+- Ident: empty_for
+- LParen
+- Ident: data
+- Colon
+- LBracket
+- I32
+- RBracket
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- For
+- Ident: item
+- In
+- Ident: data
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Dedent

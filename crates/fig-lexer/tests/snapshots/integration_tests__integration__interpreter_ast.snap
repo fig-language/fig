@@ -1,0 +1,118 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Union
+- Ident: Expr
+- Newline
+- Indent
+- Ident: int_lit
+- Colon
+- I64
+- Newline
+- Ident: float_lit
+- Colon
+- F64
+- Newline
+- Ident: bool_lit
+- Colon
+- Bool
+- Newline
+- Ident: add
+- Colon
+- Star
+- Ident: BinOp
+- Newline
+- Ident: mul
+- Colon
+- Star
+- Ident: BinOp
+- Newline
+- Ident: neg
+- Colon
+- Star
+- Ident: Expr
+- Newline
+- Dedent
+- Struct
+- Ident: BinOp
+- Newline
+- Indent
+- Ident: left
+- Colon
+- Star
+- Ident: Expr
+- Newline
+- Ident: right
+- Colon
+- Star
+- Ident: Expr
+- Newline
+- Dedent
+- Union
+- Ident: Value
+- Newline
+- Indent
+- Ident: int_val
+- Colon
+- I64
+- Newline
+- Ident: float_val
+- Colon
+- F64
+- Newline
+- Ident: bool_val
+- Colon
+- Bool
+- Newline
+- Dedent
+- Func
+- Ident: eval
+- LParen
+- Ident: expr
+- Colon
+- Star
+- Ident: Expr
+- RParen
+- Arrow
+- Ident: Value
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: eval_binop
+- LParen
+- Ident: op
+- Colon
+- Star
+- Ident: BinOp
+- RParen
+- Arrow
+- Ident: Value
+- Newline
+- Indent
+- Let
+- Ident: left
+- Eq
+- Ident: eval
+- LParen
+- Ident: op
+- Dot
+- Ident: left
+- RParen
+- Newline
+- Let
+- Ident: right
+- Eq
+- Ident: eval
+- LParen
+- Ident: op
+- Dot
+- Ident: right
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent

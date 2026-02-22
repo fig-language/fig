@@ -1,0 +1,34 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Union
+- Ident: Comparable
+- LBracket
+- Ident: A
+- Comma
+- Ident: B
+- RBracket
+- Newline
+- Indent
+- Where
+- Newline
+- Indent
+- Ident: A
+- Colon
+- Ident: Ord
+- Newline
+- Ident: B
+- Colon
+- Ident: Ord
+- Newline
+- Dedent
+- Ident: first
+- Colon
+- Ident: A
+- Newline
+- Ident: second
+- Colon
+- Ident: B
+- Newline
+- Dedent

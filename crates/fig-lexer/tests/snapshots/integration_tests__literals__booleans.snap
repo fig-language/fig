@@ -1,0 +1,35 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: booleans
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Let
+- Ident: t
+- Eq
+- "True"
+- Newline
+- Let
+- Ident: f
+- Eq
+- "False"
+- Newline
+- Let
+- Ident: condition
+- Eq
+- "True"
+- Newline
+- Let
+- Ident: flag
+- Eq
+- "False"
+- Newline
+- Pass
+- Newline
+- Dedent

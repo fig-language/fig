@@ -1,0 +1,115 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Union
+- Ident: IoError
+- Newline
+- Indent
+- Ident: not_found
+- Colon
+- OkLiteral
+- Newline
+- Ident: permission_denied
+- Colon
+- OkLiteral
+- Newline
+- Ident: io_failure
+- Colon
+- I32
+- Newline
+- Dedent
+- Union
+- Ident: Result
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- OkLiteral
+- Colon
+- Ident: T
+- Newline
+- Ident: err
+- Colon
+- Ident: IoError
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: open_file
+- LParen
+- Ident: path
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Ident: Result
+- LBracket
+- LBracket
+- U8
+- RBracket
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: read_file
+- LParen
+- Ident: path
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Ident: Result
+- LBracket
+- LBracket
+- U8
+- RBracket
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: result
+- Eq
+- Ident: open_file
+- LParen
+- Ident: path
+- RParen
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: write_file
+- LParen
+- Ident: path
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: data
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Ident: Result
+- LBracket
+- OkLiteral
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

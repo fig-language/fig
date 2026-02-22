@@ -1,0 +1,69 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Namespace
+- Ident: math
+- Newline
+- Indent
+- Export
+- Func
+- Ident: add
+- LParen
+- Ident: a
+- Colon
+- I32
+- Comma
+- Ident: b
+- Colon
+- I32
+- RParen
+- Arrow
+- I32
+- Newline
+- Export
+- Func
+- Ident: sub
+- LParen
+- Ident: a
+- Colon
+- I32
+- Comma
+- Ident: b
+- Colon
+- I32
+- RParen
+- Arrow
+- I32
+- Newline
+- Export
+- Func
+- Ident: mul
+- LParen
+- Ident: a
+- Colon
+- I32
+- Comma
+- Ident: b
+- Colon
+- I32
+- RParen
+- Arrow
+- I32
+- Newline
+- Export
+- Func
+- Ident: div
+- LParen
+- Ident: a
+- Colon
+- I32
+- Comma
+- Ident: b
+- Colon
+- I32
+- RParen
+- Arrow
+- I32
+- Newline
+- Dedent

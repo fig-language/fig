@@ -1,0 +1,52 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: mut_vars
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Mut:
+              annotations: []
+              name: x
+              ty: ~
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "0"
+                  suffix: ~
+          - Mut:
+              annotations: []
+              name: counter
+              ty: ~
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "100"
+                  suffix: ~
+          - Mut:
+              annotations: []
+              name: flag
+              ty: ~
+              value:
+                BooleanLiteral: true
+          - Mut:
+              annotations: []
+              name: name
+              ty: ~
+              value:
+                StringLiteral: initial
+          - Pass

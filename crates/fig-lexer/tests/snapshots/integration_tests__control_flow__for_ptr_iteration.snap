@@ -1,0 +1,63 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: sum_ptr
+- LParen
+- Ident: ptr
+- Colon
+- Star
+- I32
+- Comma
+- Ident: len
+- Colon
+- USize
+- RParen
+- Arrow
+- I32
+- Newline
+- Indent
+- Mut
+- Ident: total
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: len
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: val
+- Eq
+- Star
+- LParen
+- Ident: ptr
+- Plus
+- Ident: i
+- RParen
+- Newline
+- Ident: total
+- Eq
+- Ident: total
+- Plus
+- Ident: val
+- Newline
+- Dedent
+- Return
+- Ident: total
+- Newline
+- Dedent

@@ -1,0 +1,44 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Struct
+- Ident: Vector
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- Requires
+- Newline
+- Indent
+- Ident: Display
+- Newline
+- Ident: Debug
+- Newline
+- Dedent
+- Where
+- Newline
+- Indent
+- Ident: T
+- Colon
+- Ident: Numeric
+- Plus
+- Ident: Sized
+- Newline
+- Dedent
+- Ident: data
+- Colon
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Ident: len
+- Colon
+- USize
+- Newline
+- Ident: cap
+- Colon
+- USize
+- Newline
+- Dedent

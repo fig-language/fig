@@ -1,0 +1,45 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: Buffer
+      generic_params: []
+      aliased_type:
+        Array:
+          element_type: U8
+          size:
+            IntegerLiteral:
+              base: Decimal
+              digits: "1024"
+              suffix: ~
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: Vec3
+      generic_params: []
+      aliased_type:
+        Array:
+          element_type: F32
+          size:
+            IntegerLiteral:
+              base: Decimal
+              digits: "3"
+              suffix: ~
+  - TypeAlias:
+      visibility: Default
+      annotations: []
+      name: Grid
+      generic_params: []
+      aliased_type:
+        Array:
+          element_type: I32
+          size:
+            IntegerLiteral:
+              base: Decimal
+              digits: "64"
+              suffix: ~

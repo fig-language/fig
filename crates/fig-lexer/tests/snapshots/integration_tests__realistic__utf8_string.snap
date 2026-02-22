@@ -1,0 +1,2714 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Using
+- Core
+- ColonColon
+- Ident: memory
+- Newline
+- Enum
+- Ident: Utf8Error
+- Newline
+- Indent
+- Ident: INVALID_BYTE_SEQUENCE
+- Newline
+- Ident: UNEXPECTED_CONTINUATION
+- Newline
+- Ident: OVERLONG_ENCODING
+- Newline
+- Ident: INVALID_CODE_POINT
+- Newline
+- Dedent
+- Union
+- Ident: Utf8Result
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- OkLiteral
+- Colon
+- Ident: T
+- Newline
+- Ident: err
+- Colon
+- Ident: Utf8Error
+- Newline
+- Dedent
+- Export
+- Struct
+- Ident: Utf8String
+- Newline
+- Indent
+- Ident: bytes
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: length
+- Colon
+- USize
+- Newline
+- Ident: byte_length
+- Colon
+- USize
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Utf8String
+- ColonColon
+- Ident: new
+- LParen
+- RParen
+- Arrow
+- Ident: Utf8String
+- Newline
+- Indent
+- Return
+- Ident: Utf8String
+- LParen
+- Ident: bytes
+- Colon
+- LBracket
+- RBracket
+- Comma
+- Ident: length
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: byte_length
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Utf8String
+- ColonColon
+- Ident: from_bytes
+- LParen
+- Ident: bytes
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Ident: Utf8Result
+- LBracket
+- Ident: Utf8String
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: validation
+- Eq
+- Ident: validate_utf8
+- LParen
+- Ident: bytes
+- RParen
+- Newline
+- Let
+- Ident: char_count
+- Eq
+- Ident: count_utf8_chars
+- LParen
+- Ident: bytes
+- RParen
+- Newline
+- Let
+- Ident: s
+- Eq
+- Ident: Utf8String
+- LParen
+- Newline
+- Indent
+- Ident: bytes
+- Colon
+- Ident: bytes
+- Comma
+- Newline
+- Ident: length
+- Colon
+- Ident: char_count
+- Comma
+- Newline
+- Ident: byte_length
+- Colon
+- Ident: bytes
+- Dot
+- Ident: len
+- Newline
+- Dedent
+- RParen
+- Newline
+- Return
+- Ident: Utf8Result
+- LBracket
+- Ident: Utf8String
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: s
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Utf8String
+- ColonColon
+- Ident: from_str
+- LParen
+- Ident: s
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Ident: Utf8String
+- Newline
+- Indent
+- Let
+- Ident: result
+- Eq
+- Ident: Utf8String
+- ColonColon
+- Ident: from_bytes
+- LParen
+- Ident: s
+- RParen
+- Newline
+- Return
+- Ident: result
+- Dot
+- OkLiteral
+- Newline
+- Dedent
+- Func
+- Ident: Utf8String
+- ColonColon
+- Ident: as_bytes
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: bytes
+- Newline
+- Dedent
+- Func
+- Ident: Utf8String
+- ColonColon
+- Ident: len
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- USize
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: length
+- Newline
+- Dedent
+- Func
+- Ident: Utf8String
+- ColonColon
+- Ident: byte_len
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- USize
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: byte_length
+- Newline
+- Dedent
+- Func
+- Ident: Utf8String
+- ColonColon
+- Ident: is_empty
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: byte_length
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Utf8String
+- ColonColon
+- Ident: char_at
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: index
+- Colon
+- USize
+- RParen
+- Arrow
+- Question
+- U32
+- Newline
+- Indent
+- If
+- Ident: index
+- Ge
+- SelfLower
+- Dot
+- Ident: length
+- Newline
+- Indent
+- Return
+- "Null"
+- Newline
+- Dedent
+- Mut
+- Ident: byte_pos
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Mut
+- Ident: char_index
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: byte_length
+- RParen
+- Newline
+- Indent
+- If
+- Ident: char_index
+- EqEq
+- Ident: index
+- Newline
+- Indent
+- Let
+- Ident: result
+- Eq
+- Ident: decode_utf8_char
+- LParen
+- And
+- SelfLower
+- Dot
+- Ident: bytes
+- LBracket
+- Ident: byte_pos
+- RBracket
+- RParen
+- Newline
+- Return
+- Ident: result
+- Dot
+- OkLiteral
+- Newline
+- Dedent
+- Let
+- Ident: char_bytes
+- Eq
+- Ident: utf8_char_bytes
+- LParen
+- SelfLower
+- Dot
+- Ident: bytes
+- LBracket
+- Ident: byte_pos
+- RBracket
+- RParen
+- Newline
+- Ident: byte_pos
+- Eq
+- Ident: byte_pos
+- Plus
+- Ident: char_bytes
+- Newline
+- Ident: char_index
+- Eq
+- Ident: char_index
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- Return
+- "Null"
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Utf8String
+- ColonColon
+- Ident: push
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: code_point
+- Colon
+- U32
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Mut
+- Ident: buf
+- Colon
+- LBracket
+- U8
+- RBracket
+- Eq
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RBracket
+- Newline
+- Let
+- Ident: bytes_written
+- Eq
+- Ident: encode_utf8_char
+- LParen
+- Ident: code_point
+- Comma
+- And
+- Mut
+- Ident: buf
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RBracket
+- RParen
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: bytes_written
+- RParen
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: bytes
+- Dot
+- Ident: push
+- LParen
+- Ident: buf
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: byte_length
+- Eq
+- SelfLower
+- Dot
+- Ident: byte_length
+- Plus
+- Ident: bytes_written
+- Newline
+- SelfLower
+- Dot
+- Ident: length
+- Eq
+- SelfLower
+- Dot
+- Ident: length
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Utf8String
+- ColonColon
+- Ident: append
+- LParen
+- Star
+- Mut
+- SelfLower
+- Comma
+- Ident: other
+- Colon
+- Star
+- Ident: Utf8String
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: other
+- Dot
+- Ident: byte_length
+- RParen
+- Newline
+- Indent
+- SelfLower
+- Dot
+- Ident: bytes
+- Dot
+- Ident: push
+- LParen
+- Ident: other
+- Dot
+- Ident: bytes
+- LBracket
+- Ident: i
+- RBracket
+- RParen
+- Newline
+- Dedent
+- SelfLower
+- Dot
+- Ident: byte_length
+- Eq
+- SelfLower
+- Dot
+- Ident: byte_length
+- Plus
+- Ident: other
+- Dot
+- Ident: byte_length
+- Newline
+- SelfLower
+- Dot
+- Ident: length
+- Eq
+- SelfLower
+- Dot
+- Ident: length
+- Plus
+- Ident: other
+- Dot
+- Ident: length
+- Newline
+- Pass
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Utf8String
+- ColonColon
+- Ident: substring
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: start
+- Colon
+- USize
+- Comma
+- Ident: end
+- Colon
+- USize
+- RParen
+- Arrow
+- Ident: Utf8String
+- Newline
+- Indent
+- If
+- Ident: start
+- Ge
+- SelfLower
+- Dot
+- Ident: length
+- Newline
+- Indent
+- Return
+- Ident: Utf8String
+- ColonColon
+- Ident: new
+- LParen
+- RParen
+- Newline
+- Dedent
+- Let
+- Ident: actual_end
+- Eq
+- If
+- Ident: end
+- Gt
+- SelfLower
+- Dot
+- Ident: length
+- Ident: then
+- SelfLower
+- Dot
+- Ident: length
+- Else
+- Ident: end
+- Newline
+- Let
+- Ident: start_byte
+- Eq
+- SelfLower
+- Dot
+- Ident: byte_index_for_char
+- LParen
+- Ident: start
+- RParen
+- Newline
+- Let
+- Ident: end_byte
+- Eq
+- SelfLower
+- Dot
+- Ident: byte_index_for_char
+- LParen
+- Ident: actual_end
+- RParen
+- Newline
+- Let
+- Ident: slice
+- Eq
+- Ident: slice_range
+- LParen
+- SelfLower
+- Dot
+- Ident: bytes
+- Comma
+- Ident: start_byte
+- Comma
+- Ident: end_byte
+- RParen
+- Newline
+- Return
+- Ident: Utf8String
+- ColonColon
+- Ident: from_str
+- LParen
+- Ident: slice
+- RParen
+- Newline
+- Dedent
+- Func
+- Ident: Utf8String
+- ColonColon
+- Ident: byte_index_for_char
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: char_index
+- Colon
+- USize
+- RParen
+- Arrow
+- USize
+- Newline
+- Indent
+- Mut
+- Ident: byte_pos
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Mut
+- Ident: current_char
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: byte_length
+- RParen
+- Newline
+- Indent
+- If
+- Ident: current_char
+- Ge
+- Ident: char_index
+- Newline
+- Indent
+- Break
+- Newline
+- Dedent
+- Let
+- Ident: char_bytes
+- Eq
+- Ident: utf8_char_bytes
+- LParen
+- SelfLower
+- Dot
+- Ident: bytes
+- LBracket
+- Ident: byte_pos
+- RBracket
+- RParen
+- Newline
+- Ident: byte_pos
+- Eq
+- Ident: byte_pos
+- Plus
+- Ident: char_bytes
+- Newline
+- Ident: current_char
+- Eq
+- Ident: current_char
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- Return
+- Ident: byte_pos
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Utf8String
+- ColonColon
+- Ident: iter
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Ident: Utf8Iter
+- Newline
+- Indent
+- Return
+- Ident: Utf8Iter
+- LParen
+- Newline
+- Indent
+- Ident: bytes
+- Colon
+- SelfLower
+- Dot
+- Ident: bytes
+- Comma
+- Newline
+- Ident: position
+- Colon
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Newline
+- Ident: length
+- Colon
+- SelfLower
+- Dot
+- Ident: byte_length
+- Newline
+- Dedent
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Utf8String
+- ColonColon
+- Ident: to_lowercase
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Ident: Utf8String
+- Newline
+- Indent
+- Mut
+- Ident: result
+- Eq
+- Ident: Utf8String
+- ColonColon
+- Ident: new
+- LParen
+- RParen
+- Newline
+- Mut
+- Ident: iter
+- Eq
+- SelfLower
+- Dot
+- Ident: iter
+- LParen
+- RParen
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: length
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: ch
+- Eq
+- Ident: iter
+- Dot
+- Ident: next
+- LParen
+- RParen
+- Newline
+- If
+- Ident: ch
+- Ne
+- "Null"
+- Newline
+- Indent
+- Let
+- Ident: lower
+- Eq
+- Ident: to_lowercase_codepoint
+- LParen
+- Ident: ch
+- RParen
+- Newline
+- Ident: result
+- Dot
+- Ident: push
+- LParen
+- Ident: lower
+- RParen
+- Newline
+- Dedent
+- Dedent
+- Return
+- Ident: result
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Utf8String
+- ColonColon
+- Ident: to_uppercase
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Ident: Utf8String
+- Newline
+- Indent
+- Mut
+- Ident: result
+- Eq
+- Ident: Utf8String
+- ColonColon
+- Ident: new
+- LParen
+- RParen
+- Newline
+- Mut
+- Ident: iter
+- Eq
+- SelfLower
+- Dot
+- Ident: iter
+- LParen
+- RParen
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- SelfLower
+- Dot
+- Ident: length
+- RParen
+- Newline
+- Indent
+- Let
+- Ident: ch
+- Eq
+- Ident: iter
+- Dot
+- Ident: next
+- LParen
+- RParen
+- Newline
+- If
+- Ident: ch
+- Ne
+- "Null"
+- Newline
+- Indent
+- Let
+- Ident: upper
+- Eq
+- Ident: to_uppercase_codepoint
+- LParen
+- Ident: ch
+- RParen
+- Newline
+- Ident: result
+- Dot
+- Ident: push
+- LParen
+- Ident: upper
+- RParen
+- Newline
+- Dedent
+- Dedent
+- Return
+- Ident: result
+- Newline
+- Dedent
+- Func
+- Ident: Utf8String
+- ColonColon
+- Ident: starts_with
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: prefix
+- Colon
+- Star
+- Ident: Utf8String
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- If
+- Ident: prefix
+- Dot
+- Ident: byte_length
+- Gt
+- SelfLower
+- Dot
+- Ident: byte_length
+- Newline
+- Indent
+- Return
+- "False"
+- Newline
+- Dedent
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: prefix
+- Dot
+- Ident: byte_length
+- RParen
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: bytes
+- LBracket
+- Ident: i
+- RBracket
+- Ne
+- Ident: prefix
+- Dot
+- Ident: bytes
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Indent
+- Return
+- "False"
+- Newline
+- Dedent
+- Dedent
+- Return
+- "True"
+- Newline
+- Dedent
+- Func
+- Ident: Utf8String
+- ColonColon
+- Ident: ends_with
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: suffix
+- Colon
+- Star
+- Ident: Utf8String
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- If
+- Ident: suffix
+- Dot
+- Ident: byte_length
+- Gt
+- SelfLower
+- Dot
+- Ident: byte_length
+- Newline
+- Indent
+- Return
+- "False"
+- Newline
+- Dedent
+- Let
+- Ident: offset
+- Eq
+- SelfLower
+- Dot
+- Ident: byte_length
+- Minus
+- Ident: suffix
+- Dot
+- Ident: byte_length
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: suffix
+- Dot
+- Ident: byte_length
+- RParen
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: bytes
+- LBracket
+- Ident: offset
+- Plus
+- Ident: i
+- RBracket
+- Ne
+- Ident: suffix
+- Dot
+- Ident: bytes
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Indent
+- Return
+- "False"
+- Newline
+- Dedent
+- Dedent
+- Return
+- "True"
+- Newline
+- Dedent
+- Func
+- Ident: Utf8String
+- ColonColon
+- Ident: contains
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: needle
+- Colon
+- Star
+- Ident: Utf8String
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- If
+- Ident: needle
+- Dot
+- Ident: byte_length
+- Gt
+- SelfLower
+- Dot
+- Ident: byte_length
+- Newline
+- Indent
+- Return
+- "False"
+- Newline
+- Dedent
+- Let
+- Ident: max_pos
+- Eq
+- SelfLower
+- Dot
+- Ident: byte_length
+- Minus
+- Ident: needle
+- Dot
+- Ident: byte_length
+- Newline
+- For
+- Ident: pos
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: max_pos
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- RParen
+- Newline
+- Indent
+- Mut
+- Match
+- Eq
+- "True"
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: needle
+- Dot
+- Ident: byte_length
+- RParen
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: bytes
+- LBracket
+- Ident: pos
+- Plus
+- Ident: i
+- RBracket
+- Ne
+- Ident: needle
+- Dot
+- Ident: bytes
+- LBracket
+- Ident: i
+- RBracket
+- Newline
+- Indent
+- Match
+- Eq
+- "False"
+- Newline
+- Break
+- Newline
+- Dedent
+- Dedent
+- If
+- Match
+- Newline
+- Indent
+- Return
+- "True"
+- Newline
+- Dedent
+- Dedent
+- Return
+- "False"
+- Newline
+- Dedent
+- Struct
+- Ident: Utf8Iter
+- Newline
+- Indent
+- Ident: bytes
+- Colon
+- LBracket
+- U8
+- RBracket
+- Newline
+- Ident: position
+- Colon
+- USize
+- Newline
+- Ident: length
+- Colon
+- USize
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: Utf8Iter
+- ColonColon
+- Ident: next
+- LParen
+- Star
+- Mut
+- SelfLower
+- RParen
+- Arrow
+- Question
+- U32
+- Newline
+- Indent
+- If
+- SelfLower
+- Dot
+- Ident: position
+- Ge
+- SelfLower
+- Dot
+- Ident: length
+- Newline
+- Indent
+- Return
+- "Null"
+- Newline
+- Dedent
+- Let
+- Ident: result
+- Eq
+- Ident: decode_utf8_char
+- LParen
+- And
+- SelfLower
+- Dot
+- Ident: bytes
+- LBracket
+- SelfLower
+- Dot
+- Ident: position
+- RBracket
+- RParen
+- Newline
+- Let
+- Ident: code_point
+- Eq
+- Ident: result
+- Dot
+- OkLiteral
+- Newline
+- Let
+- Ident: char_bytes
+- Eq
+- Ident: utf8_char_bytes
+- LParen
+- SelfLower
+- Dot
+- Ident: bytes
+- LBracket
+- SelfLower
+- Dot
+- Ident: position
+- RBracket
+- RParen
+- Newline
+- SelfLower
+- Dot
+- Ident: position
+- Eq
+- SelfLower
+- Dot
+- Ident: position
+- Plus
+- Ident: char_bytes
+- Newline
+- Return
+- Ident: code_point
+- Newline
+- Dedent
+- Func
+- Ident: Utf8Iter
+- ColonColon
+- Ident: has_next
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- SelfLower
+- Dot
+- Ident: position
+- Lt
+- SelfLower
+- Dot
+- Ident: length
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: validate_utf8
+- LParen
+- Ident: bytes
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- Ident: Utf8Result
+- LBracket
+- OkLiteral
+- RBracket
+- Newline
+- Indent
+- Mut
+- Ident: pos
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: bytes
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- If
+- Ident: pos
+- Ge
+- Ident: bytes
+- Dot
+- Ident: len
+- Newline
+- Indent
+- Break
+- Newline
+- Dedent
+- Let
+- Ident: byte
+- Eq
+- Ident: bytes
+- LBracket
+- Ident: pos
+- RBracket
+- Newline
+- Let
+- Ident: char_bytes
+- Eq
+- Ident: utf8_char_bytes
+- LParen
+- Ident: byte
+- RParen
+- Newline
+- If
+- Ident: pos
+- Plus
+- Ident: char_bytes
+- Gt
+- Ident: bytes
+- Dot
+- Ident: len
+- Newline
+- Indent
+- Return
+- Ident: Utf8Result
+- LBracket
+- OkLiteral
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: Utf8Error
+- ColonColon
+- Ident: INVALID_BYTE_SEQUENCE
+- RParen
+- Newline
+- Dedent
+- If
+- Ident: char_bytes
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Indent
+- If
+- Bang
+- Ident: is_continuation
+- LParen
+- Ident: bytes
+- LBracket
+- Ident: pos
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- RBracket
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: Utf8Result
+- LBracket
+- OkLiteral
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: Utf8Error
+- ColonColon
+- Ident: UNEXPECTED_CONTINUATION
+- RParen
+- Newline
+- Dedent
+- Dedent
+- Elif
+- Ident: char_bytes
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "3"
+    suffix: ~
+- Newline
+- Indent
+- If
+- Bang
+- Ident: is_continuation
+- LParen
+- Ident: bytes
+- LBracket
+- Ident: pos
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- RBracket
+- RParen
+- OrOr
+- Bang
+- Ident: is_continuation
+- LParen
+- Ident: bytes
+- LBracket
+- Ident: pos
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- RBracket
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: Utf8Result
+- LBracket
+- OkLiteral
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: Utf8Error
+- ColonColon
+- Ident: UNEXPECTED_CONTINUATION
+- RParen
+- Newline
+- Dedent
+- Dedent
+- Elif
+- Ident: char_bytes
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "4"
+    suffix: ~
+- Newline
+- Indent
+- If
+- Bang
+- Ident: is_continuation
+- LParen
+- Ident: bytes
+- LBracket
+- Ident: pos
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- RBracket
+- RParen
+- OrOr
+- Bang
+- Ident: is_continuation
+- LParen
+- Ident: bytes
+- LBracket
+- Ident: pos
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- RBracket
+- RParen
+- OrOr
+- Bang
+- Ident: is_continuation
+- LParen
+- Ident: bytes
+- LBracket
+- Ident: pos
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "3"
+    suffix: ~
+- RBracket
+- RParen
+- Newline
+- Indent
+- Return
+- Ident: Utf8Result
+- LBracket
+- OkLiteral
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: Utf8Error
+- ColonColon
+- Ident: UNEXPECTED_CONTINUATION
+- RParen
+- Newline
+- Dedent
+- Dedent
+- Ident: pos
+- Eq
+- Ident: pos
+- Plus
+- Ident: char_bytes
+- Newline
+- Dedent
+- Return
+- Ident: Utf8Result
+- LBracket
+- OkLiteral
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- OkLiteral
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: decode_utf8_char
+- LParen
+- Ident: bytes
+- Colon
+- Star
+- U8
+- RParen
+- Arrow
+- Ident: Utf8Result
+- LBracket
+- U32
+- RBracket
+- Newline
+- Indent
+- Let
+- Ident: first
+- Eq
+- Ident: bytes
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RBracket
+- Newline
+- If
+- Ident: first
+- Lt
+- IntegerLiteral:
+    base: Decimal
+    digits: "128"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- Ident: Utf8Result
+- LBracket
+- U32
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: first
+- As
+- U32
+- RParen
+- Newline
+- Dedent
+- If
+- LParen
+- Ident: first
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "224"
+    suffix: ~
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "192"
+    suffix: ~
+- Newline
+- Indent
+- Let
+- Ident: ch
+- Eq
+- LParen
+- LParen
+- Ident: first
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "31"
+    suffix: ~
+- RParen
+- As
+- U32
+- RParen
+- Shl
+- IntegerLiteral:
+    base: Decimal
+    digits: "6"
+    suffix: ~
+- Newline
+- Let
+- Ident: ch2
+- Eq
+- Ident: ch
+- Or
+- LParen
+- LParen
+- Ident: bytes
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- RBracket
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "63"
+    suffix: ~
+- RParen
+- As
+- U32
+- RParen
+- Newline
+- Return
+- Ident: Utf8Result
+- LBracket
+- U32
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: ch2
+- RParen
+- Newline
+- Dedent
+- If
+- LParen
+- Ident: first
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "240"
+    suffix: ~
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "224"
+    suffix: ~
+- Newline
+- Indent
+- Let
+- Ident: ch
+- Eq
+- LParen
+- LParen
+- Ident: first
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "15"
+    suffix: ~
+- RParen
+- As
+- U32
+- RParen
+- Shl
+- IntegerLiteral:
+    base: Decimal
+    digits: "12"
+    suffix: ~
+- Newline
+- Let
+- Ident: ch2
+- Eq
+- Ident: ch
+- Or
+- LParen
+- LParen
+- LParen
+- Ident: bytes
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- RBracket
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "63"
+    suffix: ~
+- RParen
+- As
+- U32
+- RParen
+- Shl
+- IntegerLiteral:
+    base: Decimal
+    digits: "6"
+    suffix: ~
+- RParen
+- Newline
+- Let
+- Ident: ch3
+- Eq
+- Ident: ch2
+- Or
+- LParen
+- LParen
+- Ident: bytes
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- RBracket
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "63"
+    suffix: ~
+- RParen
+- As
+- U32
+- RParen
+- Newline
+- Return
+- Ident: Utf8Result
+- LBracket
+- U32
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: ch3
+- RParen
+- Newline
+- Dedent
+- If
+- LParen
+- Ident: first
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "248"
+    suffix: ~
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "240"
+    suffix: ~
+- Newline
+- Indent
+- Let
+- Ident: ch
+- Eq
+- LParen
+- LParen
+- Ident: first
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "7"
+    suffix: ~
+- RParen
+- As
+- U32
+- RParen
+- Shl
+- IntegerLiteral:
+    base: Decimal
+    digits: "18"
+    suffix: ~
+- Newline
+- Let
+- Ident: ch2
+- Eq
+- Ident: ch
+- Or
+- LParen
+- LParen
+- LParen
+- Ident: bytes
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- RBracket
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "63"
+    suffix: ~
+- RParen
+- As
+- U32
+- RParen
+- Shl
+- IntegerLiteral:
+    base: Decimal
+    digits: "12"
+    suffix: ~
+- RParen
+- Newline
+- Let
+- Ident: ch3
+- Eq
+- Ident: ch2
+- Or
+- LParen
+- LParen
+- LParen
+- Ident: bytes
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- RBracket
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "63"
+    suffix: ~
+- RParen
+- As
+- U32
+- RParen
+- Shl
+- IntegerLiteral:
+    base: Decimal
+    digits: "6"
+    suffix: ~
+- RParen
+- Newline
+- Let
+- Ident: ch4
+- Eq
+- Ident: ch3
+- Or
+- LParen
+- LParen
+- Ident: bytes
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "3"
+    suffix: ~
+- RBracket
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "63"
+    suffix: ~
+- RParen
+- As
+- U32
+- RParen
+- Newline
+- Return
+- Ident: Utf8Result
+- LBracket
+- U32
+- RBracket
+- ColonColon
+- OkLiteral
+- LParen
+- Ident: ch4
+- RParen
+- Newline
+- Dedent
+- Return
+- Ident: Utf8Result
+- LBracket
+- U32
+- RBracket
+- ColonColon
+- Ident: err
+- LParen
+- Ident: Utf8Error
+- ColonColon
+- Ident: INVALID_BYTE_SEQUENCE
+- RParen
+- Newline
+- Dedent
+- Func
+- Bang
+- Ident: encode_utf8_char
+- LParen
+- Ident: code_point
+- Colon
+- U32
+- Comma
+- Ident: buffer
+- Colon
+- Star
+- Mut
+- U8
+- RParen
+- Arrow
+- USize
+- Newline
+- Indent
+- If
+- Ident: code_point
+- Lt
+- IntegerLiteral:
+    base: Decimal
+    digits: "128"
+    suffix: ~
+- Newline
+- Indent
+- Ident: buffer
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RBracket
+- Eq
+- Ident: code_point
+- As
+- U8
+- Newline
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- If
+- Ident: code_point
+- Lt
+- IntegerLiteral:
+    base: Decimal
+    digits: "2048"
+    suffix: ~
+- Newline
+- Indent
+- Ident: buffer
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RBracket
+- Eq
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "192"
+    suffix: ~
+- Or
+- LParen
+- Ident: code_point
+- Shr
+- IntegerLiteral:
+    base: Decimal
+    digits: "6"
+    suffix: ~
+- RParen
+- RParen
+- As
+- U8
+- Newline
+- Ident: buffer
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- RBracket
+- Eq
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "128"
+    suffix: ~
+- Or
+- LParen
+- Ident: code_point
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "63"
+    suffix: ~
+- RParen
+- RParen
+- As
+- U8
+- Newline
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Dedent
+- If
+- Ident: code_point
+- Lt
+- IntegerLiteral:
+    base: Decimal
+    digits: "65536"
+    suffix: ~
+- Newline
+- Indent
+- Ident: buffer
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RBracket
+- Eq
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "224"
+    suffix: ~
+- Or
+- LParen
+- Ident: code_point
+- Shr
+- IntegerLiteral:
+    base: Decimal
+    digits: "12"
+    suffix: ~
+- RParen
+- RParen
+- As
+- U8
+- Newline
+- Ident: buffer
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- RBracket
+- Eq
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "128"
+    suffix: ~
+- Or
+- LParen
+- LParen
+- Ident: code_point
+- Shr
+- IntegerLiteral:
+    base: Decimal
+    digits: "6"
+    suffix: ~
+- RParen
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "63"
+    suffix: ~
+- RParen
+- RParen
+- As
+- U8
+- Newline
+- Ident: buffer
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- RBracket
+- Eq
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "128"
+    suffix: ~
+- Or
+- LParen
+- Ident: code_point
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "63"
+    suffix: ~
+- RParen
+- RParen
+- As
+- U8
+- Newline
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "3"
+    suffix: ~
+- Newline
+- Dedent
+- Ident: buffer
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- RBracket
+- Eq
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "240"
+    suffix: ~
+- Or
+- LParen
+- Ident: code_point
+- Shr
+- IntegerLiteral:
+    base: Decimal
+    digits: "18"
+    suffix: ~
+- RParen
+- RParen
+- As
+- U8
+- Newline
+- Ident: buffer
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- RBracket
+- Eq
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "128"
+    suffix: ~
+- Or
+- LParen
+- LParen
+- Ident: code_point
+- Shr
+- IntegerLiteral:
+    base: Decimal
+    digits: "12"
+    suffix: ~
+- RParen
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "63"
+    suffix: ~
+- RParen
+- RParen
+- As
+- U8
+- Newline
+- Ident: buffer
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- RBracket
+- Eq
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "128"
+    suffix: ~
+- Or
+- LParen
+- LParen
+- Ident: code_point
+- Shr
+- IntegerLiteral:
+    base: Decimal
+    digits: "6"
+    suffix: ~
+- RParen
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "63"
+    suffix: ~
+- RParen
+- RParen
+- As
+- U8
+- Newline
+- Ident: buffer
+- LBracket
+- IntegerLiteral:
+    base: Decimal
+    digits: "3"
+    suffix: ~
+- RBracket
+- Eq
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "128"
+    suffix: ~
+- Or
+- LParen
+- Ident: code_point
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "63"
+    suffix: ~
+- RParen
+- RParen
+- As
+- U8
+- Newline
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "4"
+    suffix: ~
+- Newline
+- Dedent
+- Func
+- Ident: utf8_char_bytes
+- LParen
+- Ident: first_byte
+- Colon
+- U8
+- RParen
+- Arrow
+- USize
+- Newline
+- Indent
+- If
+- Ident: first_byte
+- Lt
+- IntegerLiteral:
+    base: Decimal
+    digits: "128"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- If
+- LParen
+- Ident: first_byte
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "224"
+    suffix: ~
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "192"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Dedent
+- If
+- LParen
+- Ident: first_byte
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "240"
+    suffix: ~
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "224"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "3"
+    suffix: ~
+- Newline
+- Dedent
+- If
+- LParen
+- Ident: first_byte
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "248"
+    suffix: ~
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "240"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "4"
+    suffix: ~
+- Newline
+- Dedent
+- Return
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- Func
+- Ident: is_continuation
+- LParen
+- Ident: byte
+- Colon
+- U8
+- RParen
+- Arrow
+- Bool
+- Newline
+- Indent
+- Return
+- LParen
+- Ident: byte
+- And
+- IntegerLiteral:
+    base: Decimal
+    digits: "192"
+    suffix: ~
+- RParen
+- EqEq
+- IntegerLiteral:
+    base: Decimal
+    digits: "128"
+    suffix: ~
+- Newline
+- Dedent
+- Func
+- Ident: count_utf8_chars
+- LParen
+- Ident: bytes
+- Colon
+- LBracket
+- U8
+- RBracket
+- RParen
+- Arrow
+- USize
+- Newline
+- Indent
+- Mut
+- Ident: count
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- Mut
+- Ident: pos
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Newline
+- For
+- Ident: i
+- In
+- Ident: range
+- LParen
+- IntegerLiteral:
+    base: Decimal
+    digits: "0"
+    suffix: ~
+- Comma
+- Ident: bytes
+- Dot
+- Ident: len
+- RParen
+- Newline
+- Indent
+- If
+- Ident: pos
+- Ge
+- Ident: bytes
+- Dot
+- Ident: len
+- Newline
+- Indent
+- Break
+- Newline
+- Dedent
+- Let
+- Ident: char_bytes
+- Eq
+- Ident: utf8_char_bytes
+- LParen
+- Ident: bytes
+- LBracket
+- Ident: pos
+- RBracket
+- RParen
+- Newline
+- Ident: pos
+- Eq
+- Ident: pos
+- Plus
+- Ident: char_bytes
+- Newline
+- Ident: count
+- Eq
+- Ident: count
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Dedent
+- Return
+- Ident: count
+- Newline
+- Dedent
+- Func
+- Ident: to_lowercase_codepoint
+- LParen
+- Ident: ch
+- Colon
+- U32
+- RParen
+- Arrow
+- U32
+- Newline
+- Indent
+- If
+- Ident: ch
+- Ge
+- IntegerLiteral:
+    base: Decimal
+    digits: "65"
+    suffix: ~
+- AndAnd
+- Ident: ch
+- Le
+- IntegerLiteral:
+    base: Decimal
+    digits: "90"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- Ident: ch
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "32"
+    suffix: ~
+- Newline
+- Dedent
+- Return
+- Ident: ch
+- Newline
+- Dedent
+- Func
+- Ident: to_uppercase_codepoint
+- LParen
+- Ident: ch
+- Colon
+- U32
+- RParen
+- Arrow
+- U32
+- Newline
+- Indent
+- If
+- Ident: ch
+- Ge
+- IntegerLiteral:
+    base: Decimal
+    digits: "97"
+    suffix: ~
+- AndAnd
+- Ident: ch
+- Le
+- IntegerLiteral:
+    base: Decimal
+    digits: "122"
+    suffix: ~
+- Newline
+- Indent
+- Return
+- Ident: ch
+- Minus
+- IntegerLiteral:
+    base: Decimal
+    digits: "32"
+    suffix: ~
+- Newline
+- Dedent
+- Return
+- Ident: ch
+- Newline
+- Dedent
+- Func
+- Ident: slice_range
+- LParen
+- Ident: bytes
+- Colon
+- LBracket
+- U8
+- RBracket
+- Comma
+- Ident: start
+- Colon
+- USize
+- Comma
+- Ident: end
+- Colon
+- USize
+- RParen
+- Arrow
+- LBracket
+- U8
+- RBracket
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

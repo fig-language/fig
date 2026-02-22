@@ -1,0 +1,40 @@
+---
+source: crates/fig-parser/tests/integration_tests.rs
+assertion_line: 32
+expression: ast
+---
+items:
+  - Function:
+      signature:
+        visibility: Default
+        annotations: []
+        is_extern: false
+        is_effect: false
+        receiver: ~
+        name: main
+        generic_params: []
+        self_param: ~
+        params: []
+        return_types:
+          - Ok
+      body:
+        statements:
+          - Let:
+              annotations: []
+              name: a
+              ty: ~
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "1"
+                  suffix: ~
+          - Let:
+              annotations: []
+              name: b
+              ty: ~
+              value:
+                IntegerLiteral:
+                  base: Decimal
+                  digits: "2"
+                  suffix: ~
+          - Pass

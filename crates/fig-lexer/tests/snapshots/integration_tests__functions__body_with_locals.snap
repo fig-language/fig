@@ -1,0 +1,81 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: compute
+- LParen
+- Ident: x
+- Colon
+- I32
+- RParen
+- Arrow
+- I32
+- Newline
+- Indent
+- Let
+- Ident: a
+- Eq
+- Ident: x
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Let
+- Ident: b
+- Eq
+- Ident: a
+- Star
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Return
+- Ident: b
+- Newline
+- Dedent
+- Func
+- Ident: multi_step
+- LParen
+- Ident: n
+- Colon
+- I32
+- RParen
+- Arrow
+- I32
+- Newline
+- Indent
+- Let
+- Ident: step1
+- Eq
+- Ident: n
+- Star
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline
+- Let
+- Ident: step2
+- Eq
+- Ident: step1
+- Plus
+- IntegerLiteral:
+    base: Decimal
+    digits: "10"
+    suffix: ~
+- Newline
+- Let
+- Ident: step3
+- Eq
+- Ident: step2
+- Minus
+- Ident: n
+- Newline
+- Return
+- Ident: step3
+- Newline
+- Dedent

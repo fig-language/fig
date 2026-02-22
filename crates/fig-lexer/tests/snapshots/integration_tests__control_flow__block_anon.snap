@@ -1,0 +1,27 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Func
+- Ident: with_anon_block
+- LParen
+- RParen
+- Arrow
+- OkLiteral
+- Newline
+- Indent
+- Block
+- Newline
+- Indent
+- Let
+- Ident: x
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "1"
+    suffix: ~
+- Newline
+- Pass
+- Newline
+- Dedent
+- Dedent

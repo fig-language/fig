@@ -1,0 +1,75 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Struct
+- Ident: Pair
+- LBracket
+- Ident: A
+- Comma
+- Ident: B
+- RBracket
+- Newline
+- Indent
+- Ident: first
+- Colon
+- Ident: A
+- Newline
+- Ident: second
+- Colon
+- Ident: B
+- Newline
+- Dedent
+- Struct
+- Ident: Triple
+- LBracket
+- Ident: A
+- Comma
+- Ident: B
+- Comma
+- Ident: C
+- RBracket
+- Newline
+- Indent
+- Ident: a
+- Colon
+- Ident: A
+- Newline
+- Ident: b
+- Colon
+- Ident: B
+- Newline
+- Ident: c
+- Colon
+- Ident: C
+- Newline
+- Dedent
+- Struct
+- Ident: Map
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Indent
+- Ident: key
+- Colon
+- Ident: K
+- Newline
+- Ident: value
+- Colon
+- Ident: V
+- Newline
+- Ident: next
+- Colon
+- Question
+- Star
+- Ident: Map
+- LBracket
+- Ident: K
+- Comma
+- Ident: V
+- RBracket
+- Newline
+- Dedent

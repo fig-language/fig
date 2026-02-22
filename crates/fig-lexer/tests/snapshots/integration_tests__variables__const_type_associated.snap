@@ -1,0 +1,34 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Const
+- Ident: Seq
+- LBracket
+- Ident: T
+- RBracket
+- ColonColon
+- Ident: DEFAULT_CAPACITY
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "4"
+    suffix: ~
+- Newline
+- Const
+- Ident: Seq
+- LBracket
+- Ident: T
+- RBracket
+- ColonColon
+- Ident: GROW_FACTOR
+- Colon
+- USize
+- Eq
+- IntegerLiteral:
+    base: Decimal
+    digits: "2"
+    suffix: ~
+- Newline

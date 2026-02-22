@@ -1,0 +1,20 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Union
+- Ident: Option
+- LBracket
+- Ident: T
+- RBracket
+- Newline
+- Indent
+- Ident: some
+- Colon
+- Ident: T
+- Newline
+- Ident: none
+- Colon
+- OkLiteral
+- Newline
+- Dedent

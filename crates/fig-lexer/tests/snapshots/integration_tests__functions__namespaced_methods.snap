@@ -1,0 +1,105 @@
+---
+source: crates/fig-lexer/tests/integration_tests.rs
+expression: tokens
+---
+- Struct
+- Ident: Vector2
+- Newline
+- Indent
+- Ident: x
+- Colon
+- F64
+- Newline
+- Ident: y
+- Colon
+- F64
+- Newline
+- Dedent
+- Func
+- Ident: Vector2
+- ColonColon
+- Ident: new
+- LParen
+- Ident: x
+- Colon
+- F64
+- Comma
+- Ident: y
+- Colon
+- F64
+- RParen
+- Arrow
+- Ident: Vector2
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Vector2
+- ColonColon
+- Ident: zero
+- LParen
+- RParen
+- Arrow
+- Ident: Vector2
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Vector2
+- ColonColon
+- Ident: len
+- LParen
+- Star
+- SelfLower
+- RParen
+- Arrow
+- F64
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Vector2
+- ColonColon
+- Ident: dot
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: other
+- Colon
+- Star
+- Ident: Vector2
+- RParen
+- Arrow
+- F64
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent
+- Func
+- Ident: Vector2
+- ColonColon
+- Ident: add
+- LParen
+- Star
+- SelfLower
+- Comma
+- Ident: other
+- Colon
+- Star
+- Ident: Vector2
+- RParen
+- Arrow
+- Ident: Vector2
+- Newline
+- Indent
+- Pass
+- Newline
+- Dedent

@@ -3,7 +3,7 @@ interface Math
     func sub(self: Self, other: Self) -> Self
 
 interface AddTo[T]
-    func add::[Scale](self: Self, other: T, scale: Scale) -> Self
+    func add::[Scale](*mut self, other: T, scale: Scale) -> Self
 
 struct Vector2
     x: f64
@@ -28,10 +28,10 @@ func[T] ::*T::add_to::[Scale](other: i32, scale: Scale) -> *T
 // it means *T will NOT satisfy the Math interface because
 // these functions are not methods of *T, they are just free
 // functions that take *T as parameters.
-func add::[T](self: *T, other: *T) -> *T
+func add::[T](*self, other: *T) -> *T
     pass
 
-func sub::[T](self: *T, other: *T) -> *T
+func sub::[T](*self, other: *T) -> *T
     pass
 
 
@@ -48,10 +48,10 @@ func[T] ::*T::sub(other: *T) -> *T
     pass
 
 // Undecided
-func[T] ::*T::add(self: *T, other: *T) -> *T
+func[T] ::*T::add(*self, other: *T) -> *T
     pass
 
-func[T] ::*T::sub(self: *T, other: *T) -> *T
+func[T] ::*T::sub(*self, other: *T) -> *T
     pass
 
 // Here we have two sets of generic parameters, T and U.
@@ -60,7 +60,7 @@ func[T] ::*T::sub(self: *T, other: *T) -> *T
 // method called something::[U]. As apposed to T, U is
 // a type parameter that will be specified at the time of
 // the method call.
-func[T] ::[]T::something::[U](self: []T) -> ok
+func[T] ::[]T::something::[U](*self) -> ok
     pass
 
 // This is the same as the previous function but uses the
